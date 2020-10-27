@@ -1,21 +1,62 @@
 from flask import Flask
-from flask import request, make_response, redirect, flash
+from flask import request, make_response, redirect, flash, session, url_for
 from flask import render_template # allow to render from templates
+from flask_bootstrap import Bootstrap
+from flask_wtf import FlaskForm
+from wtforms.fields import StringField, PasswordField,SubmitField
+from wtforms.validators import DataRequired
 import qrcode # allow make qrCode
+import unittest
 
-#from flask_bootstrap import Bootstrap(app)
+from app import create_app
+from app.forms import LoginForm
+from app.common_functions import generarQR, isLogin
+#from app.firestore_service import get_users, get_todos
 
-app = Flask(__name__)
+app = create_app()
+
 
 todos       = ['Comprar cafe', 'Enviar solicitud de compra', 'Entregar video a productor ']
 imgAddress  = 'assets/img/'
+recipes     = ['Lemon Pie','Tres Leches','Donas']
 
+class LoginForm(FlaskForm):
+    username    = StringField('Nombre de usuario', validators=[DataRequired()])
+    password    = PasswordField('Password', validators=[DataRequired()])
+    submit      = SubmitField('Enviar')
+
+#
+#Para TEST UNITARIOS
+#
+@app.cli.command()
+def test():
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner().run(tests)
+
+
+    
+#
+#Para manejo de errores
+#
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('400.html', error=error)
 
 @app.errorhandler(404)
 def error(error):
     return render_template('404.html', error=error)
 
-#decorador de pyhton
+
+
+
+
+
+
+
+
+#
+#RUTAS
+#
 @app.route('/hello')
 def hello():
     user_ip = request.cookies.get('user_ip')
@@ -38,36 +79,37 @@ def hello():
     #return 'Hello World, ' + user_ip
     return render_template('base.html', **context)
 
+@app.route('/recipes')
+def recipes():
+    user__ip=   session.get('user__ip')
+    name    =   session.get('daniel')
+    title   =   'recetas'
+    is__login= isLogin()
 
-#decorador de pyhton
+    #obtener recetas
+    #recipes =None
+    recipes     = ['Lemon Pie','Tres Leches','Donas']
+    
+    context = {
+        'user__ip'  : user__ip,
+        'name'      : name,
+        'title'     : title,
+        'is__login' : is__login,
+        'recipes'   : recipes,
+    }
+    print(title)
+    print(is__login)
+
+    return  render_template('recipes.html', **context)    
+
+
 @app.route('/')
 def index():
-    user_ip = request.remote_addr
-
-    response = make_response(redirect('/hello'))
-    response.set_cookie('user_ip',user_ip)
+    #obtener IP
+    user__ip = request.remote_addr
+    session['user__ip'] = user__ip
+    response = make_response(redirect('/auth/login'))
 
     return response
 
 
-
-
-def generarQR(url):
-    nombre_imagen = imgAddress + 'qrcode.png'
-
-    # Link for website
-    input_data = url
-
-    #Creating an instance of qrcode
-    qr = qrcode.QRCode(
-            version=1,
-            box_size=10,
-            border=5)
-    qr.add_data(input_data)
-    qr.make(fit=True)
-    img = qr.make_image(fill='black', back_color='white')
-    img.save('static/' + nombre_imagen)
-    
-    #print( '\nstatic/' + nombre_imagen + '\n')
-    
-    return nombre_imagen

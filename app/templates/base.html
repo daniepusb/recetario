@@ -1,0 +1,50 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block head %}
+    {{ super() }}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{% block title %}Recetario | {{ title }}{% endblock %}</title>
+    
+    <meta name="description"  content="Recetario">
+    <meta name="author"       content="Boss Team">
+
+    <!--  ogp -->
+    <meta property="og:title" content="Recetario" />
+    <meta property="og:type"  content="website" />
+    <meta property="og:url"   content="https://github.com/daniepusb/recetario" />
+    <meta property="og:image" content="https://github.com/daniepusb/recetario/assets/img/profile_daniel_github.jpg" />
+    <meta property="og:site_name" content="daniepusb.github.io">
+    <meta property="og:description" content="#Recetario">
+
+    <link rel="canonical" href="https://github.com/daniepusb/recetario" />
+    <link rel="icon" href="https://github.com/daniepusb/recetario/assets/img/favicon.ico" type="image/x-icon" />
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css')}}">
+{% endblock %}
+
+{% block body %}
+    {% block navbar %}
+        {% include 'navbar.html' %}
+    {% endblock %}
+
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-success alert-dismissible">
+            <button type="button"
+                    data-dismiss="alert"
+                    class="close">&times;</button>
+            {{ message }}
+        </div>
+    {% endfor %}
+
+
+    {% block content %}{% endblock %}
+
+    {% block scripts %}
+        {{ super() }}
+    {% endblock %}
+{% endblock %}
+</body>
+</html>

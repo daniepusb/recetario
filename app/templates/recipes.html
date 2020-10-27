@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% import 'macros.html' as macros %}
+
+
+{% block navbar %}
+    {{super()}}
+{% endblock %}
+
+{% block content %}
+    {{super()}}
+
+    {% if recipes %}
+        <h1>Ver recetas</h1>
+        <ul>
+            {% for r in recipes %}
+                {{ macros.render_todo(r) }}
+            {% endfor %}
+        </ul>
+    {% else %}
+        <a href="{{ url_for('index') }}">No hay recetas para mostrar</a>
+    {% endif %}
+
+    
+
+{% endblock %}

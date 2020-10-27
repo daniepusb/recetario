@@ -2,3 +2,7 @@ flask
 flask-bootstrap
 pillow
 qrcode
+flask-wtf
+flask-testing
+blinker
+firebase-admin
