@@ -18,7 +18,7 @@ def get_user(username):
 
 def user_put(user__data):
     user_ref = db.collection('users').document(user__data.username)
-    user_ref.set({'password': user__data.password})
+    user_ref.set({'password': user__data.password,'admin': False})
 
 
 def get_recipes():
@@ -32,7 +32,7 @@ def get_recipe(recipe):
 
 def recipe_put(recipe):
     recipes_collection_ref = db.collection('recipes').document(recipe.title)
-    recipes_collection_ref.set({'description': recipe.description})
+    recipes_collection_ref.set({'description': recipe.description, 'done': False})
 """
 
 def get_todos(user_id):

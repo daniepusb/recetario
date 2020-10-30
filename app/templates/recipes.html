@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-
 {% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %} 
     {{super()}} ver recetas
@@ -12,23 +12,26 @@
 
 {% block content %}
     {{super()}}
-
+   
     {% if recipes %}
-        <h1>Ver recetas</h1>
-        <ul>
-            {% for r in recipes %}
-                {{ macros.render_recipe(r) }}                
-            {% endfor %}
-        </ul>
+        <div class="container">
+            <h1>Ver recetas</h1>
+            <ul>
+                {% for r in recipes %}
+                    {{ macros.render_recipe(r) }}                
+                {% endfor %}
+            </ul>
+        </div>
     {% else %}
         {{flash('No hay recetas para mostrar')}}
     {% endif %}
 
     {% if admin %}
-        <h3>Agregar receta</h3>
-        <a href="{{ url_for('index') }}">Agregar receta</a>
+        <div class="container">
+            <h3>Agregar receta</h3>
+            {{ wtf.quick_form(recipe__form) }}
+        </div>
     {% endif %}
-
 
 
 

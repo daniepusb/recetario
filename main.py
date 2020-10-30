@@ -13,7 +13,7 @@ import unittest
 from app import create_app
 from app.forms import RecipesForm
 from app.common_functions import generarQR
-from app.firestore_service import get_recipes, get_recipe, recipe_put
+from app.firestore_service import get_recipes, get_recipe, recipe_put, get_user
 from app.models import RecipeData, RecipeModel
 
 app = create_app()
@@ -89,7 +89,7 @@ def new_recipe():
 @login_required
 def recipes():
     if current_user.is_authenticated:
-        user        = current_user
+        username    = current_user.id
         recipe__form= RecipesForm()
 
         if recipe__form.validate_on_submit():
@@ -107,9 +107,8 @@ def recipes():
 
         context = {
             'recipes'   : get_recipes(),
-            'admin'     : False,
-            'recipe__form':recipe__form,
-            'user':user,
+            'admin'     : True, #current_user.admin,
+            'recipe__form':recipe__form
         }
 
         return render_template('recipes.html', **context)    
