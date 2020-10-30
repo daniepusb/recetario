@@ -35,7 +35,27 @@ class MainTest(TestCase):
         self.assert405(response)
         #self.assertTrue(response.status_code, 405)
         #sirve cualquiera de los self
+
+
+         def test_auth_signup_get(self):
+        response = self.client.get(url_for('auth.signup'))
+
+        self.assert200(response)
+    
 """
+   def test_auth_signup_post(self):
+        try:
+            fake_form = {
+                'username': 'test_user',
+                'password': '123456'
+            }
+            response = self.client.post(url_for('auth.signup'), data=fake_form)
+            self.assertRedirects(response, url_for('recipes'))
+        finally:
+            #Remove added db
+            db_service._delete_user(fake_form['username'], caller=self)
+
+
     #6 probar que luego de un post 
     def test_login_post(self):
         response = self.client.post(url_for('auth.login'))

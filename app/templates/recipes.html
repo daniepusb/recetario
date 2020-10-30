@@ -2,6 +2,9 @@
 
 {% import 'macros.html' as macros %}
 
+{% block title %} 
+    {{super()}} ver recetas
+{% endblock %}
 
 {% block navbar %}
     {{super()}}
@@ -14,13 +17,19 @@
         <h1>Ver recetas</h1>
         <ul>
             {% for r in recipes %}
-                {{ macros.render_todo(r) }}
+                {{ macros.render_recipe(r) }}                
             {% endfor %}
         </ul>
     {% else %}
-        <a href="{{ url_for('index') }}">No hay recetas para mostrar</a>
+        {{flash('No hay recetas para mostrar')}}
     {% endif %}
 
-    
+    {% if admin %}
+        <h3>Agregar receta</h3>
+        <a href="{{ url_for('index') }}">Agregar receta</a>
+    {% endif %}
+
+
+
 
 {% endblock %}

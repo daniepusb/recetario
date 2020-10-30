@@ -29,7 +29,7 @@ def generarQR(url):
 def isLogin():
     is__login = False
 
-    if session.get('is__login'): 
+    if session.get('username'): 
         #and request.cookies.get('user_name') and request.cookies.get('user__id') 
         is__login = True
 

@@ -4,19 +4,19 @@
 
 {% block title %}
     {{ super() }}
-    404
+    Login
 {% endblock %}
 
 {% block content %}
-    {% if user__ip %}
-        <h1>Bienvenidos, tu IP es {{ user__ip }}</h1>
+    {% if username %}
+        <h1>Bienvenido {{username}}, tu IP es {{ user__ip }}</h1>
     {% else %}
-        <a href="{{ url_for('index') }}">Ir a inicio</a>
+        <div class="container">
+            {{ wtf.quick_form(login__form) }}
+        </div>
     {% endif %}
 
-    <div class="container">
-        {{ wtf.quick_form(login__form) }}
-    </div>
+    
 
 {% endblock %}
 

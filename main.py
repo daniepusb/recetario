@@ -5,25 +5,22 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, PasswordField,SubmitField
 from wtforms.validators import DataRequired
+from flask_login import login_required, current_user
+
 import qrcode # allow make qrCode
 import unittest
 
 from app import create_app
-from app.forms import LoginForm
-from app.common_functions import generarQR, isLogin
-#from app.firestore_service import get_users, get_todos
+from app.forms import RecipesForm
+from app.common_functions import generarQR
+from app.firestore_service import get_recipes, get_recipe, recipe_put
+from app.models import RecipeData, RecipeModel
 
 app = create_app()
-
 
 todos       = ['Comprar cafe', 'Enviar solicitud de compra', 'Entregar video a productor ']
 imgAddress  = 'assets/img/'
 recipes     = ['Lemon Pie','Tres Leches','Donas']
-
-class LoginForm(FlaskForm):
-    username    = StringField('Nombre de usuario', validators=[DataRequired()])
-    password    = PasswordField('Password', validators=[DataRequired()])
-    submit      = SubmitField('Enviar')
 
 #
 #Para TEST UNITARIOS
@@ -33,8 +30,6 @@ def test():
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner().run(tests)
 
-
-    
 #
 #Para manejo de errores
 #
@@ -50,15 +45,11 @@ def error(error):
 
 
 
-
-
-
-
 #
 #RUTAS
 #
-@app.route('/hello')
-def hello():
+@app.route('/qrcode')
+def qrcode():
     user_ip = request.cookies.get('user_ip')
     #user_name = request.cookies.get('user_name')
 
@@ -79,28 +70,51 @@ def hello():
     #return 'Hello World, ' + user_ip
     return render_template('base.html', **context)
 
-@app.route('/recipes')
-def recipes():
-    user__ip=   session.get('user__ip')
-    name    =   session.get('daniel')
-    title   =   'recetas'
-    is__login= isLogin()
 
-    #obtener recetas
-    #recipes =None
-    recipes     = ['Lemon Pie','Tres Leches','Donas']
-    
+@app.route('/recipes/create', methods=['GET','POST'])
+@login_required
+def new_recipe():
+    title       = 'Nueva receta'
+    recipe__form= RecipesForm()
     context = {
-        'user__ip'  : user__ip,
-        'name'      : name,
         'title'     : title,
-        'is__login' : is__login,
-        'recipes'   : recipes,
+        'recipe__form': recipe__form,
     }
-    print(title)
-    print(is__login)
 
-    return  render_template('recipes.html', **context)    
+    return  render_template('newRecipe.html', **context) 
+
+
+
+@app.route('/recipes', methods=['GET','POST'])
+@login_required
+def recipes():
+    if current_user.is_authenticated:
+        user        = current_user
+        recipe__form= RecipesForm()
+
+        if recipe__form.validate_on_submit():
+            title       = recipe__form.title.data
+            description = recipe__form.description.data
+            
+            recipe__data= RecipeData(title, description)
+            recipe_doc  = get_recipe(recipe__data.title)
+
+            if recipe_doc.to_dict() is None:
+                recipe_put(recipe__data)
+                flash('Receta creada')
+            else:
+                flash('Ya existe Receta')
+
+        context = {
+            'recipes'   : get_recipes(),
+            'admin'     : False,
+            'recipe__form':recipe__form,
+            'user':user,
+        }
+
+        return render_template('recipes.html', **context)    
+    else:
+        return make_response(redirect('/auth.login'))
 
 
 @app.route('/')
