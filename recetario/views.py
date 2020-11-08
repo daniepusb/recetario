@@ -37,3 +37,10 @@ def say_hi(request, name, age):
     else:
         message = 'Hello, {}! Welcome to Platzigram'.format(name)
     return HttpResponse(message)
+
+
+def recipes(request):
+    """Enviar un mensaje de bienvenida"""
+    
+    message = 'Bienvenido a recetario'
+    return HttpResponse(message)
