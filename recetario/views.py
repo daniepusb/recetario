@@ -1,4 +1,4 @@
-"""Platzigram views."""
+"""Recetario views."""
 
 # Django
 from django.http import HttpResponse
