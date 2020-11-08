@@ -17,3 +17,7 @@ Empecemos por comprobar que tenemos python instalado, luego creamos el ambiente 
 
 
 
+Para ambiente de desarrollo modificar el valor de DEBUG en el archivo settings.py
+- settings.py [ DEBUG = True ]
+
+
