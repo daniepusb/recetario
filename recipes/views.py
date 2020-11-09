@@ -3,10 +3,13 @@
 # Django
 #from django.http import HttpResponse
 from django.shortcuts import render
-
+from django.views.generic import View 
 # Utilities
 from datetime import datetime
 
+# Firebase connections
+#from recetario import firestore_service
+from recetario.firestore_service import get_recipes
 
 posts = [
     {
@@ -34,3 +37,17 @@ def list_recipes(request):
     """List existing recipes."""
 
     return render(request,'feed.html', {'posts':posts})
+
+
+ 
+ 
+class Recipes(View):
+    # Especifico la plantilla o template que usaré 
+    template_name = "index.html"
+
+    # Llamo los datos que se encuentran en la tabla 'recipes' 
+    datos = get_recipes()
+
+    # Envio los datos de la tabla 'recipes' a la vista o template 
+    def get(self, request): 
+        return render(request, self.template_name, { "recipes": self.datos})

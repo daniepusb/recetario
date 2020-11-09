@@ -14,4 +14,5 @@ urlpatterns = [
     path('hi/<str:name>/<int:age>/', local_views.say_hi), #http://127.0.0.1:8000/hi/jesus/33
 
     path('recipes/', recipes_views.list_recipes),  #http://127.0.0.1:8000/recipes
+    path('postres/', recipes_views.Recipes.as_view(), name="index"),
 ]
