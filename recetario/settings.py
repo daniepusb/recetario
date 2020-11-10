@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     # LOCAL APPS
     'recipes',
 
+    # Firebase 
+    'firebase_authentication',
+
 ]
 
 MIDDLEWARE = [
@@ -60,7 +63,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        #'DIRS': [os.path.join(BASE_DIR, 'templates')],  #Defino el directorio 'templates' 
+        'DIRS': [BASE_DIR / 'templates',],  #Defino el directorio 'templates' 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,6 +78,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'recetario.wsgi.application'
 
+# Firebase
+FIREBASE_PATH = BASE_DIR / 'credentials.json'
+AUTH_USER_MODEL = 'firebase_authentication.User'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
