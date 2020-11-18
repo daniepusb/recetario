@@ -2,7 +2,7 @@
 .fenv 
 .denv
 .venv
-
+credentials.json
 
 ### Python template
 # Byte-compiled / optimized / DLL files
