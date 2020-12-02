@@ -4,6 +4,7 @@ from flask_login import LoginManager
 
 from .config    import Config
 from .auth      import auth
+from .recipes   import recipes
 from .models    import UserModel, RecipeModel   
 
 login__manager = LoginManager()
@@ -19,6 +20,9 @@ def create_app():
 
     app.config.from_object(Config)
     login__manager.init_app(app)
+
+    #Es necesario registrar los blueprints
     app.register_blueprint(auth)
+    app.register_blueprint(recipes)
 
     return app

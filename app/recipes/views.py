@@ -1,99 +1,73 @@
-from flask import render_template, session, redirect, flash, url_for, make_response
-from flask_login import login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash,  check_password_hash
-
-from . import auth
-from app.forms import LoginForm
-from app.common_functions import generarQR, isLogin
-from app.firestore_service import get_user, user_put
-from app.models import UserData, UserModel
+from . import recipes
+from flask import render_template, flash, redirect, url_for
+from flask_login import login_required, current_user
 
 import app
+from app.forms import RecipesForm
+from app.firestore_service import get_recipes, get_recipe, recipe_put
+from app.models import RecipeData, RecipeModel
 
-@auth.route('signup', methods=['GET','POST'])
-def signup():
-    signup__form = LoginForm()
-    
-    context = {
-        'signup__form' : signup__form
-    }
+@recipes.route('/', methods=['GET'] )
+@login_required
+def recipes_index():
+    return redirect(url_for('recipes.all_recipes'))
 
-    if signup__form.validate_on_submit():
-        username = signup__form.username.data
-        password = signup__form.password.data
-
-        user__doc = get_user(username)
-
-        if user__doc.to_dict() is None:
-            password__hash  = generate_password_hash(password)
-            user__data      = UserData(username,password__hash)
-            user_put(user__data)
-
-            user = UserModel(user__data)
-
-            login_user(user)
-            flash('Bienvenido')
-
-            return redirect(url_for('recipes'))
-        else:
-            flash('El usuario existe.')
-
-
-    return render_template('signup.html', **context)
-
-
-@auth.route('/login', methods=['GET','POST'])
-def login():
-    response = make_response(redirect(url_for('recipes')))
+@recipes.route('all', methods=['GET','POST'])
+@login_required
+def all_recipes():
 
     if current_user.is_authenticated:
-        response = make_response(redirect(url_for('recipes')))
-    else:
-        user__ip    =   session.get('user__ip')
-        template    =   'login.html'
-        func__redirect  = '/recipess'
-        login__form     = LoginForm()
+        username    = current_user.id
+        recipe__form= RecipesForm()
+
+        #solo si es admin debe poder hacer crear una receta
+        if recipe__form.validate_on_submit():
+            title       = recipe__form.title.data
+            description = recipe__form.description.data
+            
+            recipe__data= RecipeData(title, description)
+            recipe_doc  = get_recipe(recipe__data.title)
+
+            if recipe_doc.to_dict() is None:
+                recipe_put(recipe__data)
+                flash('Receta creada')
+            else:
+                flash('Ya existe Receta')
 
         context = {
-            'user__ip'  : user__ip,
-            'login__form':login__form
+            'recipes'   : get_recipes(),
+            'admin'     : True, #current_user.admin,
+            'recipe__form':recipe__form
         }
 
-        #asi preguntamos para metodo POST
-        if login__form.validate_on_submit():
-            username = login__form.username.data
-            password = login__form.password.data
+        return render_template('recipes.html', **context)    
+    else:
+        #no autenticado
+        return make_response(redirect('/auth/login'))
 
-            user__doc = get_user(username)
-
-            if user__doc.to_dict() is not None:
-                if check_password_hash(user__doc.to_dict()['password'], password):
-                    user__data  = UserData(username, password)
-                    user        = UserModel(user__data) 
-                    
-                    login_user(user)
-                    session['username'] = username
-
-                    flash('Bienvenido de nuevo')
-
-                    redirect(url_for('recipes'))
-                else:
-                    flash('La informacion no coincide')
-                    response = render_template(template, **context)
-            else:
-                flash('El usuario no existe')
-                response = render_template(template, **context)
-        else:
-            response = render_template(template, **context)
-
-    return response
-
-
-@auth.route('/logout', methods=['GET'])
+@recipes.route('select/<recipe>', methods=['GET'])
 @login_required
-def logout():
-    session['username']=''
-    logout_user()
-    flash('Logout done')
-    #todo: agregar una prueba para asegurar que en la cookie no quedan datos del usuario
-    return redirect(url_for('auth.login'))
+def select_recipe(recipe):
+
+    if current_user.is_authenticated:
+        username    = current_user.id
+
+        try:
+            recipe__data    = get_recipe(recipe)
+        except expression as identifier:
+            recipe__data    = None
+        else:
+            pass
+        finally:
+            flash('Busqueda completada')
+            print(recipe__data.id)
+
+        context = { 
+            'recipe'    :   recipe__data,
+        }
+        print
+        return render_template('recipe.html', **context)    
+    else:
+        #no autenticado
+        return make_response(redirect('/auth/login'))
+

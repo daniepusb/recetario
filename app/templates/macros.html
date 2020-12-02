@@ -2,7 +2,11 @@
     <li>{{ todo.id }}</li>
 {% endmacro %}
 
-{% macro render_recipe(doc) %}
-    <li>{{ doc.id }}</li>
+{% macro render_recipes(r) %}
+    <li><a href="{{ url_for('recipes.select_recipe', recipe=r.id) }}">{{ r.id }}</a></li>
 {% endmacro %}
 
+{% macro render_recipe_description(r) %}
+    <li>{{ r.id }}</li> 
+    <li>{{ r.description }}</li>
+{% endmacro %}

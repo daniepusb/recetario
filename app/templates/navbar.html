@@ -26,7 +26,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('recipes') }}">Recetas</a></li>
+                    <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
                     <li><a href="https://platzi.com" target="_blank">Platzi</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
                 {% else %}

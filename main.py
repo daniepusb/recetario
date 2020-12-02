@@ -11,10 +11,9 @@ import qrcode # allow make qrCode
 import unittest
 
 from app import create_app
-from app.forms import RecipesForm
+
 from app.common_functions import generarQR
 from app.firestore_service import get_recipes, get_recipe, recipe_put, get_user
-from app.models import RecipeData, RecipeModel
 
 app = create_app()
 
@@ -83,37 +82,6 @@ def new_recipe():
 
     return  render_template('newRecipe.html', **context) 
 
-
-
-@app.route('/recipes', methods=['GET','POST'])
-@login_required
-def recipes():
-    if current_user.is_authenticated:
-        username    = current_user.id
-        recipe__form= RecipesForm()
-
-        if recipe__form.validate_on_submit():
-            title       = recipe__form.title.data
-            description = recipe__form.description.data
-            
-            recipe__data= RecipeData(title, description)
-            recipe_doc  = get_recipe(recipe__data.title)
-
-            if recipe_doc.to_dict() is None:
-                recipe_put(recipe__data)
-                flash('Receta creada')
-            else:
-                flash('Ya existe Receta')
-
-        context = {
-            'recipes'   : get_recipes(),
-            'admin'     : True, #current_user.admin,
-            'recipe__form':recipe__form
-        }
-
-        return render_template('recipes.html', **context)    
-    else:
-        return make_response(redirect('/auth.login'))
 
 
 @app.route('/')

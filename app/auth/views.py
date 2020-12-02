@@ -44,47 +44,48 @@ def signup():
 
 @auth.route('/login', methods=['GET','POST'])
 def login():
-    response = make_response(redirect(url_for('recipes')))
 
-    if current_user.is_authenticated:
-        response = make_response(redirect(url_for('recipes')))
-    else:
-        user__ip    =   session.get('user__ip')
-        template    =   'login.html'
-        func__redirect  = '/recipess'
-        login__form     = LoginForm()
+    login__form = LoginForm()
+    template    = 'login.html'
+    context = {
+        'user__ip'      : session.get('user__ip'),
+        'login__form'   : login__form,
+        'template'      : template,
+        'func__redirect': '/recipes/list',
+    }
 
-        context = {
-            'user__ip'  : user__ip,
-            'login__form':login__form
-        }
+    #asi preguntamos para metodo POST
+    #No es necesario un else
+    if login__form.validate_on_submit():
+        username = login__form.username.data
+        password = login__form.password.data
 
-        #asi preguntamos para metodo POST
-        if login__form.validate_on_submit():
-            username = login__form.username.data
-            password = login__form.password.data
+        user__doc = get_user(username)
 
-            user__doc = get_user(username)
+        if user__doc.to_dict() is not None:
+            if check_password_hash(user__doc.to_dict()['password'], password):
+                user__data  = UserData(username, password)
+                user        = UserModel(user__data) 
+                
+                login_user(user)
+                session['username'] = username
 
-            if user__doc.to_dict() is not None:
-                if check_password_hash(user__doc.to_dict()['password'], password):
-                    user__data  = UserData(username, password)
-                    user        = UserModel(user__data) 
-                    
-                    login_user(user)
-                    session['username'] = username
-
-                    flash('Bienvenido de nuevo')
-
-                    redirect(url_for('recipes'))
-                else:
-                    flash('La informacion no coincide')
-                    response = render_template(template, **context)
+                flash('Bienvenido de nuevo')
+                
+                response = make_response(redirect('/recipes/all'))
             else:
-                flash('El usuario no existe')
+                flash('La informacion no coincide')
                 response = render_template(template, **context)
         else:
+            flash('El usuario no existe')
             response = render_template(template, **context)
+    
+
+    #si el usuario está logueado, redireccionar a recipes
+    if current_user.is_authenticated:
+        response = make_response(redirect('/recipes/all'))
+    else:
+        response = render_template(template, **context)
 
     return response
 
