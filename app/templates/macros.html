@@ -6,7 +6,6 @@
     <li><a href="{{ url_for('recipes.select_recipe', recipe=r.id) }}">{{ r.id }}</a></li>
 {% endmacro %}
 
-{% macro render_recipe_description(r) %}
-    <li>{{ r.id }}</li> 
-    <li>{{ r.description }}</li>
+{% macro render_recipe_content(k,v) %}
+    <li><b>{{ k }} :</b> {{v}}</li> 
 {% endmacro %}

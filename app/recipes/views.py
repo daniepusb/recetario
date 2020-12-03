@@ -53,19 +53,20 @@ def select_recipe(recipe):
         username    = current_user.id
 
         try:
-            recipe__data    = get_recipe(recipe)
+            recipe__data    = get_recipe(recipe).to_dict()
+            #print( recipe__data.to_dict()['description'] ) 
         except expression as identifier:
             recipe__data    = None
         else:
             pass
         finally:
-            flash('Busqueda completada')
-            print(recipe__data.id)
+            pass
+            #flash('Busqueda completada')
 
         context = { 
             'recipe'    :   recipe__data,
         }
-        print
+        
         return render_template('recipe.html', **context)    
     else:
         #no autenticado

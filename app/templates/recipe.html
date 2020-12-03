@@ -17,7 +17,9 @@
         <div class="container">
             <h1>{{ recipe.id }}</h1>
             <ul>
-                {{ macros.render_recipe_description(recipe) }}                
+                {% for k,v in recipe.items() %}
+                    {{ macros.render_recipe_content(k,v) }}                
+                {% endfor %}
             </ul>
         </div>
     {% else %}

@@ -28,10 +28,12 @@
                 {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
                     <li><a href="https://platzi.com" target="_blank">Platzi</a></li>
+                    {% if current_user.is_authenticated %}
+                    {% endif %}
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
-                    <li><a href="{{ url_for('auth.signup') }}">Registrar</a></li>
+                    <li><a href="{{ url_for('auth.signup_guest') }}">Invitados</a></li>
                 {% endif %}
             </ul>
         </div>

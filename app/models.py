@@ -1,13 +1,15 @@
 from flask_login import UserMixin
 
-from .firestore_service import get_user, get_recipe
+from .firestore_service import get_user, get_recipe, get_guest
 
-#users
+#
+#USERS
+#
 class UserData:
-    def __init__(self, username, password):
+    def __init__(self, username, password):#, admin=False):
         self.username = username
         self.password = password
-        #self.admin    = False
+        #self.admin    = admin
 
 
 class UserModel(UserMixin):
@@ -25,15 +27,16 @@ class UserModel(UserMixin):
         user_data = UserData(
             username=user_doc.id,
             password=user_doc.to_dict()['password'],
-           # admin   =user_doc.to_dict()['admin']
+            #admin   =user_doc.to_dict()['admin']
         )
 
         return UserModel(user_data)
 
 
-#recipes
+#
+#RECIPES
+#
 class RecipeData:
-    #def __init__(self, title, description, username):
     def __init__(self, title, description):
         self.title = title
         self.description = description
@@ -47,13 +50,44 @@ class RecipeModel():
         self.id = recipe.title
         self.description = recipe.description
 
-
     @staticmethod
     def query(recipe):
         recipe__bd  = get_recipe(recipe)
         recipe__data= RecipeData(
             title       = recipe__bd.id,
-            description = recipe__bd.to_dict()['description']
+            description = recipe__bd.to_dict()['description'],
         )
       
         return RecipeModel(recipe__data)
+
+
+
+#
+#GUESTS
+#
+class GuestData:
+    def __init__(self, name, email, phone):
+        self.email   = email
+        self.name    = name
+        self.phone   = phone
+
+
+class GuestModel():
+    def __init__(self, guest):
+        """
+        :param guest_data: GuestData
+        """
+        self.email   = guest.email
+        self.name    = guest.name
+        self.phone   = guest.phone
+    
+    @staticmethod
+    def query(email):
+        guest__bd   = get_guest(email)
+        guest_data  = GuestData(
+            email   = guest__bd.id,
+            name    = guest__bd.to_dict()['name'],
+            phone   = guest__bd.to_dict()['phone'],
+        )
+      
+        return GuestModel(guest_data)

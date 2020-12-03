@@ -1,12 +1,13 @@
-from flask import render_template, session, redirect, flash, url_for, make_response
+from flask import render_template, session, redirect, flash, url_for, make_response, request
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash,  check_password_hash
 
 from . import auth
-from app.forms import LoginForm
+from app.forms import LoginForm, GuestForm 
 from app.common_functions import generarQR, isLogin
-from app.firestore_service import get_user, user_put
-from app.models import UserData, UserModel
+from app.firestore_service import get_user, user_put, get_guest, guest_put
+from app.models import UserData, UserModel, GuestData, GuestModel
+from datetime import timedelta
 
 import app
 
@@ -34,6 +35,13 @@ def signup():
             login_user(user)
             flash('Bienvenido')
 
+            next = flask.request.args.get('next')
+            # is_safe_url should check if the url is safe for redirects.
+            # See http://flask.pocoo.org/snippets/62/ for an example.
+            if not is_safe_url(next):
+                return flask.abort(400)
+
+
             return redirect(url_for('recipes'))
         else:
             flash('El usuario existe.')
@@ -42,7 +50,50 @@ def signup():
     return render_template('signup.html', **context)
 
 
-@auth.route('/login', methods=['GET','POST'])
+@auth.route('signupGuest', methods=['GET','POST'])
+def signup_guest():
+    #TODO: add captcha
+    signup__guest__form = GuestForm()
+    
+    context = {
+        'signup__guest__form' : signup__guest__form
+    }
+
+    if signup__guest__form.validate_on_submit():
+        name = signup__guest__form.name.data
+        email = signup__guest__form.email.data
+        phone = signup__guest__form.phone.data
+
+        guest__doc = get_guest(email)
+        
+
+
+        if guest__doc.to_dict() is None:
+            guest__data = GuestData(name,email,phone)
+            
+            guest = GuestModel(guest__data)
+            guest_put(guest)
+
+            flash('Gracias por usar Recetario, muy pronto será invitado')
+            #TODO:Luego de invitarlo aqui pudiera mostrar un manual de las bondades de RECETARIO, el "how it works"
+
+            #next = request.args.get('next')
+            ##TODO: is_safe_url should check if the url is safe for redirects.
+            ## See http://flask.pocoo.org/snippets/62/ for an example.
+            #if not is_safe_url(next):
+            #    return flask.abort(400)
+
+
+            return render_template('signupGuestDone.html', **context)
+        else:
+            flash('El invitado existe')
+    else:
+        flash('Por favor, sirvase de introducir sus datos para poder ser invitado por el admin ')
+
+    return render_template('signupGuest.html', **context)
+
+
+@auth.route('login', methods=['GET','POST'])
 def login():
 
     login__form = LoginForm()
@@ -67,10 +118,10 @@ def login():
                 user__data  = UserData(username, password)
                 user        = UserModel(user__data) 
                 
-                login_user(user)
+                login_user(user, remember=False, duration=None, force=False, fresh=True)
                 session['username'] = username
-
-                flash('Bienvenido de nuevo')
+                
+                flash(username +', Bienvenido de nuevo')
                 
                 response = make_response(redirect('/recipes/all'))
             else:
@@ -93,7 +144,7 @@ def login():
 @auth.route('/logout', methods=['GET'])
 @login_required
 def logout():
-    session['username']=''
+    session.pop('username')
     logout_user()
     flash('Logout done')
     #todo: agregar una prueba para asegurar que en la cookie no quedan datos del usuario
