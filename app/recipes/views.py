@@ -56,27 +56,13 @@ def new_recipe():
     return  render_template('newRecipe.html', **context) 
 
 
-@recipes.route('all', methods=['GET','POST'])
+@recipes.route('all', methods=['GET'])
 @login_required
 def all_recipes():
 
     if current_user.is_authenticated:
         username    = current_user.id
         recipe__form= RecipesForm()
-
-        #solo si es admin debe poder hacer crear una receta
-        if recipe__form.validate_on_submit():
-            title       = recipe__form.title.data
-            description = recipe__form.description.data
-            
-            recipe__data= RecipeData(title, description)
-            recipe_doc  = get_recipe(recipe__data.title)
-
-            if recipe_doc.to_dict() is None:
-                recipe_put(recipe__data)
-                flash('Receta creada')
-            else:
-                flash('Ya existe Receta')
 
         context = {
             'recipes'   : get_recipes(),
