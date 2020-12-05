@@ -27,9 +27,11 @@
             <ul class="nav navbar-nav">
                 {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
-                    <li><a href="https://platzi.com" target="_blank">Platzi</a></li>
-                    {% if current_user.is_authenticated %}
+                    {% if admin %}
+                    <li><a href="{{ url_for('auth.signup') }}">Registrar persona</a></li>
+                    <li><a href="{{ url_for('recipes.new_recipe') }}">Registrar receta</a></li> 
                     {% endif %}
+                    <li><a href="https://platzi.com" target="_blank">Platzi</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>

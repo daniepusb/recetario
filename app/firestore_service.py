@@ -47,7 +47,39 @@ def get_recipe(recipe):
 
 def recipe_put(recipe):
     recipes_collection_ref = db.collection('recipes').document(recipe.title)
-    recipes_collection_ref.set({'description': recipe.description, 'done': False})
+    recipes_collection_ref.set({'description': recipe.description,'instructions': recipe.instructions})
+    
+    if recipe.ingredients is not None:
+        recipes_ingredients_ref = db.collection('recipes').document(recipe.title).collection('ingredients')
+        for k,v in recipe.ingredients.items():
+            recipes_ingredients_ref.document(k).set(v)
+
+        # recipes_ingredients_ref = db.collection('recipes').document(recipe.title).collection('ingredients')
+        # for k,v in recipe.ingredients.items():
+
+        #     print ('k:' + str(k))
+        #     print ('v:' + str(v))
+        #     for key,values in v.items():
+        #         print ('key:' + str(key))
+        #         print ('values:' + str(values))
+        #         recipes_ingredients_ref.document(k).set({ 
+        #             key: str(values),
+        #         })
+
+        # recipes_ingredients_ref.document('Galleta Maria').set({
+        #     'daniel':   250,
+        #     'unit'  :   "gr",
+        #     'angy'  :   "ml",
+        # }, merge=True)
+
+    # for k,v in recipe.ingredients.items():
+    #     for key,values in v.items():
+    #         recipes_ingredients_ref.document(k).set({ 
+    #             key: str(values),
+    #         })
+    
+
+
 
 
 #
@@ -60,6 +92,8 @@ def get_guest(email):
 def guest_put(guest):
     recipes_collection_ref = db.collection('guest').document(guest.email)
     recipes_collection_ref.set({'email': guest.email, 'name': guest.name, 'phone': guest.phone})
+
+
 """
 
 def get_todos(user_id):

@@ -1,4 +1,5 @@
 # RECETARIO
+(en desarrollo)
 Podrás ver tus recetas creadas, calcular ingredientes, porciones y precios de recetas
 
 

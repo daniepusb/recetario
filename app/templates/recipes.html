@@ -26,13 +26,4 @@
         {{flash('No hay recetas para mostrar')}}
     {% endif %}
 
-    {% if admin %}
-        <div class="container">
-            <h3>Agregar receta</h3>
-            {{ wtf.quick_form(recipe__form) }}
-        </div>
-    {% endif %}
-
-
-
 {% endblock %}

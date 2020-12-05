@@ -70,17 +70,6 @@ def qrcode():
     return render_template('base.html', **context)
 
 
-@app.route('/recipes/create', methods=['GET','POST'])
-@login_required
-def new_recipe():
-    title       = 'Nueva receta'
-    recipe__form= RecipesForm()
-    context = {
-        'title'     : title,
-        'recipe__form': recipe__form,
-    }
-
-    return  render_template('newRecipe.html', **context) 
 
 
 
