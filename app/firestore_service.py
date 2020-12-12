@@ -94,6 +94,15 @@ def guest_put(guest):
     recipes_collection_ref.set({'email': guest.email, 'name': guest.name, 'phone': guest.phone})
 
 
+
+#
+#RECIPES
+#
+def get_departments():
+    #return db.collection(u'recipes').where(u'capital', u'==', True).stream()
+    return db.collection('departments').stream()
+
+
 """
 
 def get_todos(user_id):

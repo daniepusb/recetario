@@ -1,5 +1,5 @@
 from flask import render_template, session, redirect, flash, url_for
-
+from flask_login import  current_user
 ##
 ## commons functions 
 ##
@@ -27,6 +27,8 @@ def generarQR(url):
 
 ##function to detect if the user has been log-in
 def isLogin():
+
+
     is__login = False
 
     if session.get('username'): 
@@ -34,3 +36,13 @@ def isLogin():
         is__login = True
 
     return is__login
+
+
+
+
+def check_admin():
+    """
+    Prevent non-admins from accessing the page
+    """
+    if not current_user.admin:
+        abort(403)

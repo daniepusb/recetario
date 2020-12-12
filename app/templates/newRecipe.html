@@ -1,13 +1,137 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
+{% import 'macros.html' as macros %}
 
 {% block content %}
-    {% if recipe__form %}
-        <div class="container">
-            {{ wtf.quick_form(recipe__form) }}
-        </div>
+
+    {% if admin %}
+    <div class="container">
+        <form id="create_recipe" class="form form-horizontal" method="POST" role="form" action="/recipes/create">
+            <div class="form-group">
+                <label for="inputTitle" class="col-sm-3 control-label">Nombre de la receta</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="title" placeholder="Nombre de la receta">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputDescription" class="col-sm-3 control-label">Descripcion</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="description" placeholder="Descripcion de la receta">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputInstructions" class="col-sm-3 control-label">Instrucciones</label>
+                <div class="col-sm-9">
+                    <textarea style="resize:vertical;"type="text" class="form-control"  rows="3" id="instructions" placeholder="Instrucciones"></textarea>
+                </div>
+            </div>
+
+            <hr>
+            <div id="ingredients__container" class="form-group">
+                <!-- Ingredientes -->
+                <div id="ingredient-row" class="form-group row">
+                    <div class="col-sm-12 col-lg-12 col-md-12">
+                        <label class="col-xs-5 col-sm-5 col-md-5 col-lg-5">Ingrediente</label>
+                        <label class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
+                        <label class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Unidad</label>
+                    </div>
+                    <div class="col-sm-12 col-lg-12 col-md-12">
+                        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                            <select class="form-control"  name="ingredients-name[]">
+                                <option>Dulce de Leche</option>
+                                <option>Galleta</option>
+                                <option>Limon</option>
+                                <option>Rodajas de naranja</option>
+                                <option>Zanahoria</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            <input type="text" class="form-control" name="ingredients-quantity[]" placeholder="250" required>
+                        </div>
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            <select class=" form-control"  name="ingredients-unit[]">
+                                <option>gr</option>
+                                <option>kg</option>
+                                <option>ml</option>
+                            </select>
+                        </div>
+                        <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none" aria-label="remove">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+
+            <div class="text-right">
+                <button type="button" id="add_ingredient" class="btn btn-primary" onclick="addIngrendient()" >Agregar Ingrediente</button>
+                <button type="submit" class="btn btn-success" >Enviar</button>
+            </div>
+            <br>
+        </form>
+    </div>
     {% endif %}
 
+
+    
+    <script type='text/javascript'>
+
+        function addIngrendient() {
+            var original    = document.getElementById("ingredient-row");
+            var clone       = original.cloneNode(true); // "deep" clone
+            clone.id        = "";                       // there can only be one element with an ID
+            clone.getElementsByTagName("button")[0].style.display = "block";   //display block the close button
+            original.parentNode.appendChild(clone);
+            
+        }
+
+        function deleteIngredient(e) {
+            // console.log(e)
+            // console.log(e.parentNode.parentNode)
+            // console.log( e.parentNode.parentNode.getElementsByTagName("button"))
+            e.parentNode.parentNode.remove()
+        }
+
+        var j = 0;
+    </script>
+
+    <script>
+        document.getElementById("title").focus();
+        document.getElementById("ingredient-row").getElementsByTagName("button")[0].style.display = "none";
+
+        function loadXMLDoc()
+        {
+            var req = new XMLHttpRequest()
+            req.onreadystatechange = function()
+            {
+                if (req.readyState == 4)
+                {
+                    if (req.status != 200)
+                    {
+                        //error handling code here
+                    }
+                    else
+                    {
+                        var response    = JSON.parse(req.responseText)
+                        var container   = document.getElementById("ingredients")
+                        // container.appendChild(response);
+                        // container.appendChild(document.createElement("div"));
+                        document.getElementById('ingredients').innerHTML = response
+                    }
+                }
+            }
+        
+            req.open('GET', '/recipes/ajax')
+            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            // var un = document.getElementById('scname').value
+            // var sec = document.getElementById('secret').value
+            // var postVars = 'username='+un+'&secret='+sec
+            // req.send(postVars)
+            req.send()
+            
+            return false
+        }
+    </script>
 {% endblock %}
 
 

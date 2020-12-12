@@ -1,4 +1,5 @@
 {% extends 'bootstrap/base.html' %}
+{% import "bootstrap/utils.html" as utils %}
 
 {% block head %}
     {{ super() }}
@@ -19,7 +20,7 @@
     <meta property="og:description" content="#Recetario">
 
     <link rel="canonical" href="https://github.com/daniepusb/recetario" />
-    <link rel="icon" href="https://github.com/daniepusb/recetario/assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="https://daniepusb.github.io/assets/img/favicon.ico" type="image/x-icon" />
 
 
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css')}}">
@@ -30,15 +31,7 @@
         {% include 'navbar.html' %}
     {% endblock %}
 
-    {% for message in get_flashed_messages() %}
-        <div class="alert alert-success alert-dismissible">
-            <button type="button"
-                    data-dismiss="alert"
-                    class="close">&times;</button>
-            {{ message }}
-        </div>
-    {% endfor %}
-
+    {{ utils.flashed_messages() }}
 
     {% block content %}{% endblock %}
 
