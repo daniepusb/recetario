@@ -37,12 +37,16 @@ def get_recipe(recipe):
         # a = doc.to_dict()
         # for i,j in a.items():
         #     print(i+str(j))
-        #print(u'Document data: {}'.format(doc.to_dict()))
+        # print(u'Document data: {}'.format(doc.to_dict()))
     except google.cloud.exceptions.NotFound:
         print('No such document!')
         doc = None
 
     return doc
+
+
+def get_ingredients(recipe):
+    return db.collection(u'recipes').document(recipe).collection('ingredients').stream()
 
 
 def recipe_put(recipe):

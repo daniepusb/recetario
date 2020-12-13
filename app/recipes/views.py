@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 
 import app
 from app.forms import RecipesForm
-from app.firestore_service import get_recipes, get_recipe, recipe_put
+from app.firestore_service import get_recipes, get_recipe, get_ingredients, recipe_put
 from app.models import RecipeData, RecipeModel
 from app.common_functions import check_admin
 
@@ -68,9 +68,6 @@ def new_recipe():
 
 
         return  render_template('newRecipe.html', **context) 
-    else:
-        flash("GET")
-        return  render_template('newRecipe.html', **context) 
 
     return  render_template('newRecipe.html', **context) 
 
@@ -97,28 +94,51 @@ def all_recipes():
 @login_required
 def select_recipe(recipe):
 
+    ##TODO: saber como hacer un buen try catch
+    try:
+        pass
+    except expression as identifier:
+        recipe_db        = None
+        ingredients__db  = None
+    else:
+        pass
+    finally:
+        pass
+
     if current_user.is_authenticated:
         username    = current_user.id
 
-        try:
-            recipe__data    = get_recipe(recipe).to_dict()
-            #print( recipe__data.to_dict()['description'] ) 
-        except expression as identifier:
-            recipe__data    = None
-        else:
-            pass
-        finally:
-            pass
-            #flash('Busqueda completada')
-
-        context = { 
-            'recipe': recipe__data,
-            'admin' : session['admin'],
-        }
+        recipe_db   = get_recipe(recipe).to_dict()
         
-        return render_template('recipe.html', **context)    
+        ## verificar que si existe esta receta
+        if recipe_db is not None:
+            ingredients__db = get_ingredients(recipe)
+            mostrar = ingredients__db
+            # a = recipe_db
+            # for i,j in a.items():
+            #     print(i+str(j))
+            # print(u'Document data: {}'.format(recipe_db))
+            # print( recipe_db.get('description'))
+            # print( recipe_db.get('instructions'))
+
+            # for r in mostrar:
+            #     print( r.id ) 
+            #     print( r.get('quantity'))
+            #     print( r.get('unit'))
+
+            context = {
+                'title'         : recipe,
+                'recipe'        : recipe_db,
+                'ingredients'   : ingredients__db,
+                'admin'         : session['admin'],
+            }
+            return render_template('recipe.html', **context)
+
+        else:
+            return redirect(url_for('recipes.all_recipes'))
+
     else:
-        #no autenticado
+        # usuario no autenticado
         # return make_response(redirect('/auth/login'))
         return redirect(url_for('auth.login'))
 
