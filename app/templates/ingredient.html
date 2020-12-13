@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} 
+    {{super()}} ver ingrediente selecionada
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <form id="create_recipe" class="form form-horizontal" method="POST" role="form" action="/recipes/create">
+            
+            <div class="form-group">
+                <h1>{{title}} </h1>
+            </div>
+            <div id="ingredients__properties" class="form-group">
+                <div id="properties__row" class="form-group row">
+                    {% if properties %} 
+                        <div class="col-sm-12 col-lg-12 col-md-12">
+                            <label class="col-xs-12 col-sm-5 col-md-5 col-lg-5">Propiedad</label>
+                            <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Valor</label>
+                        </div>
+                        {% for i,j in properties.items() %}  
+                            <div class="col-sm-12 col-lg-12 col-md-12">
+                                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                    <input type="text" class="form-control" name="properties" placeholder="250" required value="{{i}}">
+                                </div>
+                                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                    <input type="text" class="form-control" name="values" placeholder="250" required value="{{j}}">
+                                </div>
+                            </div>
+                        {% endfor  %}
+                    {% endif %}
+                </div>
+            </div>
+            <br><br>
+
+            <div class="text-right">
+                <button type="button" id="go_edit" class="btn btn-success" onclick="make_editable()" >Editar</button>
+            </div>
+            <br>
+        </form>
+    </div>
+    
+    <script type='text/javascript'>
+        function make_editable() {
+            //TODO: hacer editable esta receta
+            console.log("hacer editable esta receta")
+            
+        }
+    </script>
+{% endblock %}
+
+
+
+

@@ -3,7 +3,15 @@
 {% endmacro %}
 
 {% macro render_recipes(r) %}
-    <li><a href="{{ url_for('recipes.select_recipe', recipe=r.id) }}">{{ r.id }}</a></li>
+    <li><a href="{{ url_for('recipes.select', recipe=r.id) }}">{{ r.id }}</a></li>
+{% endmacro %}
+
+{% macro render_ingredients(r) %}
+    <li><a href="{{ url_for('ingredients.select', ingredient=r.id) }}">{{ r.id }}</a></li>
+{% endmacro %}
+
+{% macro render_ingredient_properties(r) %}
+    <li>{{ r }}</li>
 {% endmacro %}
 
 {% macro render_recipe_content(k,v) %}

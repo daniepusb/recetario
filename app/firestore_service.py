@@ -45,7 +45,7 @@ def get_recipe(recipe):
     return doc
 
 
-def get_ingredients(recipe):
+def get_recipe_ingredients(recipe):
     return db.collection(u'recipes').document(recipe).collection('ingredients').stream()
 
 
@@ -84,6 +84,26 @@ def recipe_put(recipe):
     
 
 
+#
+#INGREDIENTS
+#
+def get_list_ingredients():
+    return db.collection('ingredients').stream()
+
+
+def get_ingredient(ingredient):
+    doc_ref = db.collection(u'ingredients').document(ingredient)
+    try:
+        doc = doc_ref.get()
+        # a = doc.to_dict()
+        # for i,j in a.items():
+        #     print(i+str(j))
+        # print(u'Document data: {}'.format(doc.to_dict()))
+    except google.cloud.exceptions.NotFound:
+        print('No such document!')
+        doc = None
+
+    return doc
 
 
 #
@@ -100,7 +120,7 @@ def guest_put(guest):
 
 
 #
-#RECIPES
+#DEPARTMENTS
 #
 def get_departments():
     #return db.collection(u'recipes').where(u'capital', u'==', True).stream()

@@ -28,8 +28,10 @@
                 {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
                     {% if admin %}
-                    <li><a href="{{ url_for('auth.signup') }}">Registrar persona</a></li>
-                    <li><a href="{{ url_for('recipes.new_recipe') }}">Registrar receta</a></li> 
+                        <li><a href="{{ url_for('recipes.new_recipe') }}">Registrar receta</a></li>
+                        <li><a href="{{ url_for('auth.signup') }}">Registrar persona</a></li>
+                        <li><a href="{{ url_for('ingredients.list_ingredients') }}">Ingredientes</a></li>
+                        <li><a href="{{ url_for('ingredients.create') }}">Registrar Ingrediente</a></li>
                     {% endif %}
                     <li><a href="https://platzi.com" target="_blank">Platzi</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>

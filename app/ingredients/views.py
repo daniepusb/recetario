@@ -1,38 +1,26 @@
-from . import recipes
+from . import ingredients
 from flask import render_template, flash, redirect, url_for, session, jsonify, request
 from flask_login import login_required, current_user
 
 
 import app
-from app.forms import RecipesForm
-from app.firestore_service import get_recipes, get_recipe, get_recipe_ingredients, recipe_put
+from app.firestore_service import get_list_ingredients, get_ingredient
 from app.models import RecipeData, RecipeModel
 from app.common_functions import check_admin
 
 
-@recipes.route('/', methods=['GET'] )
+@ingredients.route('/', methods=['GET'] )
 @login_required
-def recipes_index():
-    return redirect(url_for('recipes.all_recipes'))
-
-
-@recipes.route('/ajax', methods=['GET'] )
-def ajax():
-    
-    check_admin()
-
-    recipe__form    = RecipesForm()
-    response        = recipe__form.ingredients
-
-    return jsonify(response)
+def index():
+    return redirect(url_for('ingredients.list_ingredients'))
 
 
 
-@recipes.route('create', methods=['GET','POST'])
+@ingredients.route('create', methods=['GET','POST'])
 @login_required
-def new_recipe():
+def create():
     
-    title       = 'Nueva receta'
+    title       = 'Nuevo Ingrediente'
     context = {
         'title' : title,
         'admin' : session['admin'],
@@ -62,7 +50,7 @@ def new_recipe():
             recipe_put(recipe__data)
             flash('Receta creada')
 
-            return redirect(url_for('recipes.all_recipes'))
+            return redirect(url_for('ingredients.list_ingredients'))
         else:
             flash('Ya existe Receta')
 
@@ -72,52 +60,40 @@ def new_recipe():
     return  render_template('newRecipe.html', **context) 
 
 
-@recipes.route('all', methods=['GET'])
+@ingredients.route('all', methods=['GET'])
 @login_required
-def all_recipes():
+def list_ingredients():
 
     if current_user.is_authenticated:
         username    = current_user.id
 
         context = {
-            'recipes'   : get_recipes(),
-            'admin'     : session['admin'],
+            'ingredients'   : get_list_ingredients(),
+            'admin'         : session['admin'],
         }
 
-        return render_template('recipes.html', **context)    
+        return render_template('ingredients.html', **context)    
     else:
         #no autenticado
         return make_response(redirect('/auth/login'))
 
 
-@recipes.route('select/<recipe>', methods=['GET'])
+@ingredients.route('select/<ingredient>', methods=['GET'])
 @login_required
-def select(recipe):
+def select(ingredient):
 
     ##TODO: saber como hacer un buen try catch
-    try:
-        pass
-    except expression as identifier:
-        recipe_db        = None
-        ingredients__db  = None
-    else:
-        pass
-    finally:
-        pass
-
     if current_user.is_authenticated:
         username    = current_user.id
 
-        recipe_db   = get_recipe(recipe).to_dict()
+        ingredient_db   = get_ingredient(ingredient).to_dict()
         
         ## verificar que si existe esta receta
-        if recipe_db is not None:
-            ingredients__db = get_recipe_ingredients(recipe)
-            mostrar = ingredients__db
-            # a = recipe_db
+        if ingredient_db is not None:
+            # a = ingredient_db
             # for i,j in a.items():
             #     print(i+str(j))
-            # print(u'Document data: {}'.format(recipe_db))
+            # print(u'Document data: {}'.format(ingredient_db))
             # print( recipe_db.get('description'))
             # print( recipe_db.get('instructions'))
 
@@ -127,15 +103,14 @@ def select(recipe):
             #     print( r.get('unit'))
 
             context = {
-                'title'         : recipe,
-                'recipe'        : recipe_db,
-                'ingredients'   : ingredients__db,
+                'title'         : ingredient,
+                'properties'    : ingredient_db,
                 'admin'         : session['admin'],
             }
-            return render_template('recipe.html', **context)
+            return render_template('ingredient.html', **context)
 
         else:
-            return redirect(url_for('recipes.all_recipes'))
+            return redirect(url_for('ingredients.all_recipes'))
 
     else:
         # usuario no autenticado
