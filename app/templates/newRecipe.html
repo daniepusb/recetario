@@ -4,25 +4,24 @@
 
 {% block content %}
 
-    {% if admin %}
     <div class="container">
         <form id="create_recipe" class="form form-horizontal" method="POST" role="form" action="/recipes/create">
             <div class="form-group">
                 <label for="inputTitle" class="col-sm-3 control-label">Nombre de la receta</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="title" placeholder="Nombre de la receta">
+                    <input id="title" name="title" type="text" class="form-control"  placeholder="Nombre de la receta" {% if form %} value="{{form.get('title')}}" {% endif %}>
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputDescription" class="col-sm-3 control-label">Descripcion</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" id="description" placeholder="Descripcion de la receta">
+                    <input id="description" name="description" type="text" class="form-control"  placeholder="Descripcion de la receta" {% if form %} value="{{form.get('description')}}" {% endif %}>
                 </div>
             </div>
             <div class="form-group">
                 <label for="inputInstructions" class="col-sm-3 control-label">Instrucciones</label>
                 <div class="col-sm-9">
-                    <textarea style="resize:vertical;"type="text" class="form-control"  rows="3" id="instructions" placeholder="Instrucciones"></textarea>
+                    <textarea id="instructions" name="instructions" style="resize:vertical" type="text" class="form-control"  rows="3"  placeholder="Instrucciones" >{% if form %} {{form.get('instructions')}} {% endif %}</textarea>
                 </div>
             </div>
 
@@ -31,13 +30,41 @@
                 <!-- Ingredientes -->
                 <div id="ingredient-row" class="form-group row">
                     <div class="col-sm-12 col-lg-12 col-md-12">
-                        <label class="col-xs-5 col-sm-5 col-md-5 col-lg-5">Ingrediente</label>
-                        <label class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
-                        <label class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Unidad</label>
+                        <label class="col-xs-12 col-sm-5 col-md-5 col-lg-5">Ingrediente</label>
+                        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
+                        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Unidad</label>
                     </div>
+                    {% if form %} 
+                        {% for i in zipped  %}  
+                            <div class="col-sm-12 col-lg-12 col-md-12">
+                                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                    <select class="form-control"  name="ingredients-name">
+                                        <option>Dulce de Leche</option>
+                                        <option>Galleta</option>
+                                        <option>Limon</option>
+                                        <option>Rodajas de naranja</option>
+                                        <option>Zanahoria</option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required value="{{i[1]}}">
+                                </div>
+                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <select class=" form-control"  name="ingredients-unit">
+                                        <option>gr</option>
+                                        <option>kg</option>
+                                        <option>ml</option>
+                                    </select>
+                                </div>
+                                <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none" aria-label="remove">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        {% endfor  %}
+                    {% endif %}
                     <div class="col-sm-12 col-lg-12 col-md-12">
-                        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
-                            <select class="form-control"  name="ingredients-name[]">
+                        <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <select class="form-control"  name="ingredients-name">
                                 <option>Dulce de Leche</option>
                                 <option>Galleta</option>
                                 <option>Limon</option>
@@ -45,11 +72,11 @@
                                 <option>Zanahoria</option>
                             </select>
                         </div>
-                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                            <input type="text" class="form-control" name="ingredients-quantity[]" placeholder="250" required>
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required>
                         </div>
-                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                            <select class=" form-control"  name="ingredients-unit[]">
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                            <select class=" form-control"  name="ingredients-unit">
                                 <option>gr</option>
                                 <option>kg</option>
                                 <option>ml</option>
@@ -70,11 +97,10 @@
             <br>
         </form>
     </div>
-    {% endif %}
-
-
     
     <script type='text/javascript'>
+        document.getElementById("title").focus();
+        document.getElementById("ingredient-row").getElementsByTagName("button")[0].style.display = "none";
 
         function addIngrendient() {
             var original    = document.getElementById("ingredient-row");
@@ -96,8 +122,6 @@
     </script>
 
     <script>
-        document.getElementById("title").focus();
-        document.getElementById("ingredient-row").getElementsByTagName("button")[0].style.display = "none";
 
         function loadXMLDoc()
         {

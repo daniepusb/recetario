@@ -32,60 +32,45 @@ def ajax():
 @login_required
 def new_recipe():
     
-    #recipe__form= RecipesForm()    #not use wtforms
     title       = 'Nueva receta'
-
     context = {
-        'title'         : title,
-        #'recipe__form'  : recipe__form,
-        'admin'         : session['admin'],
+        'title' : title,
+        'admin' : session['admin'],
     }
     
     if request.method== 'POST':
-        flash("POST")
-        # context = context + { 
-        #     'post' : True,
-        # }
+        ingredients = {}
+        formData    = request.form
+
+        title       = formData.get('title').upper()
+        description = formData.get('description')
+        instructions= formData.get('instructions')
+        # print( formData.to_dict() )
+
+        context['form']     = formData
+        context['zipped']   = zip( formData.getlist('ingredients-name'),formData.getlist('ingredients-quantity'),formData.getlist('ingredients-unit'))
+        
+        for k in context['zipped']:
+            ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
+        #print(ingredients)
+
+        recipe__data= RecipeData(title, description, instructions, ingredients)
+        print(recipe__data)
+
+        recipe_db   = get_recipe(recipe__data.title)
+        if recipe_db.to_dict() is None:
+            recipe_put(recipe__data)
+            flash('Receta creada')
+
+            return redirect(url_for('recipes.all_recipes'))
+        else:
+            flash('Ya existe Receta')
+
+
         return  render_template('newRecipe.html', **context) 
     else:
         flash("GET")
         return  render_template('newRecipe.html', **context) 
-
-
-
-    # if not recipe__form.validate_on_submit():
-    #     flash("GET")
-    #     #print (recipe__form)                           #prints an objeto
-    #     #print (recipe__form.ingredients)               #prints html
-    #     print (recipe__form.ingredients.data)           #prints a dict
-    #     print("**********************************************")
-
-    #solo si es admin debe poder hacer crear una receta
-    # if recipe__form.validate_on_submit():
-    #     title       = recipe__form.title.data
-    #     description = recipe__form.description.data
-    #     instructions= recipe__form.instructions.data
-    #     ingredients = recipe__form.ingredients.data
-    #     #print ( jsonify(recipe__form.ingredients.get('name')) )
-    #     print ( recipe__form.ingredients) 
-    #     print ( recipe__form.ingredients.data)
-
-        # ingredients = {
-        #     ingredients__form.get('name'): { 'quantity':ingredients__form.get('quantity'), 'unit': ingredients__form.get('unit')},
-        # }
-        # print(ingredients)
-
-        # recipe__data= RecipeData(title, description, instructions, ingredients)
-        # recipe_db   = get_recipe(recipe__data.title)
-
-        # if recipe_db.to_dict() is None:
-        #     recipe_put(recipe__data)
-        #     flash('Receta creada')
-
-            #return redirect(url_for('recipes.all_recipes'))
-        # else:
-        #     flash('Ya existe Receta')
-
 
     return  render_template('newRecipe.html', **context) 
 
