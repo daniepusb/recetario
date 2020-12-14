@@ -24,14 +24,34 @@
         </div>
 
         <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
+            <ul id="class__navbar__active" class="nav navbar-nav" aria-active="{{navbar}}__li">
                 {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
                     {% if admin %}
-                        <li><a href="{{ url_for('recipes.new_recipe') }}">Registrar receta</a></li>
-                        <li><a href="{{ url_for('auth.signup') }}">Registrar persona</a></li>
-                        <li><a href="{{ url_for('ingredients.list_ingredients') }}">Ingredientes</a></li>
-                        <li><a href="{{ url_for('ingredients.create') }}">Registrar Ingrediente</a></li>
+                        <li class="dropdown" id="recipes__li">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Recetas <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('recipes.new_recipe') }}">Registrar receta</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown" id="ingredients__li">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ingredientes <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('ingredients.list_ingredients') }}">Ingredientes</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('ingredients.create') }}">Registrar Ingrediente</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown" id="guests__li">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Usuarios <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('auth.signup') }}">Registrar persona</a></li>
+                            </ul>
+                        </li>
+                        
+                    {% else %}
+                        <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
                     {% endif %}
                     <li><a href="https://platzi.com" target="_blank">Platzi</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
@@ -44,4 +64,9 @@
     </div>
 </div>
 
+<script type='text/javascript'>
+    var ref__class__active  = document.getElementById('class__navbar__active')
+    var li__name            = ref__class__active.getAttribute('aria-active')
+    var li__active          = document.getElementById(li__name).classList.add('active')
 
+</script>

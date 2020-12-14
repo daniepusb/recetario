@@ -24,6 +24,7 @@ def create():
     context = {
         'title' : title,
         'admin' : session['admin'],
+        'navbar': 'ingredients',
     }
     
     if request.method== 'POST':
@@ -70,6 +71,7 @@ def list_ingredients():
         context = {
             'ingredients'   : get_list_ingredients(),
             'admin'         : session['admin'],
+            'navbar'        : 'ingredients',
         }
 
         return render_template('ingredients.html', **context)    
@@ -106,6 +108,7 @@ def select(ingredient):
                 'title'         : ingredient,
                 'properties'    : ingredient_db,
                 'admin'         : session['admin'],
+                'navbar': 'ingredients',
             }
             return render_template('ingredient.html', **context)
 

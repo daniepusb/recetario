@@ -31,11 +31,12 @@ def ajax():
 @recipes.route('create', methods=['GET','POST'])
 @login_required
 def new_recipe():
-    
+    ##TODO: cuando la receta viene sin nombre de receta lanza un error de google
     title       = 'Nueva receta'
     context = {
         'title' : title,
         'admin' : session['admin'],
+        'navbar': 'recipes',
     }
     
     if request.method== 'POST':
@@ -82,6 +83,7 @@ def all_recipes():
         context = {
             'recipes'   : get_recipes(),
             'admin'     : session['admin'],
+            'navbar'    : 'recipes',
         }
 
         return render_template('recipes.html', **context)    
