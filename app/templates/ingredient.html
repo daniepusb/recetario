@@ -44,6 +44,31 @@
     </div>
     
     <script type='text/javascript'>
+        
+        disabled_all()
+        
+        function disabled_all(){
+            var el = document.getElementsByTagName("INPUT") 
+            for (var i = 0; i < el.length; i++) {
+                el[i].disabled = true
+            }
+            //ahora el textarea
+            el = document.getElementsByTagName("TEXTAREA") 
+            for (var i = 0; i < el.length; i++) {
+                el[i].disabled = true
+            }
+            //ahora los selects
+            el = document.getElementsByTagName("SELECT") 
+            for (var i = 0; i < el.length; i++) {
+                el[i].disabled = true
+            }
+            //ahora los botones de eliminacion
+            el = document.querySelectorAll('button.btn__delete')
+            for (var i = 0; i < el.length; i++) {
+                el[i].disabled = true
+            }
+        }
+        
         function make_editable() {
             //TODO: hacer editable esta receta
             console.log("hacer editable esta receta")

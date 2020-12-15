@@ -56,9 +56,9 @@ def create():
             flash('Ya existe Receta')
 
 
-        return  render_template('newRecipe.html', **context) 
+        return  render_template('recipe_create.html', **context) 
 
-    return  render_template('newRecipe.html', **context) 
+    return  render_template('recipe_create.html', **context) 
 
 
 @ingredients.route('all', methods=['GET'])
