@@ -64,9 +64,11 @@
     </div>
 </div>
 
+{% if navbar %}
 <script type='text/javascript'>
     var ref__class__active  = document.getElementById('class__navbar__active')
     var li__name            = ref__class__active.getAttribute('aria-active')
     var li__active          = document.getElementById(li__name).classList.add('active')
 
 </script>
+{% endif%}

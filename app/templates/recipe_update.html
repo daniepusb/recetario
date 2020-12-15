@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} 
+    {{super()}} ver receta selecionada
+{% endblock %}
+
+{% block content %}
+    {% if form %}
+        <div class="container">
+            <form id="recipe" class="form form-horizontal" method="POST" role="form" action="/recipes/update/{{title}}">
+                <fieldset id="fieldsetmyFormControl" disabled>
+                    <legend>{{title}}</legend>
+                    <div class="form-group">
+                        <label for="inputTitle" class="col-sm-3 control-label">Nombre de la receta</label>
+                        <div class="col-sm-9">
+                            <input id="title" name="title" type="text" class="form-control"  placeholder="Nombre de la receta" value="{{title}}" disabled required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDescription" class="col-sm-3 control-label">Descripcion</label>
+                        <div class="col-sm-9">
+                            <input id="description" name="description" type="text" class="form-control"  placeholder="Descripcion de la receta" value="{{form.get('description')}}" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputServings" class="col-sm-3 control-label">Porciones</label>
+                        <div class="col-sm-9">
+                            <input id="servings" name="servings" type="text" class="form-control"  placeholder="Cantidad de porciones de la receta" value="{{form.get('servings')}}" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputInstructions" class="col-sm-3 control-label">Instrucciones</label>
+                        <div class="col-sm-9">
+                            <textarea id="instructions" name="instructions" style="resize:vertical" type="text" class="form-control"  rows="3"  placeholder="Instrucciones" required>{{form.get('instructions')}} </textarea>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div id="ingredients__container" class="form-group">
+                        <!-- Ingredientes -->
+                        <div id="ingredient-row" class="form-group row">
+                            {% if ingredients %} 
+                                {% for i in ingredients  %}  
+                                <div>
+                                    <div class="col-sm-12 col-lg-12 col-md-12">
+                                        <label class="col-xs-12 col-sm-5 col-md-5 col-lg-5">Ingrediente</label>
+                                        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
+                                        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Unidad</label>
+                                    </div>
+                                    <div class="col-sm-12 col-lg-12 col-md-12">
+                                        <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                            <select class="form-control"  name="ingredients-name">
+                                                <option selected>{{i.id}}</option>
+                                                <option>Dulce de Leche</option>
+                                                <option>Galleta</option>
+                                                <option>Limon</option>
+                                                <option>Rodajas de naranja</option>
+                                                <option>Zanahoria</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                            <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required value="{{i.get('quantity')}}">
+                                        </div>
+                                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                            <select class=" form-control"  name="ingredients-unit">
+                                                <option selected>{{i.get('unit')}}</option>
+                                                <option>gr</option>
+                                                <option>kg</option>
+                                                <option>ml</option>
+                                            </select>
+                                        </div>
+                                        <button name="btn__delete" onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none btn__delete" aria-label="remove">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endfor  %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <br><br>
+
+                    <div id="buttons_box" class="text-right" hidden>
+                        <button type="button" id="add_ingredient_btn" class="btn btn-primary" onclick="addIngrendient()">Agregar Ingrediente</button>
+                        <button type="submit" id="submit_btn"  class="btn btn-success" >Guardar</button>
+                    </div>
+                </fieldset>
+            </form>
+            <div id="go_edit_btn" class="text-left" >
+                <button type="button"  class="btn btn-success" onclick="make_editable()" >Editar</button>
+            </div>
+            <br><br><br>
+
+            <div id="ingredient__row__hidden" class="form-group row" hidden>
+                <div class="col-sm-12 col-lg-12 col-md-12">
+                    <label class="col-xs-12 col-sm-5 col-md-5 col-lg-5">Ingrediente</label>
+                    <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
+                    <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Unidad</label>
+                </div>
+                <div class="col-sm-12 col-lg-12 col-md-12">
+                    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                        <select class="form-control"  name="ingredients-name">
+                            <option>Dulce de Leche</option>
+                            <option>Galleta</option>
+                            <option>Limon</option>
+                            <option>Rodajas de naranja</option>
+                            <option>Zanahoria</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                        <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required value="">
+                    </div>
+                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                        <select class=" form-control"  name="ingredients-unit">
+                            <option>gr</option>
+                            <option>kg</option>
+                            <option>ml</option>
+                        </select>
+                    </div>
+                    <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1" aria-label="remove">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <script type='text/javascript'>
+            //TODO: detectar algun cambio en el formulario y allí mostrar el boton de guardar
+            function make_editable() {
+                document.getElementById('buttons_box').hidden = false
+                document.getElementById('go_edit_btn').hidden = true
+                let fieldset            = document.getElementById('fieldsetmyFormControl')
+                
+                fieldset.disabled         = !fieldset.disabled
+                console.log("Hacer editable esta receta")
+            }
+            
+            function addIngrendient() {
+                var target      = document.getElementById("ingredient-row")
+                var original    = document.getElementById("ingredient__row__hidden")
+                var clone       = original.cloneNode(true)                   // "deep" clone include hidden
+                clone.id        = ""                                                    // there can only be one element with an ID
+                clone.hidden    = false                                                 // remove hidden atributte
+                clone.getElementsByTagName("button")[0].style.display = "block"         // display block the close button
+                clone.classList.remove('row')
+                clone.classList.remove('form-group')
+                
+                target.appendChild(clone)
+            }
+
+            function deleteIngredient(e) {
+                // console.log(e)
+                // console.log(e.parentNode.parentNode)
+                // console.log( e.parentNode.parentNode.getElementsByTagName("button"))
+                e.parentNode.parentNode.remove()
+            }
+
+            var j = 0;
+        </script>
+    {% endif %}
+{% endblock %}
+
+
+
+

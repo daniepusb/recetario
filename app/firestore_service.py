@@ -51,7 +51,11 @@ def get_recipe_ingredients(recipe):
 
 def recipe_put(recipe):
     recipes_collection_ref = db.collection('recipes').document(recipe.title)
-    recipes_collection_ref.set({'description': recipe.description,'instructions': recipe.instructions})
+    recipes_collection_ref.set({
+        'description'   : recipe.description,
+        'instructions'  : recipe.instructions,
+        'servings'      : recipe.servings,
+    })
     
     if recipe.ingredients is not None:
         recipes_ingredients_ref = db.collection('recipes').document(recipe.title).collection('ingredients')
@@ -82,6 +86,22 @@ def recipe_put(recipe):
     #             key: str(values),
     #         })
     
+
+def recipe_update(recipe):
+    recipes_collection_ref = db.collection('recipes').document(recipe.title)
+    recipes_collection_ref.set(
+        {
+            'description'   : recipe.description,
+            'instructions'  : recipe.instructions,
+            'servings'      : recipe.servings,
+        }
+    )
+    
+    if recipe.ingredients is not None:
+        recipes_ingredients_ref = db.collection('recipes').document(recipe.title).collection('ingredients')
+        for k,v in recipe.ingredients.items():
+            recipes_ingredients_ref.document(k).set(v)
+
 
 
 #

@@ -34,11 +34,12 @@ class UserModel(UserMixin):
 #RECIPES
 #
 class RecipeData:
-    def __init__(self, title, description, instructions, ingredients):
+    def __init__(self, title, description, instructions, servings, ingredients):
         self.title          = title
         self.description    = description
         self.instructions   = instructions
         self.ingredients    = ingredients 
+        self.servings       = servings 
 
 
 class RecipeModel():
@@ -49,6 +50,7 @@ class RecipeModel():
         self.id             = recipe.title
         self.description    = recipe.description
         self.instructions   = recipe.instructions
+        self.servings       = recipe.servings
         self.ingredients    = recipe.ingredients
 
         
@@ -60,6 +62,7 @@ class RecipeModel():
             title       = recipe__bd.id,
             description = recipe__bd.to_dict()['description'],
             instructions= recipe__bd.to_dict()['instructions'],
+            servings    = recipe__bd.to_dict()['servings'],
             ingredients = recipe__bd.to_dict()['ingredients'],
         )
       
