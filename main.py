@@ -34,11 +34,18 @@ def test():
 #
 @app.errorhandler(500)
 def server_error(error):
-    return render_template('400.html', error=error)
+    context = {
+        'admin' : session['admin'],
+    }
+    return render_template('400.html', error=error, **context)
 
+    
 @app.errorhandler(404)
 def error(error):
-    return render_template('404.html', error=error)
+    context = {
+        'admin' : session['admin'],
+    }
+    return render_template('404.html', error=error, **context)
 
 
 
