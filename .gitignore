@@ -1,4 +1,5 @@
 #use 
+fenv
 .fenv 
 .denv
 .venv
@@ -196,3 +197,4 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# app/admin*
