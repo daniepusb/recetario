@@ -162,36 +162,39 @@ def update(recipe):
     }
     
     if request.method== 'POST':
-        ingredients = {}
         formData    = request.form
-        #print( formData.to_dict() )
-
-        ##TODO: verificar el nombre receta, si cambia se debe hacer un procedimiento distinto
-        title       = recipe
-        description = formData.get('description')
-        instructions= formData.get('instructions')
-        servings    = formData.get('servings')
         
-        context['form']     = formData
-        context['zipped']   = zip( formData.getlist('ingredients-name'),formData.getlist('ingredients-quantity'),formData.getlist('ingredients-unit'))
-        
-        for k in context['zipped']:
-            ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
-        print(ingredients)
+        if 'go_back_btn' in formData:
+            return redirect(url_for('recipes.all_recipes'))
 
-        recipe__data    = RecipeData(title, description, instructions, servings, ingredients)
-        recipe_db       = get_recipe(recipe__data.title)
-
-        if recipe_db.to_dict() is not None:
-            recipe_update(recipe__data)
-            flash('Receta actualizada')
-            return redirect(url_for('recipes.select', recipe=recipe__data.title))
         else:
-            flash('No existe receta para actualizar')
-            return  render_template('recipe_update.html', **context) 
-    
-    
-    
+            ingredients = {}
+            
+            #print( formData.to_dict() )
+
+            ##TODO: verificar el nombre receta, si cambia se debe hacer un procedimiento distinto
+            title       = recipe
+            description = formData.get('description')
+            instructions= formData.get('instructions')
+            servings    = formData.get('servings')
+            
+            context['form']     = formData
+            context['zipped']   = zip( formData.getlist('ingredients-name'),formData.getlist('ingredients-quantity'),formData.getlist('ingredients-unit'))
+            
+            for k in context['zipped']:
+                ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
+            print(ingredients)
+
+            recipe__data    = RecipeData(title, description, instructions, servings, ingredients)
+            recipe_db       = get_recipe(recipe__data.title)
+
+            if recipe_db.to_dict() is not None:
+                recipe_update(recipe__data)
+                flash('Receta actualizada')
+                return redirect(url_for('recipes.select', recipe=recipe__data.title))
+            else:
+                flash('No existe receta para actualizar')
+                return  render_template('recipe_update.html', **context) 
     else:
         ##GET
         recipe_db   = get_recipe(recipe).to_dict()
