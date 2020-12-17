@@ -1,11 +1,3 @@
-<!--<nav>-->
-    <!--<ul>-->
-        <!--<img src="{{ url_for('static', filename='images/platzi.png')}}" alt="Platzi Logo">-->
-        <!--<li><a href="{{ url_for('index') }}">Ir a inicio</a></li>-->
-        <!--<li><a href="https://platzi.com" target="_blank">Ir a Platzi</a></li>-->
-    <!--</ul>-->
-<!--</nav>-->
-
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -18,7 +10,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('index') }}">
+            <a class="navbar-brand" href="{{ url_for('recipes.all_recipes') }}">
                 <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="Platzi logo">
             </a>
         </div>
@@ -53,7 +45,7 @@
                     {% else %}
                         <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
                     {% endif %}
-                    <li><a href="https://platzi.com" target="_blank">Platzi</a></li>
+                    <li><a href="https://github.com/daniepusb/recetario/" target="_blank">Github</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
