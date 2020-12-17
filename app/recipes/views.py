@@ -183,10 +183,11 @@ def update(recipe):
             
             for k in context['zipped']:
                 ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
-            print(ingredients)
+            #print(ingredients)
 
             recipe__data    = RecipeData(title, description, instructions, servings, ingredients)
             recipe_db       = get_recipe(recipe__data.title)
+            #print(recipe__data.ingredients)
 
             if recipe_db.to_dict() is not None:
                 recipe_update(recipe__data)

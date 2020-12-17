@@ -5,102 +5,105 @@
 {% block content %}
 
     <div class="container">
-        <form id="create_recipe" class="form form-horizontal" method="POST" role="form" action="/recipes/create">
-            <div class="form-group">
-                <label for="inputTitle" class="col-sm-3 control-label">Nombre de la receta</label>
-                <div class="col-sm-9">
-                    <input id="title" name="title" type="text" class="form-control"  placeholder="Nombre de la receta" {% if form %} value="{{form.get('title')}}" {% endif %} required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputDescription" class="col-sm-3 control-label">Descripcion</label>
-                <div class="col-sm-9">
-                    <input id="description" name="description" type="text" class="form-control"  placeholder="Descripcion de la receta" {% if form %} value="{{form.get('description')}}" {% endif %} required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputServings" class="col-sm-3 control-label">Porciones</label>
-                <div class="col-sm-9">
-                    <input id="servings" name="servings" type="text" class="form-control"  placeholder="Cantidad de porciones de la receta" {% if form %} value="{{form.get('servings')}}" {% endif %} required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputInstructions" class="col-sm-3 control-label">Instrucciones</label>
-                <div class="col-sm-9">
-                    <textarea id="instructions" name="instructions" style="resize:vertical" type="text" class="form-control"  rows="3"  placeholder="Instrucciones" >{% if form %} {{form.get('instructions')}} {% endif %}</textarea>
-                </div>
-            </div>
-
-            <hr>
-            <div id="ingredients__container" class="form-group">
-                <!-- Ingredientes -->
-                <div id="ingredient-row" class="form-group row">
-                    <div class="col-sm-12 col-lg-12 col-md-12">
-                        <label class="col-xs-12 col-sm-5 col-md-5 col-lg-5">Ingrediente</label>
-                        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
-                        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Unidad</label>
+        <form id="recipe_create_form" class="form form-horizontal" method="POST" role="form" action="/recipes/create">
+            <fieldset id="fieldsetmyFormControl" >
+                <legend>Registrar Receta</legend>
+                <div class="form-group">
+                    <label for="inputTitle" class="col-sm-3 control-label">Nombre de la receta</label>
+                    <div class="col-sm-9">
+                        <input id="title" name="title" type="text" class="form-control"  placeholder="Nombre de la receta" {% if form %} value="{{form.get('title')}}" {% endif %} required>
                     </div>
-                    {% if form %} 
-                        {% for i in zipped  %}  
-                            <div class="col-sm-12 col-lg-12 col-md-12">
-                                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                                    <select class="form-control"  name="ingredients-name">
-                                        <option>Dulce de Leche</option>
-                                        <option>Galleta</option>
-                                        <option>Limon</option>
-                                        <option>Rodajas de naranja</option>
-                                        <option>Zanahoria</option>
-                                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="inputDescription" class="col-sm-3 control-label">Descripcion</label>
+                    <div class="col-sm-9">
+                        <input id="description" name="description" type="text" class="form-control"  placeholder="Descripcion de la receta" {% if form %} value="{{form.get('description')}}" {% endif %} required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputServings" class="col-sm-3 control-label">Porciones</label>
+                    <div class="col-sm-9">
+                        <input id="servings" name="servings" type="text" class="form-control"  placeholder="Cantidad de porciones de la receta" {% if form %} value="{{form.get('servings')}}" {% endif %} required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputInstructions" class="col-sm-3 control-label">Instrucciones</label>
+                    <div class="col-sm-9">
+                        <textarea id="instructions" name="instructions" style="resize:vertical" type="text" class="form-control"  rows="3"  placeholder="Instrucciones" >{% if form %} {{form.get('instructions')}} {% endif %}</textarea>
+                    </div>
+                </div>
+
+                <hr>
+                <div id="ingredients__container" class="form-group">
+                    <!-- Ingredientes -->
+                    <div id="ingredient-row" class="form-group row">
+                        <div class="col-sm-12 col-lg-12 col-md-12">
+                            <label class="col-xs-12 col-sm-5 col-md-5 col-lg-5">Ingrediente</label>
+                            <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
+                            <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Unidad</label>
+                        </div>
+                        {% if form %} 
+                            {% for i in zipped  %}  
+                                <div class="col-sm-12 col-lg-12 col-md-12">
+                                    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                        <select class="form-control"  name="ingredients-name">
+                                            <option>Dulce de Leche</option>
+                                            <option>Galleta</option>
+                                            <option>Limon</option>
+                                            <option>Rodajas de naranja</option>
+                                            <option>Zanahoria</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                        <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required value="{{i[1]}}">
+                                    </div>
+                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                        <select class=" form-control"  name="ingredients-unit">
+                                            <option>gr</option>
+                                            <option>kg</option>
+                                            <option>ml</option>
+                                        </select>
+                                    </div>
+                                    <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none" aria-label="remove">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                    </button>
                                 </div>
-                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                    <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required value="{{i[1]}}">
-                                </div>
-                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                    <select class=" form-control"  name="ingredients-unit">
-                                        <option>gr</option>
-                                        <option>kg</option>
-                                        <option>ml</option>
-                                    </select>
-                                </div>
-                                <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none" aria-label="remove">
-                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                </button>
+                            {% endfor  %}
+                        {% endif %}
+                        <div class="col-sm-12 col-lg-12 col-md-12">
+                            <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                <select class="form-control"  name="ingredients-name">
+                                    <option>Dulce de Leche</option>
+                                    <option>Galleta</option>
+                                    <option>Limon</option>
+                                    <option>Rodajas de naranja</option>
+                                    <option>Zanahoria</option>
+                                </select>
                             </div>
-                        {% endfor  %}
-                    {% endif %}
-                    <div class="col-sm-12 col-lg-12 col-md-12">
-                        <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                            <select class="form-control"  name="ingredients-name">
-                                <option>Dulce de Leche</option>
-                                <option>Galleta</option>
-                                <option>Limon</option>
-                                <option>Rodajas de naranja</option>
-                                <option>Zanahoria</option>
-                            </select>
+                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required>
+                            </div>
+                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                <select class=" form-control"  name="ingredients-unit">
+                                    <option>gr</option>
+                                    <option>kg</option>
+                                    <option>ml</option>
+                                </select>
+                            </div>
+                            <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none" aria-label="remove">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
                         </div>
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                            <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required>
-                        </div>
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                            <select class=" form-control"  name="ingredients-unit">
-                                <option>gr</option>
-                                <option>kg</option>
-                                <option>ml</option>
-                            </select>
-                        </div>
-                        <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none" aria-label="remove">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                        </button>
                     </div>
                 </div>
-            </div>
-            <br><br>
+                <br><br>
 
-            <div class="text-right">
-                <button type="button" id="add_ingredient" class="btn btn-primary" onclick="addIngrendient()" >Agregar Ingrediente</button>
-                <button type="submit" class="btn btn-success" >Crear</button>
-            </div>
-            <br>
+                <div class="text-right">
+                    <button type="button" id="add_ingredient" class="btn btn-primary" onclick="addIngrendient()" >Agregar Ingrediente</button>
+                    <button type="submit" class="btn btn-success" >Crear</button>
+                </div>
+                <br>
+            </fieldset>    
         </form>
     </div>
     

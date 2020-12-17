@@ -4,8 +4,8 @@ from flask_login import login_required, current_user
 
 
 import app
-from app.firestore_service import get_list_ingredients, get_ingredient
-from app.models import RecipeData, RecipeModel
+from app.firestore_service import get_list_ingredients, get_ingredient, put_ingredient
+from app.models import IngredientData
 from app.common_functions import check_admin
 
 
@@ -31,34 +31,35 @@ def create():
         ingredients = {}
         formData    = request.form
 
-        title       = formData.get('title').upper()
-        description = formData.get('description')
-        instructions= formData.get('instructions')
-        # print( formData.to_dict() )
+        title           = formData.get('title').upper()
+        price           = formData.get('price')
+        quantity        = int(formData.get('quantity'))
+        unit            = formData.get('unit')
+        
+        if formData.get('is_gluten_free'):
+            is_gluten_free = True
+        else:
+            is_gluten_free = False
+        ##TODO: cuando falla el post no mantiene el valor de checkbox
 
         context['form']     = formData
-        context['zipped']   = zip( formData.getlist('ingredients-name'),formData.getlist('ingredients-quantity'),formData.getlist('ingredients-unit'))
-        
-        for k in context['zipped']:
-            ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
-        #print(ingredients)
 
-        recipe__data= RecipeData(title, description, instructions, ingredients)
-        print(recipe__data)
+        ingredient__data= IngredientData(title, price, quantity, unit, is_gluten_free)
+        #print(ingredient__data.is_gluten_free)
 
-        recipe_db   = get_recipe(recipe__data.title)
-        if recipe_db.to_dict() is None:
-            recipe_put(recipe__data)
-            flash('Receta creada')
+        ingredient__db   = get_ingredient(title)
+        if ingredient__db.to_dict() is None:
+            put_ingredient(ingredient__data)
+            flash('Ingrediente creado')
 
             return redirect(url_for('ingredients.list_ingredients'))
         else:
-            flash('Ya existe Receta')
+            flash('Ya existe Ingrediente')
 
 
-        return  render_template('recipe_create.html', **context) 
+        return  render_template('ingredient_create.html', **context) 
 
-    return  render_template('recipe_create.html', **context) 
+    return  render_template('ingredient_create.html', **context) 
 
 
 @ingredients.route('all', methods=['GET'])
@@ -74,7 +75,7 @@ def list_ingredients():
             'navbar'        : 'ingredients',
         }
 
-        return render_template('ingredients.html', **context)    
+        return render_template('ingredients_list.html', **context)    
     else:
         #no autenticado
         return make_response(redirect('/auth/login'))

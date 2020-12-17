@@ -13,17 +13,17 @@
 {% block content %}
     {{super()}}
    
-    {% if recipes %}
-        <div class="container">
-            <h1>Ver recetas</h1>
+    <div class="container">
+        {% if recipes %}
+            <h1>Listar recetas</h1>
             <ul>
                 {% for r in recipes %}
                     {{ macros.render_recipes(r) }}                
                 {% endfor %}
             </ul>
-        </div>
-    {% else %}
-        No hay recetas para mostrar
-    {% endif %}
+        {% else %}
+        <h1>No hay recetas para mostrar</h1>
+        {% endif %}
+    </div>
 
 {% endblock %}

@@ -1,9 +1,9 @@
 from flask_login import UserMixin
 
-from .firestore_service import get_user, get_recipe, get_guest
+from .firestore_service import get_user, get_recipe, get_guest, get_ingredient
 
 #
-#USERS
+#USERS Collection(users)
 #
 class UserData:
     def __init__(self, username, admin=False):
@@ -31,7 +31,7 @@ class UserModel(UserMixin):
 
 
 #
-#RECIPES
+#RECIPES Collection(recipes)
 #
 class RecipeData:
     def __init__(self, title, description, instructions, servings, ingredients):
@@ -71,7 +71,7 @@ class RecipeModel():
 
 
 #
-#GUESTS
+#GUESTS Collection(guest)
 #
 class GuestData:
     def __init__(self, name, email, phone):
@@ -101,22 +101,36 @@ class GuestModel():
         return GuestModel(guest_data)
 
 
+
 #
-#INGREDIENTS
+#INGREDIENTS Collection(ingredients)
 #
-class IngredientesData:
-    def __init__(self, name, quantity, unit, notes):
-        self.name    = name
-        self.quantity= quantity
-        self.unit    = unit
-        self.unit    = unit
+class IngredientData:
+    def __init__(self, title, price=0, quantity=0, unit='gr', is_gluten_free=False):
+        self.title          = title
+        self.price          = price
+        self.quantity       = quantity
+        self.unit           = unit
+        self.is_gluten_free = is_gluten_free
 
 class IngredientsModel():
     def __init__(self, ingredient):
         """
         :param guest_data: GuestData
         """
-        self.name    = ingredient.name
-        self.quantity= ingredient.quantity
-        self.unit    = ingredient.unit
-        self.notes   = ingredient.notes
+        self.id             = ingredient.title
+        self.price          = ingredient.price
+        self.quantity       = ingredient.quantity
+        self.unit           = ingredient.unit
+        self.is_gluten_free = ingredient.is_gluten_free
+    
+    @staticmethod
+    def query(ingredient):
+        ingredient__bd   = get_ingredient(email)
+        ingredient__data = IngredientData(
+            title           = ingredient__bd.id,
+            price           = ingredient__bd.price,
+            quantity        = ingredient__bd.quantity,
+            unit            = ingredient__bd.unit,
+            is_gluten_free  = ingredient__bd.is_gluten_free,
+        )
