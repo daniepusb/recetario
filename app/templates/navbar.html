@@ -10,7 +10,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('recipes.all_recipes') }}">
+            <a class="navbar-brand" href="{{ url_for('recipes.list_recipes') }}">
                 <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="Platzi logo">
             </a>
         </div>
@@ -22,7 +22,7 @@
                         <li class="dropdown" id="recipes__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Recetas <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
+                                <li><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="{{ url_for('recipes.new_recipe') }}">Registrar receta</a></li>
                             </ul>
@@ -43,7 +43,7 @@
                         </li>
                         
                     {% else %}
-                        <li><a href="{{ url_for('recipes.all_recipes') }}">Recetas</a></li>
+                        <li><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
                     {% endif %}
                     <li><a href="https://github.com/daniepusb/recetario/" target="_blank">Github</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>

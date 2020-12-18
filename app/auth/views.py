@@ -53,7 +53,7 @@ def signup():
 
         return render_template('signup.html', **context)
     else: 
-        return redirect(url_for('all_recipes'))
+        return redirect(url_for('recipes.list_recipes'))
 
 
 @auth.route('signupGuest', methods=['GET','POST'])

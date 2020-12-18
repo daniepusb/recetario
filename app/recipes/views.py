@@ -13,7 +13,7 @@ from app.common_functions import check_admin
 @recipes.route('/', methods=['GET'] )
 @login_required
 def recipes_index():
-    return redirect(url_for('recipes.all_recipes'))
+    return redirect(url_for('recipes.list_recipes'))
 
 
 @recipes.route('/ajax', methods=['GET'] )
@@ -63,7 +63,7 @@ def new_recipe():
             recipe_put(recipe__data)
             flash('Receta creada')
 
-            return redirect(url_for('recipes.all_recipes'))
+            return redirect(url_for('recipes.list_recipes'))
         else:
             flash('Ya existe Receta')
 
@@ -75,7 +75,7 @@ def new_recipe():
 
 @recipes.route('all', methods=['GET'])
 @login_required
-def all_recipes():
+def list_recipes():
 
     if current_user.is_authenticated:
         username    = current_user.id
@@ -141,7 +141,7 @@ def select(recipe):
             return render_template('recipe_update.html', **context)
 
         else:
-            return redirect(url_for('recipes.all_recipes'))
+            return redirect(url_for('recipes.list_recipes'))
 
     else:
         # usuario no autenticado
@@ -165,13 +165,11 @@ def update(recipe):
         formData    = request.form
         
         if 'go_back_btn' in formData:
-            return redirect(url_for('recipes.all_recipes'))
+            return redirect(url_for('recipes.list_recipes'))
 
         else:
             ingredients = {}
-            
             #print( formData.to_dict() )
-
             ##TODO: verificar el nombre receta, si cambia se debe hacer un procedimiento distinto
             title       = recipe
             description = formData.get('description')
@@ -196,38 +194,4 @@ def update(recipe):
             else:
                 flash('No existe receta para actualizar')
                 return  render_template('recipe_update.html', **context) 
-    else:
-        ##GET
-        recipe_db   = get_recipe(recipe).to_dict()
-        
-        if recipe_db is not None:
-            ingredients__db = get_recipe_ingredients(recipe)
-            
-            # a = recipe_db
-            # for i,j in a.items():
-            #     print(i+str(j))
-            # print(u'Document data: {}'.format(recipe_db))
-            # print( recipe_db.get('description'))
-            # print( recipe_db.get('instructions'))
-            # print( recipe_db.get('servings'))
-            
-            # mostrar = ingredients__db
-            # for r in mostrar:
-            #     print( r.id ) 
-            #     print( r.get('quantity'))
-            #     print( r.get('unit'))
-
-            context = {
-                'title'         : recipe,
-                'form'          : recipe_db,
-                'ingredients'   : ingredients__db,
-                'admin'         : session['admin'],
-                'navbar'        : 'recipes',
-            }
-            return render_template('recipe_update.html', **context)
-
-        else:
-            flash('No existe esa receta')
-            return redirect(url_for('recipes.all_recipes'))
-
 
