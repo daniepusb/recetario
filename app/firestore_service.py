@@ -158,9 +158,20 @@ def get_ingredient(ingredient):
 
     return doc
 
+
 def put_ingredient(ingredient):
     ingredient_collection_ref = db.collection('ingredients').document(ingredient.title)
     ingredient_collection_ref.set({'price': ingredient.price, 'quantity': ingredient.quantity, 'unit': ingredient.unit, 'is_gluten_free': ingredient.is_gluten_free})
+
+
+def update_ingredient(ingredient, old_ingredient=None):
+    if old_ingredient is None:
+        ingredient_collection_ref = db.collection('ingredients').document(ingredient.title)
+        ingredient_collection_ref.set({'price': ingredient.price, 'quantity': ingredient.quantity, 'unit': ingredient.unit, 'is_gluten_free': ingredient.is_gluten_free})
+    else:
+        ## TODO: delete old_ingredient and call put_ingredient(ingredient):
+        pass
+
 
 #
 #GUESTS
