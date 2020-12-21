@@ -5,7 +5,7 @@
 {% block content %}
 
     <div class="container">
-        <form id="recipe_create_form" class="form form-horizontal" method="POST" role="form" action="/recipes/create">
+        <form id="recipe_create_form" class="form form-horizontal" method="POST" role="form" action="/recipes/create" enctype="multipart/form-data">
             <fieldset id="fieldsetmyFormControl" >
                 <legend>Registrar Receta</legend>
                 <div class="form-group">
@@ -23,7 +23,7 @@
                 <div class="form-group">
                     <label for="inputServings" class="col-sm-3 control-label">Porciones</label>
                     <div class="col-sm-9">
-                        <input id="servings" name="servings" type="text" class="form-control"  placeholder="Cantidad de porciones de la receta" {% if form %} value="{{form.get('servings')}}" {% endif %} required>
+                        <input id="servings" name="servings" type="number" class="form-control"  placeholder="Cantidad de porciones de la receta" {% if form %} value="{{form.get('servings')}}" {% endif %} required>
                     </div>
                 </div>
                 <div class="form-group">
@@ -32,7 +32,15 @@
                         <textarea id="instructions" name="instructions" style="resize:vertical" type="text" class="form-control"  rows="3"  placeholder="Instrucciones" >{% if form %} {{form.get('instructions')}} {% endif %}</textarea>
                     </div>
                 </div>
-
+                <div class="form-group">
+                    <label for="inputImage" class="col-sm-3 control-label">Imagen</label>
+                    <div id="profile-container" class="col-sm-9">
+                        <image id="profileImage" onclick="fasterPreview(this)" src="{{ url_for('static',  filename='assets/img/cupcake_recipe.png') }}" style="width:150px;height:150px;" />
+                        <input id="imageUpload" onchange="fasterPreview(this)" type="file" name="profile_photo" placeholder="Photo" required  aria-filename="" aria-src="" value="">
+                    </div>
+                    <input id="imageUpload__filename" hidden type="text" name="filename" aria-filename="" aria-src="" value="OLDNAME">
+                    <input id="imageUpload__URL" hidden type="text" name="imageURL" aria-imageURL="" aria-src="" value="OLDimageURL">
+                </div>
                 <hr>
                 <div id="ingredients__container" class="form-group">
                     <!-- Ingredientes -->
@@ -55,7 +63,7 @@
                                         </select>
                                     </div>
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                        <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required value="{{i[1]}}">
+                                        <input type="number" class="form-control" name="ingredients-quantity" placeholder="250" required value="{{i[1]}}">
                                     </div>
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                         <select class=" form-control"  name="ingredients-unit">
@@ -64,8 +72,8 @@
                                             <option>ml</option>
                                         </select>
                                     </div>
-                                    <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none" aria-label="remove">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                    <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1" aria-label="trash">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                     </button>
                                 </div>
                             {% endfor  %}
@@ -81,7 +89,7 @@
                                 </select>
                             </div>
                             <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required>
+                                <input type="number" class="form-control" name="ingredients-quantity" placeholder="250" required>
                             </div>
                             <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                 <select class=" form-control"  name="ingredients-unit">
@@ -90,8 +98,8 @@
                                     <option>ml</option>
                                 </select>
                             </div>
-                            <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1 d-none" aria-label="remove">
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1" aria-label="trash">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             </button>
                         </div>
                     </div>
@@ -106,7 +114,11 @@
             </fieldset>    
         </form>
     </div>
-    
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-storage.js"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-storage.js"></script> -->
+
     <script type='text/javascript'>
         document.getElementById("title").focus();
         document.getElementById("ingredient-row").getElementsByTagName("button")[0].style.display = "none";
@@ -126,45 +138,57 @@
             // console.log( e.parentNode.parentNode.getElementsByTagName("button"))
             e.parentNode.parentNode.remove()
         }
-
-        var j = 0;
     </script>
-
+   
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCLEJ3eFncL16rZaFP02-w4Eb_qqFmbSA",
+            authDomain: "blogeekplatzi-2e74f.firebaseapp.com",
+            databaseURL: "https://blogeekplatzi-2e74f.firebaseio.com",
+            projectId: "blogeekplatzi-2e74f",
+            storageBucket: "blogeekplatzi-2e74f.appspot.com",
+            messagingSenderId: "669626757295",
+            appId: "1:669626757295:web:c3ea2002a548b07fe4645a",
+            measurementId: "G-0TLGQ6FHH4"
+        };
 
-        function loadXMLDoc()
-        {
-            var req = new XMLHttpRequest()
-            req.onreadystatechange = function()
-            {
-                if (req.readyState == 4)
-                {
-                    if (req.status != 200)
-                    {
-                        //error handling code here
-                    }
-                    else
-                    {
-                        var response    = JSON.parse(req.responseText)
-                        var container   = document.getElementById("ingredients")
-                        // container.appendChild(response);
-                        // container.appendChild(document.createElement("div"));
-                        document.getElementById('ingredients').innerHTML = response
-                    }
-                }
+        firebase.initializeApp(firebaseConfig);
+        console.log("firebase config expose");
+
+        function fasterPreview( uploader ) {
+            if ( uploader.files && uploader.files[0] ){
+                $('#profileImage').attr('src',window.URL.createObjectURL(uploader.files[0]) );
             }
+            // document.querySelector("#imageUpload").src = "url"
+            // document.getElementById('imageUpload__filename').value ="name"
+            // document.getElementById('imageUpload__URL').value ="url"            
+            uploadImage()
+        }
         
-            req.open('GET', '/recipes/ajax')
-            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-            // var un = document.getElementById('scname').value
-            // var sec = document.getElementById('secret').value
-            // var postVars = 'username='+un+'&secret='+sec
-            // req.send(postVars)
-            req.send()
+        function uploadImage() {
+            const ref       = firebase.storage().ref('recipes');
+            const file      = document.querySelector("#imageUpload").files[0];
+            const name      = +new Date() + "-"// + file.filename;
+            const metadata  = { contentType: file.type };
+            const task      = ref.child(name).put(file, metadata);
             
-            return false
+            task
+                .then(snapshot => snapshot.ref.getDownloadURL())
+                    .then(url => {
+                        console.log("ESTA ES LA URL")
+                        console.log(url)
+                        console.log(name)
+                        document.querySelector("#imageUpload").src = url
+                        document.getElementById('imageUpload__filename').value = name
+                        document.getElementById('imageUpload__URL').value = url
+                        //document.querySelector("#imageUpload").setAttribute('aria-filename',name)
+                    })
+                .catch(console.error);
         }
     </script>
+
+
+    
 {% endblock %}
 
 

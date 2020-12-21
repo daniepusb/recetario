@@ -7,8 +7,8 @@ import app
 from app.forms import RecipesForm
 from app.firestore_service import get_recipes, get_recipe, get_recipe_ingredients, recipe_put, recipe_update
 from app.models import RecipeData, RecipeModel
-from app.common_functions import check_admin
-
+from app.common_functions import check_admin, upload_blob
+#import os 
 
 @recipes.route('/', methods=['GET'] )
 @login_required
@@ -27,11 +27,10 @@ def ajax():
     return jsonify(response)
 
 
-
 @recipes.route('create', methods=['GET','POST'])
 @login_required
 def new_recipe():
-    ##TODO: cuando la receta viene sin nombre de receta lanza un error de google
+    ##TODO: cuando la receta viene sin nombre de receta lanza un error de google, debo capturarlo con un try
     title       = 'Nueva receta'
     context = {
         'title' : title,
@@ -46,17 +45,61 @@ def new_recipe():
         title       = formData.get('title').upper()
         description = formData.get('description')
         instructions= formData.get('instructions')
-        # print( formData.to_dict() )
-
+        servings    = formData.get('servings')
+        imageURL    = formData.get('imageURL')
+        
         context['form']     = formData
+        #context["IMAGE_UPLOADS"] = 'C://Users/DPedroza/Documents/Daniel Pedroza/workspace/2020/recetario/imagesToUpload'
+
+        if request.files:
+            pass
+            #image = request.files['image']
+            #print(image)
+            #print( request.files.get('image') )
+            
+            ##TODO:primero aprendamos a guardarlo en el server(la laptop, localhost)
+                #image.save(os.path.join(context["IMAGE_UPLOADS"], image.filename))
+                #print("image saved")
+
+            ##TODO:ahora aprendamos a usar firebase server
+                # upload_blob(
+                #     bucket_name='blogeekplatzi-2e74f.appspot.com',
+                #     source_file_name='C:/Users/DPedroza/Documents/Daniel Pedroza/workspace/2020/recetario/imagesToUpload/2.jpg',
+                #     destination_blob_name='recipes/ingredient-2.jpg',
+                # )
+                #print("image saved")
+
+            #ahora aprendamos a usar Firebase web (javascript)
+
+
+
+            # print("*********************************************")
+            # print("image saved")
+            #bucket_name='recetario-blogeekplatzi-2e74f',
+            #gs://blogeekplatzi-2e74f.appspot.com
+            #source_file_name='C:/Users/DPedroza/Documents/Daniel Pedroza/workspace/2020/recetario/imagesToUpload/1.jpg',
+            #source_file_name='C:/Users/DPedroza/Documents/Daniel Pedroza/flask.jpg',
+            #destination_blob_name='recipes/ingredient-'+title,
+            # responseURL = upload_blob(
+            #     bucket_name='blogeekplatzi-2e74f.appspot.com',
+            #     source_file_name='C:/Users/DPedroza/Documents/Daniel Pedroza/workspace/2020/recetario/imagesToUpload/2.jpg',
+            #     destination_blob_name='recipes/ingredient-2.jpg',
+            # )
+            # print(responseURL)
+
+        # except google.api_core.exceptions.NotFound as error:
+        #     print("Arrojó una excepcion")
+        # except google.api_core.exceptions.NameError as error:
+        #     print("Arrojó una excepcion")
+        
         context['zipped']   = zip( formData.getlist('ingredients-name'),formData.getlist('ingredients-quantity'),formData.getlist('ingredients-unit'))
         
         for k in context['zipped']:
             ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
-        #print(ingredients)
+        # #print(ingredients)
 
-        recipe__data= RecipeData(title, description, instructions, ingredients)
-        print(recipe__data)
+        recipe__data= RecipeData(title, description, instructions, servings, imageURL, ingredients)
+        # print(recipe__data)
 
         recipe_db   = get_recipe(recipe__data.title)
         if recipe_db.to_dict() is None:
@@ -155,6 +198,8 @@ def update(recipe):
     ##TODO: saber como hacer un buen try catch
     ##TODO: esta comprobacion ya no es necesario porque tiene el decorador @login_required
     ##TODO: detectar cambios en el formulario para mostrar el boton de guardar
+    ##TODO: es importante advertir que la regla de firebase storage está pública y no debería ser así
+    ##TODO: es importante advertir que mientras no se cargue totalmente la foto en storage y retorne la URL no deberia permitirse subir 
     context = {
         'title'         : recipe,
         'admin'         : session['admin'],
@@ -175,6 +220,7 @@ def update(recipe):
             description = formData.get('description')
             instructions= formData.get('instructions')
             servings    = formData.get('servings')
+            #imageURL    = formData.get('imageURL')
             
             context['form']     = formData
             context['zipped']   = zip( formData.getlist('ingredients-name'),formData.getlist('ingredients-quantity'),formData.getlist('ingredients-unit'))
@@ -183,7 +229,7 @@ def update(recipe):
                 ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
             #print(ingredients)
 
-            recipe__data    = RecipeData(title, description, instructions, servings, ingredients)
+            recipe__data    = RecipeData(title, description, instructions, servings, None, ingredients)
             recipe_db       = get_recipe(recipe__data.title)
             #print(recipe__data.ingredients)
 

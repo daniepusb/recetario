@@ -55,6 +55,7 @@ def recipe_put(recipe):
         'description'   : recipe.description,
         'instructions'  : recipe.instructions,
         'servings'      : recipe.servings,
+        'imageURL'      : recipe.imageURL,
     })
     
     if recipe.ingredients is not None:

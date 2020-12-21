@@ -3,11 +3,37 @@
 {% endmacro %}
 
 {% macro render_recipes(r) %}
-    <li><a href="{{ url_for('recipes.select', recipe=r.id) }}">{{ r.id }}</a></li>
+    <li class="list-group-item">
+        <div class="media">
+            <div class="media-left media-middle">
+                <a href="{{ url_for('recipes.select', recipe=r.id) }}" >
+                    {% if r.get('imageURL')   %}
+                        <img src="{{ r.get('imageURL') }}" alt="{{ r.id }}" style="width:20px;height:20px;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="{{ r.id }}" style="width:20px;height:20px;">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-middle"><a href="{{ url_for('recipes.select', recipe=r.id) }}">{{ r.id }}</a></h4>
+            </div>
+        </div>
+    </li>
 {% endmacro %}
 
 {% macro render_ingredients(r) %}
-    <li><a href="{{ url_for('ingredients.select', ingredient=r.id) }}">{{ r.id }}</a></li>
+    <li class="list-group-item">
+        <div class="media">
+            <div class="media-left media-middle">
+                <a href="{{ url_for('ingredients.select', ingredient=r.id) }}" >
+                    <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="{{ r.id }}" style="width:20px;height:20px;">
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-middle"><a href="{{ url_for('ingredients.select', ingredient=r.id) }}">{{ r.id }}</a></h4>
+            </div>
+        </div>
+    </li>
 {% endmacro %}
 
 {% macro render_ingredient_properties(r) %}

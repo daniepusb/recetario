@@ -16,7 +16,7 @@
     <div class="container">
         {% if ingredients %}
             <h1>Listar ingredientes</h1>
-            <ul>
+            <ul class="list-group">
                 {% for r in ingredients %}
                     {{ macros.render_ingredients(r) }}                
                 {% endfor %}
