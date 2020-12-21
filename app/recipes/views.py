@@ -7,7 +7,7 @@ import app
 from app.forms import RecipesForm
 from app.firestore_service import get_recipes, get_recipe, get_recipe_ingredients, recipe_put, recipe_update
 from app.models import RecipeData, RecipeModel
-from app.common_functions import check_admin, upload_blob
+from app.common_functions import check_admin
 #import os 
 
 @recipes.route('/', methods=['GET'] )
