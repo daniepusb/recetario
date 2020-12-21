@@ -34,7 +34,7 @@ class UserModel(UserMixin):
 #RECIPES Collection(recipes)
 #
 class RecipeData:
-    def __init__(self, title, description, instructions, servings, imageURL=None, ingredients):
+    def __init__(self, title, description, instructions, servings, imageURL, ingredients):
         self.title          = title
         self.description    = description
         self.instructions   = instructions
