@@ -184,8 +184,6 @@ def ajax():
     i=0
     for j in ingredients:
         r += "<option>"+ j.id + "</option>"
-        print(j.id)
-        print(r)
 
     return r
     #return jsonify(r)
