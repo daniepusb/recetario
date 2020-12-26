@@ -214,7 +214,8 @@ def update(recipe):
         
         if 'go_back_btn' in formData:
             return redirect(url_for('recipes.list_recipes'))
-
+        elif 'go_estimate_btn' in formData:
+            return redirect(url_for('recipes.estimate', recipe=recipe))
         else:
             ingredients = {}
             #print( formData.to_dict() )
@@ -234,7 +235,7 @@ def update(recipe):
 
             recipe__data    = RecipeData(title, description, instructions, servings, imageURL, ingredients)
             recipe_db       = get_recipe(recipe__data.title)
-            #print(recipe__data.ingredients)
+            print(recipe__data)
 
             if recipe_db.to_dict() is not None:
                 recipe_update(recipe__data)
