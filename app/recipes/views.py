@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 
 import app
 from app.forms import RecipesForm
-from app.firestore_service import get_recipes, get_recipe, get_recipe_ingredients, recipe_put, recipe_update
+from app.firestore_service import get_recipes, get_recipe, get_recipe_ingredients, recipe_put, recipe_update, get_list_ingredients
 from app.models import RecipeData, RecipeModel
 from app.common_functions import check_admin
 #import os 
@@ -33,9 +33,11 @@ def new_recipe():
     ##TODO: cuando la receta viene sin nombre de receta lanza un error de google, debo capturarlo con un try
     title       = 'Nueva receta'
     context = {
-        'title' : title,
-        'admin' : session['admin'],
-        'navbar': 'recipes',
+        'navbar'            : 'recipes',
+        'title'             : title,
+        'admin'             : session['admin'],
+        'ingredients__list'  : get_list_ingredients(),
+       
     }
     
     if request.method== 'POST':
@@ -175,11 +177,12 @@ def select(recipe):
             #     print( r.get('unit'))
 
             context = {
-                'title'         : recipe,
-                'form'          : recipe_db,
-                'ingredients'   : ingredients__db,
-                'admin'         : session['admin'],
-                'navbar'        : 'recipes',
+                'navbar'            : 'recipes',
+                'title'             : recipe,
+                'form'              : recipe_db,
+                'ingredients'       : ingredients__db,
+                'admin'             : session['admin'],
+                'ingredients__list' : get_list_ingredients(),
             }
             return render_template('recipe_update.html', **context)
 
@@ -220,7 +223,7 @@ def update(recipe):
             description = formData.get('description')
             instructions= formData.get('instructions')
             servings    = formData.get('servings')
-            #imageURL    = formData.get('imageURL')
+            imageURL    = formData.get('imageURL')
             
             context['form']     = formData
             context['zipped']   = zip( formData.getlist('ingredients-name'),formData.getlist('ingredients-quantity'),formData.getlist('ingredients-unit'))
@@ -229,7 +232,7 @@ def update(recipe):
                 ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
             #print(ingredients)
 
-            recipe__data    = RecipeData(title, description, instructions, servings, None, ingredients)
+            recipe__data    = RecipeData(title, description, instructions, servings, imageURL, ingredients)
             recipe_db       = get_recipe(recipe__data.title)
             #print(recipe__data.ingredients)
 

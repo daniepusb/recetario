@@ -41,5 +41,13 @@
 {% endmacro %}
 
 {% macro render_dropdown_ingredients(r) %}
-    <option>r.id</option>
+    <option>{{r.id}}</option>
+{% endmacro %}
+
+{% macro render_dropdown_ingredients_selected(r,opt=False) %}
+    {% if r.id == opt %}
+        <option selected aria-selected="true">{{r.id}}</option>
+    {% else %}
+        <option>{{r.id}}</option>
+    {% endif %}
 {% endmacro %}

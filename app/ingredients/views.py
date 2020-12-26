@@ -2,7 +2,7 @@ from . import ingredients
 from flask import render_template, flash, redirect, url_for, session, jsonify, request
 from flask_login import login_required, current_user
 
-
+ 
 import app
 from app.firestore_service import get_list_ingredients, get_ingredient, put_ingredient, update_ingredient
 from app.models import IngredientData
@@ -165,5 +165,27 @@ def update(ingredient):
             # return redirect(url_for('ingredients.select', ingredient=ingredient__data.title))
 
 
+@ingredients.route('/dropdownHTML', methods=['GET'] )
+@login_required
+def ajaxHTML():
+    ingredients     = get_list_ingredients()
 
+    context = {
+        'ingredients__list' : ingredients,
+    }
 
+    return render_template('dropdown.html', **context)
+
+@ingredients.route('/dropdown', methods=['GET'] )
+@login_required
+def ajax():
+    ingredients     = get_list_ingredients()
+    r=''
+    i=0
+    for j in ingredients:
+        r += "<option>"+ j.id + "</option>"
+        print(j.id)
+        print(r)
+
+    return r
+    #return jsonify(r)

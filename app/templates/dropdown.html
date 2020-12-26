@@ -1,0 +1,7 @@
+{% import 'macros.html' as macros %}
+
+{% if ingredients__list %} 
+    {% for r in ingredients__list  %}  
+        {{ macros.render_dropdown_ingredients(r) }}
+    {% endfor %}
+{% endif %}
