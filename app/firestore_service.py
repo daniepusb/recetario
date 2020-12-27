@@ -104,6 +104,7 @@ def recipe_update(recipe, old_recipe=None):
                 'description'   : recipe.description,
                 'instructions'  : recipe.instructions,
                 'servings'      : recipe.servings,
+                'imageURL'      : recipe.imageURL,
             }
         )
 
