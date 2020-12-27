@@ -72,7 +72,7 @@
                                             </select>
                                         </div>
                                         <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                            <input type="text" class="form-control" name="ingredients-quantity" placeholder="250" required value="{{i.get('quantity')}}">
+                                            <input type="number" class="form-control" name="ingredients-quantity" placeholder="250" required step="1" min="1" value="{{i.get('quantity')}}">
                                         </div>
                                         <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                             <select class=" form-control"  name="ingredients-unit">

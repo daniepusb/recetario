@@ -10,7 +10,7 @@
                 <legend>{{title}}</legend>
                 <div class="form-group">
                     <label for="inputTitle" class="col-sm-3 control-label">Nombre del ingrediente</label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-4">
                         <input id="title" name="title" type="text" class="form-control"  placeholder="Nombre del ingrediente" {% if form %} value="{{form.get('title')}}" {% endif %} required>
                     </div>
                 </div>
@@ -42,6 +42,7 @@
                     </div>
                     <div class="col-sm-5"></div>
                 </div>
+                <hr>
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="glutenFree">Gluten Free</label>
                     <div class="col-sm-4">
@@ -49,7 +50,6 @@
                     </div>
                     <div class="col-sm-8"></div>
                 </div>
-                <hr>
                 
                 <br><br>
 
