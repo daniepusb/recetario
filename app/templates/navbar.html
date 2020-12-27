@@ -43,7 +43,7 @@
                         </li>
                         
                     {% else %}
-                        <li><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
+                        <li id="recipes__li"><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
                     {% endif %}
                     <li><a href="https://github.com/daniepusb/recetario/" target="_blank">Github</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>

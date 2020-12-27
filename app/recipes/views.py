@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 
 import app
 from app.forms import RecipesForm
-from app.firestore_service import get_recipes, get_recipe, get_recipe_ingredients, recipe_put, recipe_update, get_list_ingredients
+from app.firestore_service import get_recipes, get_recipe, get_recipe_ingredients, recipe_put, recipe_update, get_list_ingredients, get_ingredient
 from app.models import RecipeData, RecipeModel
 from app.common_functions import check_admin
 #import os 
@@ -203,10 +203,13 @@ def update(recipe):
     ##TODO: detectar cambios en el formulario para mostrar el boton de guardar
     ##TODO: es importante advertir que la regla de firebase storage está pública y no debería ser así
     ##TODO: es importante advertir que mientras no se cargue totalmente la foto en storage y retorne la URL no deberia permitirse subir 
+    
+    check_admin()
+
     context = {
+        'navbar'        : 'recipes',
         'title'         : recipe,
         'admin'         : session['admin'],
-        'navbar'        : 'recipes',
     }
     
     if request.method== 'POST':
@@ -245,3 +248,42 @@ def update(recipe):
                 flash('No existe receta para actualizar')
                 return  render_template('recipe_update.html', **context) 
 
+
+@recipes.route('estimate/<recipe>/<servings>', methods=['GET'])
+@login_required
+def estimate(recipe,servings):
+    ##TODO: saber como hacer un buen try catch
+
+    check_admin()
+    flash('Calculando Costos')
+
+    context = {
+        'navbar'        : 'recipes',
+        'title'         : recipe,
+        'admin'         : session['admin'],
+    }
+    
+    if request.method== 'GET':
+        #conocer el valor de cada ingrediente
+        #dividir cantidad del ingrediente receta entre cantidad presentacion ingrediente 
+        recipe__ingredients__db2    = get_recipe_ingredients(recipe)
+        recipe__ingredients__db     = get_recipe_ingredients(recipe)
+        recipe__db                  = get_recipe(recipe).to_dict()
+        total                       = 0
+
+        for ri in recipe__ingredients__db2:
+            i = get_ingredient(ri.id)
+            context[i.id] = i.to_dict()
+            total += context[i.id].get('price')
+            print (context[i.id].get('price'))
+        
+        print(total)
+        context['ingredients']      = recipe__ingredients__db
+        context['recipe__db']       = recipe__db
+        context['servings']         = recipe__db.get('servings')
+        context['total']            = total
+
+        print(context)
+
+
+        return render_template( 'recipe_estimate.html', context=context )
