@@ -41,7 +41,7 @@
                     <div class="form-group">
                         <label for="inputServings" class="col-sm-4 control-label">Porciones</label>
                         <div class="col-sm-8">
-                            <input id="servings" name="servings" type="number" class="form-control"  placeholder="Cantidad de porciones de la receta" {% if form %} value="{{form.get('servings')}}" {% endif %} required>
+                            <input id="servings" name="servings" type="number" class="form-control"  placeholder="Cantidad de porciones de la receta" step="1" min="1" {% if form %} value="{{form.get('servings')}}" {% endif %} required>
                         </div>
                     </div>
                     <div class="form-group">

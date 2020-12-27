@@ -39,7 +39,7 @@
                         <div class="form-group">
                             <label for="inputServings" class="col-sm-4 control-label">Porciones</label>
                             <div class="col-sm-8">
-                                <input id="servings" name="servings" type="text" class="form-control"  placeholder="Cantidad de porciones de la receta" value="{{form.get('servings')}}" required>
+                                <input id="servings" name="servings" type="number" class="form-control"  placeholder="Cantidad de porciones de la receta" step="1" min="1" value="{{form.get('servings')}}" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -103,7 +103,7 @@
             {% if admin %}
             <div id="go_edit_btn" class="text-left" >
                 <button type="button"  class="btn btn-success" onclick="make_editable()" aria-roledescription="edit" >Editar</button>
-                <a class="btn btn-primary" href="{{ url_for('recipes.estimate',recipe=title, servings=1)}}" role="button" aria-roledescription="estimate" >Calcular costo</a>
+                <a class="btn btn-primary" href="{{ url_for('recipes.estimate',recipe=title, amount=1)}}" role="button" aria-roledescription="estimate" >Calcular costo</a>
             </div>
             {% endif %}
             <br><br><br>

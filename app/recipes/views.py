@@ -47,7 +47,7 @@ def new_recipe():
         title       = formData.get('title').upper()
         description = formData.get('description')
         instructions= formData.get('instructions')
-        servings    = formData.get('servings')
+        servings    = int (formData.get('servings'))
         imageURL    = formData.get('imageURL')
         
         context['form']     = formData
@@ -249,19 +249,21 @@ def update(recipe):
                 return  render_template('recipe_update.html', **context) 
 
 
-@recipes.route('estimate/<recipe>/<servings>', methods=['GET'])
+@recipes.route('estimate/<recipe>/<amount>', methods=['GET'])
 @login_required
-def estimate(recipe,servings):
+def estimate(recipe,amount):
     ##TODO: saber como hacer un buen try catch
+    ##TODO: amount debe ser siempre mayor a cero y no puede ser float, chequearlo
 
     check_admin()
     flash('Calculando Costos')
-
     context = {
         'navbar'        : 'recipes',
         'title'         : recipe,
         'admin'         : session['admin'],
+        'info'          : {},
     }
+    
     
     if request.method== 'GET':
         #conocer el valor de cada ingrediente
@@ -273,17 +275,47 @@ def estimate(recipe,servings):
 
         for ri in recipe__ingredients__db2:
             i = get_ingredient(ri.id)
-            context[i.id] = i.to_dict()
-            total += context[i.id].get('price')
-            print (context[i.id].get('price'))
+            
+            ##asignacion de cada ingrediente
+            context['info'][ri.id] = i.to_dict()
+            
+            #calculo de cantidad de porciones
+            context['info'][ri.id]['newQuantity']   = int(ri.get('quantity')) * int(amount) 
+            
+            dividendo   = int (context['info'][ri.id]['newQuantity'])
+            divisor     = int (i.get('quantity'))
+            result_float= dividendo / divisor
+            cociente    = dividendo // divisor
+            resto       = dividendo % divisor
+
+            if ( result_float > 1 and resto > 0 ):
+                #print('result_float > 1 and resto > 0 ' + str(result_float) + ' - '   + str(cociente) + ' - '  + str(resto) )
+                context['info'][ri.id]['newPrice']      = int( i.get('price')) * int(cociente+1) 
+                context['info'][ri.id]['newNeed']       = cociente+1
+            elif ( result_float > 1 and resto == 0 ):
+                #print('result_float > 1 and resto = 0 '  + str(result_float) + ' - '   + str(cociente) + ' - ' + str(resto) )
+                context['info'][ri.id]['newPrice']      = int( i.get('price')) * int(cociente) 
+                context['info'][ri.id]['newNeed']       = cociente
+            else:
+                #print('else, es menor a 1, no hay cambios '  + str(result_float) + ' - '   + str(cociente) + ' - '  + str(resto) )
+                context['info'][ri.id]['newPrice']      = int( i.get('price')) 
+                context['info'][ri.id]['newNeed']       = 1 
+                
+            #sumatoria
+            total += context['info'][ri.id].get('newPrice')
+            
+            # print (ri.id)
+            # print (ri.get('quantity'))
+            # print ( context['info'][ri.id]['newQuantity'] )
+        # print(total)
         
-        print(total)
+        
         context['ingredients']      = recipe__ingredients__db
         context['recipe__db']       = recipe__db
-        context['servings']         = recipe__db.get('servings')
+        context['servings']         = int (recipe__db.get('servings') * int(amount))
+        context['amount']           = amount
         context['total']            = total
+        ##TODO: cuando se calcula las porciones no debe dar un numero float, hay que chequear eso
+        #print(context)
 
-        print(context)
-
-
-        return render_template( 'recipe_estimate.html', context=context )
+        return render_template( 'recipe_estimate.html', **context )

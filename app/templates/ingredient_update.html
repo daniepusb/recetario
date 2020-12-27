@@ -22,14 +22,14 @@
                 <div class="form-group">
                     <label for="inputPrice" class="col-sm-3 control-label">Precio</label>
                     <div class="col-sm-4">
-                        <input id="price" name="price" type="text" class="form-control"  placeholder="Precio del ingrediente" {% if form %} value="{{form.get('price')}}" {% endif %} required>
+                        <input id="price" name="price" type="number" class="form-control"  placeholder="Precio del ingrediente" step="0.01" min="0" {% if form %} value="{{form.get('price')}}" {% endif %} required>
                     </div>
                     <div class="col-sm-5"></div>
                 </div>
                 <div class="form-group">
                     <label for="inputQuantity" class="col-sm-3 control-label">Cantidad</label>
                     <div class="col-sm-4">
-                        <input id="quantity" name="quantity" type="text" class="form-control"  placeholder="Cantidad de la presentacion" {% if form %} value="{{form.get('quantity')}}" {% endif %} required>
+                        <input id="quantity" name="quantity" type="number" class="form-control"  placeholder="Cantidad de la presentacion" step="0.01" min="0" {% if form %} value="{{form.get('quantity')}}" {% endif %} required>
                     </div>
                     <div class="col-sm-5"></div>
                 </div>
@@ -79,60 +79,6 @@
         }
     </script>
 
-    <script>
-        // File or Blob named mountains.jpg
-        var file = document.getElementById('imageToUpload');
-
-        // Create the file metadata
-        var metadata = {
-            contentType: 'image/jpeg'
-        };
-
-        // Upload file and metadata to the object 'images/mountains.jpg'
-        var uploadTask = storageRef.child('images/' + file.name).put(file, metadata);
-
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-        function(snapshot) {
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-            case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused');
-                break;
-            case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running');
-                break;
-            }
-        }, function(error) {
-
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        switch (error.code) {
-            case 'storage/unauthorized':
-            // User doesn't have permission to access the object
-            break;
-
-            case 'storage/canceled':
-            // User canceled the upload
-            break;
-
-            
-
-            case 'storage/unknown':
-            // Unknown error occurred, inspect error.serverResponse
-            break;
-        }
-        }, function() {
-        // Upload completed successfully, now we can get the download URL
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-            console.log('File available at', downloadURL);
-        });
-        });
-
-
-    </script>
 {% endblock %}
 
 

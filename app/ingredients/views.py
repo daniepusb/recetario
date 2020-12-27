@@ -32,8 +32,8 @@ def create():
         formData    = request.form
 
         title           = formData.get('title').upper()
-        price           = formData.get('price')
-        quantity        = int(formData.get('quantity'))
+        price           = float (formData.get('price'))
+        quantity        = float (formData.get('quantity'))
         unit            = formData.get('unit')
         
         if formData.get('is_gluten_free'):
@@ -141,8 +141,8 @@ def update(ingredient):
     
             ##TODO: verificar el nombre receta, si cambia se debe hacer un procedimiento distinto
             title           = ingredient
-            price           = formData.get('price')
-            quantity        = formData.get('quantity')
+            price           = float (formData.get('price') )
+            quantity        = float (formData.get('quantity') )
             unit            = formData.get('unit')
             
             if formData.get('is_gluten_free'):
