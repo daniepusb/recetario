@@ -6,8 +6,9 @@ from .firestore_service import get_user, get_recipe, get_guest, get_ingredient
 #USERS Collection(users)
 #
 class UserData:
-    def __init__(self, username, admin=False):
+    def __init__(self, username, password, admin=False):
         self.username = username
+        self.password = password
         self.admin    = admin
 
 
@@ -17,6 +18,7 @@ class UserModel(UserMixin):
         :param user_data: UserData
         """
         self.id         = user__data.username
+        self.password   = user__data.password
         self.admin      = user__data.admin
 
     @staticmethod
@@ -24,6 +26,7 @@ class UserModel(UserMixin):
         user_doc = get_user(user_id)
         user_data = UserData(
             username=user_doc.id,
+            password=user_doc.to_dict()['password'],
             admin   =user_doc.to_dict()['admin'],
         )
 

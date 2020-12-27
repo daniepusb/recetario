@@ -15,6 +15,7 @@ import app
 @auth.route('signup', methods=['GET','POST'])
 @login_required
 def signup():
+    ##TODO: verificar que al momento de generar la contraseña esté sumando un SAL, un código adicional al final para que no sea reversible y mas seguro
     if ( session['admin'] ):
         signup__form = LoginForm()
         
@@ -37,16 +38,16 @@ def signup():
                 user = UserModel(user__data)
 
                 login_user(user)
-                flash(username +', Bienvenido', category='info')
+                flash(username +', Bienvenid@', category='info')
 
-                next = flask.request.args.get('next')
+                # next = flask.request.args.get('next')
                 # is_safe_url should check if the url is safe for redirects.
                 # See http://flask.pocoo.org/snippets/62/ for an example.
-                if not is_safe_url(next):
-                    return flask.abort(400)
+                # if not is_safe_url(next):
+                #     return flask.abort(400)
 
 
-                return redirect(url_for('recipes'))
+                return redirect(url_for('recipes.list_recipes'))
             else:
                 flash('El usuario existe.')
 
@@ -121,14 +122,14 @@ def login():
 
         if user__db is not None:
             if check_password_hash(user__db['password'], password):
-                user__data  = UserData(username=username, admin=user__db['admin'])
+                user__data  = UserData(username=username,password=password, admin=user__db['admin'])
                 user        = UserModel(user__data) 
                 
                 login_user(user, remember=False, duration=None, force=False, fresh=True)
                 session['username'] = username
                 session['admin']    = user.admin
                 
-                flash(username +', Bienvenido de nuevo', category='info')
+                flash(username +', Bienvenid@ de nuevo', category='info')
                 
                 response = make_response(redirect('/recipes/all'))
             else:
