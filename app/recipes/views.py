@@ -226,7 +226,7 @@ def update(recipe):
             title       = recipe
             description = formData.get('description')
             instructions= formData.get('instructions')
-            servings    = formData.get('servings')
+            servings    = int(formData.get('servings'))
             imageURL    = formData.get('imageURL')
             
             context['form']     = formData
@@ -249,14 +249,18 @@ def update(recipe):
                 return  render_template('recipe_update.html', **context) 
 
 
-@recipes.route('estimate/<recipe>/<amount>', methods=['GET'])
+@recipes.route('estimate', methods=['POST'])
 @login_required
-def estimate(recipe,amount):
+def estimate():
     ##TODO: saber como hacer un buen try catch
     ##TODO: amount debe ser siempre mayor a cero y no puede ser float, chequearlo
-
     check_admin()
-    flash('Calculando Costos')
+
+    formData    = request.form
+    recipe      = formData.get('recipe')
+    amount      = formData.get('amount') 
+
+    # flash('Calculando Costos')
     context = {
         'navbar'        : 'recipes',
         'title'         : recipe,
@@ -265,7 +269,7 @@ def estimate(recipe,amount):
     }
     
     
-    if request.method== 'GET':
+    if request.method== 'POST':
         #conocer el valor de cada ingrediente
         #dividir cantidad del ingrediente receta entre cantidad presentacion ingrediente 
         recipe__ingredients__db2    = get_recipe_ingredients(recipe)
@@ -312,7 +316,7 @@ def estimate(recipe,amount):
         
         context['ingredients']      = recipe__ingredients__db
         context['recipe__db']       = recipe__db
-        context['servings']         = int (recipe__db.get('servings') * int(amount))
+        context['servings']         = int(recipe__db.get('servings')) * int(amount)
         context['amount']           = amount
         context['total']            = total
         ##TODO: cuando se calcula las porciones no debe dar un numero float, hay que chequear eso

@@ -9,46 +9,39 @@
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-heading">Panel de visualizacion {{title}}</div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Ingrediente</th>					
-                        <th>Cantidad necesaria</th>		
-                        <th>Cantidad de la presentacion</th>
-                        <th>Unidad</th>					
-                        <th>Cantidad a comprar</th>
-                        <th>Precio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for i in ingredients  %}
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>{{i.id}}</td>
-                        <td>{{ info[i.id].get('newQuantity') }}</td>
-                        <td>{{ info[i.id].get('quantity') }}</td>
-                        <td>{{i.get('unit')}}</td>
-                        <td>{{ info[i.id].get('newNeed') }}</td>
-                        <td>{{ info[i.id].get('newPrice') }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ingrediente</th>					
+                            <th>Cantidad necesaria</th>		
+                            <th>Cantidad de la presentacion</th>
+                            <th>Unidad</th>					
+                            <th>Cantidad a comprar</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in ingredients  %}
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>{{i.id}}</td>
+                            <td>{{ info[i.id].get('newQuantity') }}</td>
+                            <td>{{ info[i.id].get('quantity') }}</td>
+                            <td>{{i.get('unit')}}</td>
+                            <td>{{ info[i.id].get('newNeed') }}</td>
+                            <td>{{ info[i.id].get('newPrice') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
         </div>
+        <hr>
         <div class="panel panel-default">
             <div class="panel-heading">Panel de totalizacion</div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>					
-                        <th></th>		
                         <th>Cantidad solicitada</th>
                         <th>Porciones totales</th>					
                         <th>Total costo</th>
@@ -56,23 +49,39 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row"></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>					
-                        <th></th>		
-                        <th><input type="number" name="amount" id="" step="1" min="1" onchange="showSubmitBtn()" value="{{amount}}" /></th>
+                        <td>{{ amount }}</td>
                         <td>{{ servings }}</td>
                         <td>{{ total }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        
     </div>
+    <hr>
+    <br>
+    <!-- formulario -->
+    <div class="container">
+        {% if admin %}
+            <form id="recipe_estimate_form" class="form" method="POST" action="/recipes/estimate" role="form"  aria-roledescription="calcular costo de cantidad solicitada">
+                <label for="inputAmount" class="control-label">Cantidad de recetas a calcular</label>
+                <div class="form-group">
+                    <div class="col-sm-2">
+                        <input type="number" name="amount" class="form-control"  placeholder="Cantidad de recetas a calcular" step="1" min="1" value="1" required>
+                    </div>
+                    <!-- <input class="btn btn-primary" type="number" name="amount" value=1> -->
+                    <input hidden type="text" name="recipe" value="{{title}}">
+                    <input type="submit" class="btn btn-primary" role="submit button" aria-roledescription="" value="Calcular nuevamente" >
+                </div>
+            </form>
+        {% endif %}
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <script>
+
+        function showSubmitBtn(){
+            
+        }
+    </script>
 {% endblock %}
 
 

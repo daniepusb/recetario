@@ -101,10 +101,14 @@
                 </fieldset>
             </form>
             {% if admin %}
-            <div id="go_edit_btn" class="text-left" >
-                <button type="button"  class="btn btn-success" onclick="make_editable()" aria-roledescription="edit" >Editar</button>
-                <a class="btn btn-primary" href="{{ url_for('recipes.estimate',recipe=title, amount=1)}}" role="button" aria-roledescription="estimate" >Calcular costo</a>
-            </div>
+            <form id="recipe_estimate_form" class="form" method="POST" role="form" action="/recipes/estimate">
+                <div id="go_edit_btn" class="text-left" >
+                    <button type="button"  class="btn btn-success" onclick="make_editable()" aria-roledescription="edit" >Editar</button>
+                    <input hidden type="number" name="amount" value=1>
+                    <input hidden type="text" name="recipe" value="{{title}}">
+                    <input type="submit" class="btn btn-primary" role="button" aria-roledescription="estimate" value="Calcular costo de ingredientes" >
+                </div>
+            </form>
             {% endif %}
             <br><br><br>
 
