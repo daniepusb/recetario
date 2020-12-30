@@ -37,12 +37,13 @@ class UserModel(UserMixin):
 #RECIPES Collection(recipes)
 #
 class RecipeData:
-    def __init__(self, title, description, instructions, servings, imageURL, ingredients):
+    def __init__(self, title, description, instructions, servings, imageURL, ingredients, product):
         self.title          = title
         self.description    = description
         self.instructions   = instructions
         self.ingredients    = ingredients 
         self.servings       = servings 
+        self.product        = product 
         self.imageURL       = imageURL 
 
 
@@ -56,6 +57,7 @@ class RecipeModel():
         self.instructions   = recipe.instructions
         self.servings       = recipe.servings
         self.imageURL       = recipe.imageURL
+        self.product        = recipe.product 
         self.ingredients    = recipe.ingredients
 
         
@@ -69,6 +71,7 @@ class RecipeModel():
             instructions= recipe__bd.to_dict()['instructions'],
             servings    = recipe__bd.to_dict()['servings'],
             imageURL    = recipe__bd.to_dict()['imageURL'],
+            product     = recipe__bd.to_dict()['product'],
             ingredients = recipe__bd.to_dict()['ingredients'],
         )
       
@@ -140,3 +143,88 @@ class IngredientsModel():
             unit            = ingredient__bd.unit,
             is_gluten_free  = ingredient__bd.is_gluten_free,
         )
+
+
+
+
+
+#
+#STORES Collection(stores)
+#
+class StoreData:
+    def __init__(self, storeID, name, address, contactNumber, email, telegram, instagram ):
+        self.storeID        = storeID
+        self.name           = name
+        self.address        = address
+        self.contactNumber  = contactNumber
+        self.email          = email 
+        self.telegram       = telegram 
+        self.instagram      = instagram 
+
+
+class StoreModel():
+    def __init__(self, storeData):
+        """
+        :param store: storeData
+        """
+        self.id             = storeData.storeID
+        self.name           = storeData.name
+        self.address        = storeData.address
+        self.contactNumber  = storeData.contactNumber
+        self.email          = storeData.email 
+        self.telegram       = storeData.telegram 
+        self.instagram      = storeData.instagram 
+
+
+    @staticmethod
+    def query(storeID):
+        store__bd  = get_store(storeID)
+        store__data= StoreData(
+            id              = store__bd.storeID,
+            name            = store__bd.to_dict()['name'],
+            address         = store__bd.to_dict()['address'],
+            contactNumber   = store__bd.to_dict()['contactNumber'],
+            email           = store__bd.to_dict()['email'],
+            telegram        = store__bd.to_dict()['telegram'],
+            instagram       = store__bd.to_dict()['instagram'],
+        )
+      
+        return StoreModel(store__data)
+
+
+
+
+#
+#ORDERS Collection(orders)
+#
+class OrderData:
+    def __init__(self, store, deliveryDate, products):
+        self.store          = store
+        self.deliveryDate   = deliveryDate
+        self.products       = products 
+
+
+class OrderModel():
+    def __init__(self, orderData):
+        """
+        :param order: orderData
+        """
+        self.id             = orderData.id
+        self.store          = orderData.store
+        self.deliveryDate   = orderData.deliveryDate
+        self.products       = orderData.products
+        
+
+    @staticmethod
+    def query(order):
+        order__bd  = get_order(order)
+        order__data= OrderData(
+            id          = order__bd.id,
+            store       = order__bd.to_dict()['store'],
+            deliveryDate= order__bd.to_dict()['deliveryDate'],
+            products    = order__bd.to_dict()['products'],
+        )
+      
+        return OrderModel(order__data)
+
+

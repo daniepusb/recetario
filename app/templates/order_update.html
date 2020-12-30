@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% import 'macros.html' as macros %}
+
+{% block title %} 
+    {{super()}}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!-- inicio del form -->
+        <form id="order_create_form" class="form form-horizontal" method="POST" role="form" action="/orders/update">
+            <fieldset id="fieldsetmyFormControl" disabled>
+                <legend>{{ form.get('store') }} >> {{ form.get('deliveryDate') }}</legend>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="form-group">
+                        <label for="inputStore" class="col-sm-4 control-label">Local</label>
+                        <div class="col-sm-8">
+                            <select name="store-name" class="form-control" id="storeName">
+                                {% if form %}
+                                    <option selected aria-selected="true">{{ form.get('store') }}</option>
+                                {% endif %}
+                                {% for i in stores__list  %}  
+                                    {{macros.render_dropdown(i.get('name'))}}
+                                {% endfor  %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDeliveryDate" class="col-sm-4 control-label">Fecha de entrega</label>
+                        <div class="col-sm-8">
+                            <input name="delivery-date" type="datetime-local" id="deliveryDate" {% if form %} value="{{ form.get('deliveryDate') }}"   {% endif %} />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- segundo bloque: products -->
+                
+                <hr class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div id="products__container" class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div id="product-row" class="form-group row">
+                        {% if products %} 
+                            {% for i in products  %}  
+                                <div class="col-sm-12 col-lg-12 col-md-12">
+                                    <label class="col-xs-12 col-sm-5 col-md-5 col-lg-5">Producto</label>
+                                    <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
+                                </div>
+                                <div class="col-sm-12 col-lg-12 col-md-12">
+                                    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                        <input type="text" name="product-name" value="{{i.id}}">
+                                    </div>
+                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                        <input type="number" class="form-control" name="product-quantity" placeholder="5"  value="{{i.get('quantity')}}" required  >
+                                    </div>
+                                    <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1" aria-label="trash">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            {% endfor  %}
+                        {% endif  %}
+                    </div>
+                </div>
+                
+                <hr class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div id="buttons_box" class="text-right" hidden>
+                    <button type="submit" id="go_back_btn" name='go_back_btn'   class="btn btn-info"                                aria-roledescription="go back button">Atras</button>
+                    <button type="button" id="add_product_btn"                  class="btn btn-primary" onclick="addProduct()"      aria-roledescription="add ingredient">Agregar Producto</button>
+                    <button type="submit" id="submit_btn"                       class="btn btn-success"                             aria-roledescription="save form">Guardar</button>
+                </div>
+            </fieldset>   
+        </form>
+
+
+        {% if admin %}
+        <div id="go_edit_btn" class="text-left" >
+            <button type="button"  class="btn btn-success" onclick="make_editable()" aria-roledescription="edit" >Editar</button>
+            <input hidden type="number" name="amount" value=1>
+            <input hidden type="text" name="recipe" value="{{title}}">
+        </div>
+        {% endif %}
+
+
+        <!-- inicio trozo de codigo oculto para clonar con addProduct -->
+        <div id="product__hidden" class="form-group row" hidden>
+            <div class="col-sm-12 col-lg-12 col-md-12">
+                <label class="col-xs-12 col-sm-5 col-md-5 col-lg-5">Producto</label>
+                <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3">Cantidad</label>
+            </div>
+            <div class="col-sm-12 col-lg-12 col-md-12">
+                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                    <select name="product-name" class="form-control" id="">
+                        {% for i in products__list  %}  
+                            {{macros.render_dropdown(i)}}
+                        {% endfor  %}
+                    </select>
+                </div>
+                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                    <input type="number" class="form-control" name="product-quantity" placeholder="5" {% if recipe__config %} step="{{recipe__config.get('step')}}"  min="{{recipe__config.get('min')}}"   {% endif %} required  >
+                </div>
+                <button onclick="deleteIngredient(this)" type="button" class="btn btn-default col-xs-1 col-sm-1 col-md-1 col-lg-1" aria-label="trash">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <!-- FIN trozo de codigo oculto para clonar con addProduct -->
+
+        <!-- fin del form -->
+    </div>
+
+    <!-- Scripts -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.0/dist/js/datepicker.min.js"></script> -->
+
+
+    <script type='text/javascript'>
+        document.getElementById("storeName").focus();
+        // const elemDatePicker    = document.querySelector('input[name="delivery-date"]');
+        // const datepicker        = new Datepicker(elemDatePicker, {
+        //     // ...options
+        // });
+
+
+        function addProduct() {
+            var parentToAppend  = document.getElementById("products__container");
+            var original        = document.getElementById("product__hidden");
+            var clone           = original.cloneNode(true); 
+            clone.id            = "";  
+            clone.hidden        = false
+            parentToAppend.appendChild(clone);
+        }
+
+        function deleteIngredient(e) {
+            // console.log(e)
+            // console.log(e.parentNode.parentNode)
+            // console.log( e.parentNode.parentNode.getElementsByTagName("button"))
+            e.parentNode.parentNode.remove()
+        }
+
+        function make_editable() {
+            document.getElementById('buttons_box').hidden = false
+            document.getElementById('go_edit_btn').hidden = true
+            let fieldset  = document.getElementById('fieldsetmyFormControl')
+            
+            fieldset.disabled   = !fieldset.disabled
+            console.log("Hacer editable esta receta")
+        }
+    </script>
+   
+
+    
+{% endblock %}
+
+
+
+

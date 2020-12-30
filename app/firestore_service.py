@@ -1,3 +1,4 @@
+import datetime
 import firebase_admin
 #from firebase_admin import credentials
 from firebase_admin import firestore
@@ -56,6 +57,7 @@ def recipe_put(recipe):
         'instructions'  : recipe.instructions,
         'servings'      : recipe.servings,
         'imageURL'      : recipe.imageURL,
+        'product'       : recipe.product,
     })
     
     if recipe.ingredients is not None:
@@ -105,6 +107,7 @@ def recipe_update(recipe, old_recipe=None):
                 'instructions'  : recipe.instructions,
                 'servings'      : recipe.servings,
                 'imageURL'      : recipe.imageURL,
+                'product'       : recipe.product,
             }
         )
 
@@ -195,6 +198,89 @@ def get_departments():
     #return db.collection(u'recipes').where(u'capital', u'==', True).stream()
     return db.collection('departments').stream()
 
+
+
+
+#
+# ORDERS
+#
+def get_list_orders():
+    return db.collection('orders').stream()
+
+
+def get_order(id):
+    doc_ref = db.collection(u'orders').document(id)
+    try:
+        doc = doc_ref.get()
+    except google.cloud.exceptions.NotFound:
+        print('No such document!')
+        doc = None
+    return doc
+
+
+def get_order_products(orderID):
+    return db.collection(u'orders').document(orderID).collection('products').stream()
+
+
+def put_order(order):
+    order_ref = db.collection('orders').document()
+    order_ref.set({
+        'store'         : order.store,
+        'createdDate'   : datetime.datetime.now(),
+        'deliveryDate'  : order.deliveryDate,
+    })
+    
+    if order.products is not None:
+        products_ref = db.collection('orders').document(order_ref.id).collection('products')
+        for k,v in order.products.items():
+            products_ref.document(k).set(v)
+
+    return order_ref.id
+
+
+#
+# STORES
+#
+def get_list_stores():
+    return db.collection('stores').stream()
+
+
+def get_store(id):
+    doc_ref = db.collection(u'stores').document(id)
+    try:
+        doc = doc_ref.get()
+    except google.cloud.exceptions.NotFound:
+        print('No such document!')
+        doc = None
+    return doc
+
+
+def put_store(store):
+    store_collection_ref = db.collection('stores')
+    store_collection_ref.add({
+        'name'          : store.name,
+        'address'       : store.address,
+        'contactNumber' : store.contactNumber,
+        'email'         : store.email,
+        'telegram'      : store.telegram,
+        'instagram'     : store.instagram,
+    })
+
+
+def update_store(store, old_store=None):
+    if old_store is None:
+        store_collection_ref = db.collection('stores').document(store.storeID)
+        store_collection_ref.set({
+            'name'          : store.name,
+            'address'       : store.address,
+            'contactNumber' : store.contactNumber,
+            'email'         : store.email,
+            'telegram'      : store.telegram,
+            'instagram'     : store.instagram,
+        })
+    else:
+        ## TODO: delete old_store and call put_store(store):
+        pass
 
 """
 

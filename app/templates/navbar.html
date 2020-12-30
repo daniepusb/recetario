@@ -24,7 +24,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="{{ url_for('recipes.new_recipe') }}">Registrar receta</a></li>
+                                <li><a href="{{ url_for('recipes.create') }}">Registrar receta</a></li>
                             </ul>
                         </li>
                         <li class="dropdown" id="ingredients__li">
@@ -35,10 +35,27 @@
                                 <li><a href="{{ url_for('ingredients.create') }}">Registrar Ingrediente</a></li>
                             </ul>
                         </li>
+                        <li class="dropdown" id="orders__li">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-roledescription="estimar" aria-haspopup="true" aria-expanded="false">Pedidos <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('orders.list_orders') }}">Historial de Pedidos</a></li>
+                                <!-- <li><a href="{{ url_for('orders.simulate') }}">Simular pedido semanal</a></li> -->
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('orders.create') }}">Registrar pedido</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown" id="stores__li">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-roledescription="estimar" aria-haspopup="true" aria-expanded="false">Locales <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('stores.list_stores') }}">Locales</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('stores.create') }}">Registrar Local</a></li>
+                            </ul>
+                        </li>
                         <li class="dropdown" id="guests__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Usuarios <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="{{ url_for('auth.signup') }}">Registrar persona</a></li>
+                                <li><a href="{{ url_for('auth.signup') }}">Registrar usuario</a></li>
                             </ul>
                         </li>
                         

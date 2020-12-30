@@ -2,6 +2,10 @@
     <li>{{ todo.id }}</li>
 {% endmacro %}
 
+{% macro render_dropdown(r) %}
+    <option>{{r}}</option>
+{% endmacro %}
+
 {% macro render_recipes(r) %}
     <li class="list-group-item">
         <div class="media">
@@ -11,7 +15,40 @@
                 </a>
             </div>
             <div class="media-body">
-                <h4 class="media-middle"><a href="{{ url_for('recipes.select', recipe=r.id) }}">{{ r.id }}</a></h4>
+                <h4 class="media-middle">
+                    <a href="{{ url_for('recipes.select', recipe=r.id) }}">{{ r.id }}</a>
+                    <span>{% if r.get('product') %} (Producto Terminado) {% endif %}</span>
+                </h4>
+            </div>
+        </div>
+    </li>
+{% endmacro %}
+
+{% macro render_orders(r) %}
+    <li class="list-group-item">
+        <div class="media">
+            <div class="media-left media-middle">
+                <a href="{{ url_for('orders.select', orderID=r.id) }}" >
+                    <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="{{ r.id }}" style="width:20px;height:20px;">
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-middle"><a href="{{ url_for('orders.select', orderID=r.id) }}">{{ r.get('store') }} >> {{ r.get('deliveryDate') }}</a></h4>
+            </div>
+        </div>
+    </li>
+{% endmacro %}
+
+{% macro render_stores(r) %}
+    <li class="list-group-item">
+        <div class="media">
+            <div class="media-left media-middle">
+                <a href="{{ url_for('stores.select', storeID=r.get('name')) }}" >
+                    <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="{{ r.get('name') }}" style="width:20px;height:20px;">
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-middle"><a href="{{ url_for('stores.select', storeID=r.id) }}">{{ r.get('name')}}</a></h4>
             </div>
         </div>
     </li>
@@ -32,16 +69,13 @@
     </li>
 {% endmacro %}
 
+
 {% macro render_ingredient_properties(r) %}
     <li>{{ r }}</li>
 {% endmacro %}
 
 {% macro render_recipe_content(k,v) %}
     <li><b>{{ k }} :</b> {{v}}</li> 
-{% endmacro %}
-
-{% macro render_dropdown_ingredients(r) %}
-    <option>{{r.id}}</option>
 {% endmacro %}
 
 {% macro render_dropdown_ingredients_selected(r,opt=False) %}
@@ -51,3 +85,4 @@
         <option>{{r.id}}</option>
     {% endif %}
 {% endmacro %}
+
