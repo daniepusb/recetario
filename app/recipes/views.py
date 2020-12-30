@@ -29,15 +29,14 @@ def ajax():
 
 @recipes.route('create', methods=['GET','POST'])
 @login_required
-def new_recipe():
+def create():
     ##TODO: cuando la receta viene sin nombre de receta lanza un error de google, debo capturarlo con un try
     title       = 'Nueva receta'
     context = {
         'navbar'            : 'recipes',
         'title'             : title,
         'admin'             : session['admin'],
-        'ingredients__list'  : get_list_ingredients(),
-       
+        'ingredients__list' : get_list_ingredients(),
     }
     
     if request.method== 'POST':
@@ -49,7 +48,10 @@ def new_recipe():
         instructions= formData.get('instructions')
         servings    = int (formData.get('servings'))
         imageURL    = formData.get('imageURL')
-        
+        if formData.get('product'):
+            product = True
+        else:
+            product = False
         context['form']     = formData
         #context["IMAGE_UPLOADS"] = 'C://Users/DPedroza/Documents/Daniel Pedroza/workspace/2020/recetario/imagesToUpload'
 
@@ -100,7 +102,7 @@ def new_recipe():
             ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
         # #print(ingredients)
 
-        recipe__data= RecipeData(title, description, instructions, servings, imageURL, ingredients)
+        recipe__data= RecipeData(title, description, instructions, servings, imageURL, ingredients, product)
         # print(recipe__data)
 
         recipe_db   = get_recipe(recipe__data.title)
@@ -111,7 +113,7 @@ def new_recipe():
             return redirect(url_for('recipes.list_recipes'))
         else:
             flash('Ya existe Receta')
-
+            ##TODO:revisar template porque está fallando los ingredientes y están fallando el javascript
 
         return  render_template('recipe_create.html', **context) 
 
@@ -127,9 +129,10 @@ def list_recipes():
 
         context = {
             ##TODO: colocar un try catch
+            'navbar'    : 'recipes',
+            'cil'       : 'Ver recetas',
             'recipes'   : get_recipes(),
             'admin'     : session['admin'],
-            'navbar'    : 'recipes',
         }
 
         return render_template('recipes_list.html', **context)    
@@ -229,6 +232,11 @@ def update(recipe):
             servings    = int(formData.get('servings'))
             imageURL    = formData.get('imageURL')
             
+            if formData.get('product'):
+                product = True
+            else:
+                product = False
+                
             context['form']     = formData
             context['zipped']   = zip( formData.getlist('ingredients-name'),formData.getlist('ingredients-quantity'),formData.getlist('ingredients-unit'))
             
@@ -236,7 +244,7 @@ def update(recipe):
                 ingredients[ k[0] ] = { 'quantity':k[1], 'unit': k[2]}
             #print(ingredients)
 
-            recipe__data    = RecipeData(title, description, instructions, servings, imageURL, ingredients)
+            recipe__data    = RecipeData(title=title, description=description, instructions=instructions, servings=servings, imageURL=imageURL, ingredients=ingredients, product=product)
             recipe_db       = get_recipe(recipe__data.title)
             print(recipe__data)
 

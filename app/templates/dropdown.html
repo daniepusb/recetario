@@ -2,6 +2,6 @@
 
 {% if ingredients__list %} 
     {% for r in ingredients__list  %}  
-        {{ macros.render_dropdown_ingredients(r) }}
+        {{ macros.render_dropdown(r.id) }}
     {% endfor %}
 {% endif %}
