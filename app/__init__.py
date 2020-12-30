@@ -6,6 +6,8 @@ from .config        import Config
 #from .admin         import admin
 from .auth          import auth
 from .ingredients   import ingredients
+from .orders        import orders
+from .stores        import stores
 from .recipes       import recipes
 from .models        import UserModel, RecipeModel   
 
@@ -28,6 +30,8 @@ def create_app():
     #Es necesario registrar los blueprints
     #app.register_blueprint(admin)
     app.register_blueprint(auth)
+    app.register_blueprint(orders)
+    app.register_blueprint(stores)
     app.register_blueprint(recipes)
     app.register_blueprint(ingredients)
 
