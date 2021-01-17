@@ -6,7 +6,7 @@ from werkzeug.security  import generate_password_hash,  check_password_hash
 from . import auth
 from app.forms              import LoginForm, GuestForm 
 from app.common_functions   import generarQR, isLogin
-from app.firestore_service  import get_user, user_put, get_guest, guest_put
+from app.firestore_service  import get_user, user_put, get_guest, guest_put, get_user_with_tenant
 from app.models             import UserData, UserModel, GuestData, GuestModel
 from datetime               import timedelta
 
@@ -17,44 +17,37 @@ import app
 def signup():
     ##TODO: verificar que al momento de generar la contraseña esté sumando un SAL, un código adicional al final para que no sea reversible y mas seguro
     if ( session['admin'] ):
-        signup__form = LoginForm()
-        
         context = {
-            'signup__form'  : signup__form,
-            'admin'         : session['admin'],
+            'admin': session['admin'],
         }
 
-        if signup__form.validate_on_submit():
-            username = signup__form.username.data
-            password = signup__form.password.data
+        if request.method == 'POST':
+            formData = request.form
+            username = formData.get('username').upper()
+            password = formData.get('password')
+            fullname = formData.get('fullname')
+            gender   = formData.get('gender').upper()
 
-            user__doc = get_user(username)
+            # print(formData)
+            context['form']=formData
 
-            if user__doc.to_dict() is None:
+            # user__db = get_user(username).to_dict()
+            user__db = get_user_with_tenant(username,session['tenant'])
+            if user__db.to_dict() is None:
                 password__hash  = generate_password_hash(password)
-                user__data      = UserData(username,password__hash)
+                user__data      = UserData(username=username, password=password__hash, admin=False, tenant=session['tenant'], fullname=fullname, gender=gender)
+
                 user_put(user__data)
-
-                user = UserModel(user__data)
-
-                login_user(user)
-                flash(username +', Bienvenid@', category='info')
-
-                # next = flask.request.args.get('next')
-                # is_safe_url should check if the url is safe for redirects.
-                # See http://flask.pocoo.org/snippets/62/ for an example.
-                # if not is_safe_url(next):
-                #     return flask.abort(400)
-
-
-                return redirect(url_for('recipes.list_recipes'))
+               
+                flash('Usuario registrado', category='info')
+                return redirect(url_for('orders.list_orders'))
             else:
                 flash('El usuario existe.')
-
-
+                
         return render_template('signup.html', **context)
     else: 
-        return redirect(url_for('recipes.list_recipes'))
+        flash('No tiene permisos de administrador', category='info')
+        return redirect(url_for('orders.list_orders'))
 
 
 @auth.route('signupGuest', methods=['GET','POST'])
@@ -118,7 +111,8 @@ def login():
         # print(formData)
         context['form'] = formData
 
-        user__db = get_user(username).to_dict()
+        # user__db = get_user(username).to_dict()
+        user__db = get_user_with_tenant(username,tenant).to_dict()
 
         if user__db is not None:
             if check_password_hash(user__db['password'], password):
@@ -128,19 +122,19 @@ def login():
 
                     login_user(user, remember=False, duration=None, force=False, fresh=True)
                     session['tenant']   = user.tenant
-                    session['username'] = username
+                    session['username'] = user.id
                     session['admin']    = user.admin
                     session['fullname'] = user.fullname
                     session['gender']   = user.gender
                     
-                    print(session)
+                    # print(session)
 
                     if user.gender =='male':
                         flash(user.fullname +', Bienvenido de nuevo', category='info')
                     elif user.gender =='female':
                         flash(user.fullname +', Bienvenida de nuevo', category='info')
 
-                    response = make_response(redirect('/recipes/all'))
+                    response = make_response(redirect('/orders'))
                 else:
                     response = render_template('login.html', **context)
             else:
@@ -155,7 +149,7 @@ def login():
 
     #si el usuario está logueado, redireccionar a recipes
     if current_user.is_authenticated:
-        response = make_response(redirect('/recipes/all'))
+        response = make_response(redirect('/orders'))
 
     return response
 
@@ -163,8 +157,12 @@ def login():
 @auth.route('/logout', methods=['GET'])
 @login_required
 def logout():
-    session.pop('username')
     session.pop('admin')
+    session.pop('fullname')
+    session.pop('gender')
+    session.pop('tenant')
+    session.pop('username')
+
     ##TODO: saber si es necesario o no lo session.pop()
     logout_user()
     flash('Logout done')

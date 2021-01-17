@@ -38,11 +38,11 @@ def isLogin():
     return is__login
 
 
-
-
 def check_admin():
     """
     Prevent non-admins from accessing the page
     """
     if not current_user.admin:
-        abort(403)
+        return False
+    else:
+        return True

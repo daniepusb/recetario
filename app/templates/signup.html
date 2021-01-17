@@ -8,9 +8,24 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="container">
-        {{ wtf.quick_form(signup__form) }}
+    <div class="container center">
+        <form id="signup_form" class="form-signin form form-horizontal" method="POST" role="form" action="/auth/signup">
+            <legend>Registrar usuario</legend>
+            <label for="inputEmail" class="sr-only">Usuario</label>
+            <input id="inputUsername" name="username" type="text"  class="form-control" placeholder="Usuario" required {% if form %} value="{{form.get('username')}}" {% endif %} style="text-transform:uppercase">
+            
+            <label for="inputPassword" class="sr-only">Contraseña</label>
+            <input id="inputPassword" name="password" type="password" class="form-control" placeholder="Password" required>
+            
+            <br>
+            <label for="inputFullname" class="sr-only">Nombre completo</label>
+            <input id="inputFullname" name="fullname" type="text"  class="form-control" placeholder="Nombre completo" required {% if form %} value="{{form.get('fullname')}}" {% endif %} >
+            
+            <label class="radio-inline"><input type="radio" name="gender" checked  value='male'>male</label>
+            <label class="radio-inline"><input type="radio" name="gender" value='female'>female</label>
+            <br><br>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Agregar usuario</button>
+        </form>
     </div>
 
 {% endblock %}

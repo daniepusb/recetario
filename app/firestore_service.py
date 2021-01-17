@@ -1,6 +1,6 @@
 import datetime
 import firebase_admin
-#from firebase_admin import credentials
+from flask import session
 from firebase_admin import firestore
 
 #credential = credentials.ApplicationDefault()
@@ -14,25 +14,31 @@ db = firestore.client()
 def get_users():
     return db.collection('users').get()
 
-
 def get_user(username):
     return db.collection('users').document(username).get()
 
+def get_user_with_tenant(username,tenant):
+    return db.collection('tenant').document(tenant).collection('users').document(username).get()
 
 def user_put(user__data):
     user_ref = db.collection('users').document(user__data.username)
-    user_ref.set({'password': user__data.password,'admin': False})
+    user_ref.set({'password': user__data.password,'admin': False, 'tenant':session['tenant'], 'gender':user__data.gender, 'fullname':user__data.fullname})
+
+    user_ref = db.collection('tenant').document(session['tenant']).collection('users').document(user__data.username)
+    user_ref.set({'password': user__data.password,'admin': False, 'tenant':session['tenant'], 'gender':user__data.gender, 'fullname':user__data.fullname})
+
+
 
 #
 #RECIPES
 #
 def get_recipes():
-    #return db.collection(u'recipes').where(u'capital', u'==', True).stream()
-    return db.collection('recipes').stream()
+    #return db.collection(u'collection').where(u'capital', u'==', True).stream()
+    return db.collection(u'tenant').document(session['tenant']).collection('recipes').stream()
 
 
 def get_recipe(recipe):
-    doc_ref = db.collection(u'recipes').document(recipe)
+    doc_ref = db.collection('tenant').document(session['tenant']).collection(u'recipes').document(recipe)
     try:
         doc = doc_ref.get()
         # a = doc.to_dict()
@@ -47,11 +53,11 @@ def get_recipe(recipe):
 
 
 def get_recipe_ingredients(recipe):
-    return db.collection(u'recipes').document(recipe).collection('ingredients').stream()
+    return db.collection('tenant').document(session['tenant']).collection(u'recipes').document(recipe).collection('ingredients').stream()
 
 
 def recipe_put(recipe):
-    recipes_collection_ref = db.collection('recipes').document(recipe.title)
+    recipes_collection_ref = db.collection('tenant').document(session['tenant']).collection('recipes').document(recipe.title)
     recipes_collection_ref.set({
         'description'   : recipe.description,
         'instructions'  : recipe.instructions,
@@ -61,7 +67,7 @@ def recipe_put(recipe):
     })
     
     if recipe.ingredients is not None:
-        recipes_ingredients_ref = db.collection('recipes').document(recipe.title).collection('ingredients')
+        recipes_ingredients_ref = db.collection('tenant').document(session['tenant']).collection('recipes').document(recipe.title).collection('ingredients')
         for k,v in recipe.ingredients.items():
             recipes_ingredients_ref.document(k).set(v)
 
@@ -100,7 +106,7 @@ def recipe_update(recipe, old_recipe=None):
         # set new ingredients subcollections reference
         # set new content 
         
-        recipes_collection_ref = db.collection('recipes').document(recipe.title)
+        recipes_collection_ref = db.collection('tenant').document(session['tenant']).collection('recipes').document(recipe.title)
         recipes_collection_ref.set(
             {
                 'description'   : recipe.description,
@@ -111,7 +117,7 @@ def recipe_update(recipe, old_recipe=None):
             }
         )
 
-        recipes_ingredients_ref = db.collection('recipes').document(recipe.title).collection('ingredients')
+        recipes_ingredients_ref = db.collection('tenant').document(session['tenant']).collection('recipes').document(recipe.title).collection('ingredients')
         delete_collection(recipes_ingredients_ref, 100, 0)
 
         if recipe.ingredients is not None:
@@ -146,11 +152,11 @@ def delete_collection(coll_ref, batch_size, counter):
 #INGREDIENTS
 #
 def get_list_ingredients():
-    return db.collection('ingredients').stream()
+    return db.collection('tenant').document(session['tenant']).collection('ingredients').stream()
 
 
 def get_ingredient(ingredient):
-    doc_ref = db.collection(u'ingredients').document(ingredient)
+    doc_ref = db.collection('tenant').document(session['tenant']).collection(u'ingredients').document(ingredient)
     try:
         doc = doc_ref.get()
         # a = doc.to_dict()
@@ -165,13 +171,13 @@ def get_ingredient(ingredient):
 
 
 def put_ingredient(ingredient):
-    ingredient_collection_ref = db.collection('ingredients').document(ingredient.title)
+    ingredient_collection_ref = db.collection('tenant').document(session['tenant']).collection('ingredients').document(ingredient.title)
     ingredient_collection_ref.set({'price': ingredient.price, 'quantity': ingredient.quantity, 'unit': ingredient.unit, 'is_gluten_free': ingredient.is_gluten_free})
 
 
 def update_ingredient(ingredient, old_ingredient=None):
     if old_ingredient is None:
-        ingredient_collection_ref = db.collection('ingredients').document(ingredient.title)
+        ingredient_collection_ref = db.collection('tenant').document(session['tenant']).collection('ingredients').document(ingredient.title)
         ingredient_collection_ref.set({'price': ingredient.price, 'quantity': ingredient.quantity, 'unit': ingredient.unit, 'is_gluten_free': ingredient.is_gluten_free})
     else:
         ## TODO: delete old_ingredient and call put_ingredient(ingredient):
@@ -205,11 +211,11 @@ def get_departments():
 # ORDERS
 #
 def get_list_orders():
-    return db.collection('orders').stream()
+    return db.collection('tenant').document(session['tenant']).collection('orders').stream()
 
 
 def get_order(id):
-    doc_ref = db.collection(u'orders').document(id)
+    doc_ref = db.collection('tenant').document(session['tenant']).collection(u'orders').document(id)
     try:
         doc = doc_ref.get()
     except google.cloud.exceptions.NotFound:
@@ -219,11 +225,11 @@ def get_order(id):
 
 
 def get_order_products(orderID):
-    return db.collection(u'orders').document(orderID).collection('products').stream()
+    return db.collection('tenant').document(session['tenant']).collection(u'orders').document(orderID).collection('products').stream()
 
 
 def put_order(order):
-    order_ref = db.collection('orders').document()
+    order_ref = db.collection('tenant').document(session['tenant']).collection('orders').document()
     order_ref.set({
         'store'         : order.store,
         'createdDate'   : datetime.datetime.now(),
@@ -231,7 +237,7 @@ def put_order(order):
     })
     
     if order.products is not None:
-        products_ref = db.collection('orders').document(order_ref.id).collection('products')
+        products_ref = db.collection('tenant').document(session['tenant']).collection('orders').document(order_ref.id).collection('products')
         for k,v in order.products.items():
             products_ref.document(k).set(v)
 
@@ -242,11 +248,11 @@ def put_order(order):
 # STORES
 #
 def get_list_stores():
-    return db.collection('stores').stream()
+    return db.collection('tenant').document(session['tenant']).collection('stores').stream()
 
 
 def get_store(id):
-    doc_ref = db.collection(u'stores').document(id)
+    doc_ref = db.collection('tenant').document(session['tenant']).collection(u'stores').document(id)
     try:
         doc = doc_ref.get()
     except google.cloud.exceptions.NotFound:
@@ -256,7 +262,7 @@ def get_store(id):
 
 
 def put_store(store):
-    store_collection_ref = db.collection('stores')
+    store_collection_ref = db.collection('tenant').document(session['tenant']).collection('stores')
     store_collection_ref.add({
         'name'          : store.name,
         'address'       : store.address,
@@ -269,7 +275,7 @@ def put_store(store):
 
 def update_store(store, old_store=None):
     if old_store is None:
-        store_collection_ref = db.collection('stores').document(store.storeID)
+        store_collection_ref = db.collection('tenant').document(session['tenant']).collection('stores').document(store.storeID)
         store_collection_ref.set({
             'name'          : store.name,
             'address'       : store.address,
