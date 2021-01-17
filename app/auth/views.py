@@ -123,7 +123,7 @@ def login():
         if user__db is not None:
             if check_password_hash(user__db['password'], password):
                 if tenant == user__db['tenant']:
-                    user__data  = UserData(username=username,password=password, admin=user__db['admin'] )
+                    user__data  = UserData(username=username,password=password, admin=user__db['admin'], tenant=user__db['tenant'], fullname=user__db['fullname'], gender=user__db['gender'] )
                     user        = UserModel(user__data) 
 
                     login_user(user, remember=False, duration=None, force=False, fresh=True)
@@ -133,6 +133,8 @@ def login():
                     session['fullname'] = user.fullname
                     session['gender']   = user.gender
                     
+                    print(session)
+
                     if user.gender =='male':
                         flash(user.fullname +', Bienvenido de nuevo', category='info')
                     elif user.gender =='female':
