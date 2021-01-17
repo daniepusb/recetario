@@ -11,12 +11,40 @@
     {% if username %}
         <h1>Bienvenido {{username}}, tu IP es {{ user__ip }}</h1>
     {% else %}
-        <div class="container">
-            {{ wtf.quick_form(login__form) }}
+        <div class="container center">
+            <form id="login_form" class="form-signin form form-horizontal" method="POST" role="form" action="/auth/login">
+                <h2 class="form-signin-heading">Bienvenido</h2>
+                
+                <label for="inputTenant" class="sr-only">Empresa</label>
+                <input id="inputTenant" name="tenant" type="text"  class="form-control" placeholder="ID de empresa" required="" autofocus="" {% if form %} value="{{form.get('tenant')}}" {% endif %} style="text-transform:uppercase">
+                
+                <label for="inputEmail" class="sr-only">Usuario</label>
+                <input id="inputUsername" name="username" type="text"  class="form-control" placeholder="Usuario" required {% if form %} value="{{form.get('username')}}" {% endif %} style="text-transform:uppercase">
+                
+                <label for="inputPassword" class="sr-only">Contraseña</label>
+                <input id="inputPassword" name="password" type="password" id="" class="form-control" placeholder="Password" required>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" value="remember-me"> Recordarme
+                  </label>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+              </form>
+
         </div>
     {% endif %}
 
-    
+    <!-- scripts -->
+
+    <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.2.1/firebase.js" integrity="sha512-IPAWPC8WDUUXzhyTC0uZc957MUSIC/H+1qd8pvQ18pdM0oiazsSp0g1QVCIRy4ZxC1h50dWbQIxWWi/P2NMQ9w==" crossorigin="anonymous"></script> -->
+    <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.2.1/firebase-app.min.js" integrity="sha512-Wt80kYLoTCwSaluT6Uhk6DAHV3NLXYWrdJSLmBtk1V9PRogftrA1/JD9ZYA++36bbZ3qV3vJAwBrvBJYqzhbLw==" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.2.1/firebase-auth.min.js" integrity="sha512-VG0eWusDk0tOAi2JSqhNlswCD00tbpcytQ2gJEYpevGztYgMjR3PphlN84auTXUIqBsjQnh0KB5onCp14gFRdA==" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.2.1/firebase-firestore.min.js" integrity="sha512-PiY3aX3y9wFpvTNm8FfdhJWSeozJFyC8ObYBBMRRmFII/4gXZrwSdEpja5+zj1VHpc6/+z2z3mrguJPhrowwbA==" crossorigin="anonymous"></script>
+     -->
+    <!-- <script defer src="https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.23.0/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.23.0/firebase-firestore.js"></script> -->
+
 
 {% endblock %}
 

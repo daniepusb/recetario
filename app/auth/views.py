@@ -103,50 +103,57 @@ def signup_guest():
 @auth.route('login', methods=['GET','POST'])
 def login():
 
-    login__form = LoginForm()
-    template    = 'login.html'
     context = {
         'user__ip'      : session.get('user__ip'),
-        'login__form'   : login__form,
-        'template'      : template,
-        'func__redirect': '/recipes/list',
     }
+    
+    response = render_template('login.html', **context)
+    
+    if request.method == 'POST':
+        formData    = request.form
+        tenant      = formData.get('tenant').upper()
+        username    = formData.get('username').upper()
+        password    = formData.get('password')
 
-    #asi preguntamos para metodo POST
-    #No es necesario un else
-    if login__form.validate_on_submit():
-        username = login__form.username.data
-        password = login__form.password.data
+        # print(formData)
+        context['form'] = formData
 
         user__db = get_user(username).to_dict()
 
         if user__db is not None:
             if check_password_hash(user__db['password'], password):
-                user__data  = UserData(username=username,password=password, admin=user__db['admin'])
-                user        = UserModel(user__data) 
-                
-                login_user(user, remember=False, duration=None, force=False, fresh=True)
-                session['username'] = username
-                session['admin']    = user.admin
-                
-                flash(username +', Bienvenid@ de nuevo', category='info')
-                
-                response = make_response(redirect('/recipes/all'))
+                if tenant == user__db['tenant']:
+                    user__data  = UserData(username=username,password=password, admin=user__db['admin'] )
+                    user        = UserModel(user__data) 
+
+                    login_user(user, remember=False, duration=None, force=False, fresh=True)
+                    session['tenant']   = user.tenant
+                    session['username'] = username
+                    session['admin']    = user.admin
+                    session['fullname'] = user.fullname
+                    session['gender']   = user.gender
+                    
+                    if user.gender =='male':
+                        flash(user.fullname +', Bienvenido de nuevo', category='info')
+                    elif user.gender =='female':
+                        flash(user.fullname +', Bienvenida de nuevo', category='info')
+
+                    response = make_response(redirect('/recipes/all'))
+                else:
+                    response = render_template('login.html', **context)
             else:
                 flash('La informacion no coincide', category='warning')
-                response = render_template(template, **context)
+                response = render_template('login.html', **context)
         else:
             flash('El usuario no existe', category='error')
             ##TODO: customize los flash con colores
             ##TODO: quizas un mensaje diferente flash('La informacion no coincide')
-            response = render_template(template, **context)
+            response = render_template('login.html', **context)
     
 
     #si el usuario está logueado, redireccionar a recipes
     if current_user.is_authenticated:
         response = make_response(redirect('/recipes/all'))
-    else:
-        response = render_template(template, **context)
 
     return response
 

@@ -6,10 +6,14 @@ from .firestore_service import get_user, get_recipe, get_guest, get_ingredient
 #USERS Collection(users)
 #
 class UserData:
-    def __init__(self, username, password, admin=False):
+    def __init__(self, username, password, admin=False, tenant='', fullname='', gender=''):
         self.username = username
         self.password = password
         self.admin    = admin
+        self.tenant   = tenant
+        self.fullname = fullname
+        self.gender   = gender
+
 
 
 class UserModel(UserMixin):
@@ -20,6 +24,9 @@ class UserModel(UserMixin):
         self.id         = user__data.username
         self.password   = user__data.password
         self.admin      = user__data.admin
+        self.tenant     = user__data.tenant
+        self.fullname   = user__data.fullname
+        self.gender     = user__data.gender
 
     @staticmethod
     def query(user_id):
@@ -28,6 +35,9 @@ class UserModel(UserMixin):
             username=user_doc.id,
             password=user_doc.to_dict()['password'],
             admin   =user_doc.to_dict()['admin'],
+            tenant  =user_doc.to_dict()['tenant'],
+            fullname=user_doc.to_dict()['fullname'],
+            gender  =user_doc.to_dict()['gender'],
         )
 
         return UserModel(user_data)
