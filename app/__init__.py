@@ -6,6 +6,7 @@ from .config        import Config
 #from .admin         import admin
 from .auth          import auth
 from .ingredients   import ingredients
+from .inventory     import inventory
 from .orders        import orders
 from .stores        import stores
 from .recipes       import recipes
@@ -34,5 +35,6 @@ def create_app():
     app.register_blueprint(stores)
     app.register_blueprint(recipes)
     app.register_blueprint(ingredients)
+    app.register_blueprint(inventory)
 
     return app

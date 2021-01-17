@@ -288,6 +288,27 @@ def update_store(store, old_store=None):
         ## TODO: delete old_store and call put_store(store):
         pass
 
+
+
+
+#
+#INVENTORY
+#
+def get_list_inventory():
+    return db.collection('tenant').document(session['tenant']).collection('inventory').stream()
+
+def import__export_data():
+    pass
+#     from_ref= db.collection('recipes').document('POSTRE FRIO DE LIMON').collection('ingredients').stream()
+#     to_ref  = db.collection('tenant').document('REFLACAKE').collection('recipes').document('POSTRE FRIO DE LIMON').collection('ingredients')
+    
+#     for doc in from_ref:
+#         to_ref.document(doc.id).set(doc.to_dict())
+        
+
+
+
+
 """
 
 def get_todos(user_id):

@@ -135,7 +135,7 @@ class IngredientData:
 class IngredientsModel():
     def __init__(self, ingredient):
         """
-        :param guest_data: GuestData
+        :param ingredient: IngredientData
         """
         self.id             = ingredient.title
         self.price          = ingredient.price
@@ -238,3 +238,23 @@ class OrderModel():
         return OrderModel(order__data)
 
 
+
+
+
+#
+#INVENTORY Collection(inventory)
+#
+class InventoryData:
+    def __init__(self, products, ingredients):
+        self.products       = products
+        self.ingredients    = ingredients
+
+class InventoryModel():
+    def __init__(self, inventory):
+        """
+        :param guest_data: InventoryData
+        """
+        self.id             = inventory.doc
+        self.products       = inventory.products
+        self.ingredients    = inventory.ingredients
+    
