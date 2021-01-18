@@ -11,7 +11,11 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="{{ url_for('recipes.list_recipes') }}">
-                <img id="app__logo" src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="Platzi logo">
+                {% if session['tenantImageURL'] %}
+                    <img id="app__logo" src="{{ session['tenantImageURL'] }}" alt="Logo">
+                {% else %}
+                    <img id="app__logo" src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="Platzi logo">
+                {% endif %}
             </a>
         </div>
 

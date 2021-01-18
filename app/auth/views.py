@@ -6,7 +6,7 @@ from werkzeug.security  import generate_password_hash,  check_password_hash
 from . import auth
 from app.forms              import LoginForm, GuestForm 
 from app.common_functions   import generarQR, isLogin
-from app.firestore_service  import get_user, user_put, get_guest, guest_put, get_user_with_tenant
+from app.firestore_service  import get_user, user_put, get_guest, guest_put, get_user_with_tenant, get_tenat_info
 from app.models             import UserData, UserModel, GuestData, GuestModel
 from datetime               import timedelta
 
@@ -121,11 +121,19 @@ def login():
                     user        = UserModel(user__data) 
 
                     login_user(user, remember=False, duration=None, force=False, fresh=True)
-                    session['tenant']   = user.tenant
-                    session['username'] = user.id
-                    session['admin']    = user.admin
-                    session['fullname'] = user.fullname
-                    session['gender']   = user.gender
+                    # search tenant info (like imageURL)
+                    tenant = get_tenat_info(tenant)
+
+
+                    ##TODO: llamar a una funcion que agregue todos estos
+                    ##TODO: crear una funcion que los quite y usar esa funcion en log_out
+                    session['admin']            = user.admin
+                    session['fullname']         = user.fullname
+                    session['gender']           = user.gender
+                    session['tenant']           = user.tenant
+                    session['tenantImageURL']   = tenant.get('imageURL')
+                    session['username']         = user.id
+                    
                     
                     # print(session)
 

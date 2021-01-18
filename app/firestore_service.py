@@ -306,6 +306,12 @@ def import__export_data():
 #         to_ref.document(doc.id).set(doc.to_dict())
         
 
+#
+#TENANT
+#
+def get_tenat_info(tenant):
+    return db.collection('tenant').document(tenant).get()
+
 
 
 
