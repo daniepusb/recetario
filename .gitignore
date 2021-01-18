@@ -198,3 +198,4 @@ Temporary Items
 .apdisk
 
 # app/admin*
+app/config.py
