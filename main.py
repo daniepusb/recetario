@@ -96,20 +96,12 @@ def index():
 @app.route('/api/import', methods=['GET'])
 def importJson():
     try:
-        #buscar la referencia origen
-        #buscar la referencia destino
-        #set
-        import__export_data()
-        
-        # docs    = import_json()
-        
-        # for doc in docs:
-        #     print(u'{} => {}'.format(doc.id, doc.to_dict()))
+        # import__export_data()
 
         return {'message': 'Done'},200
     except Exception as inst:
         print(type(inst))    # the exception instance
         print(inst.args)     # arguments stored in .args
         print(inst)          # __str__ allows args to be printed directly,
-                            # but may be overridden in exception subclasses
+                             # but may be overridden in exception subclasses
         return {'message': 'Error importing or exporting data'},400
