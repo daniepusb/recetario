@@ -23,14 +23,17 @@
             <ul id="class__navbar__active" class="nav navbar-nav" aria-active="{{navbar}}__li">
                 {% if current_user.is_authenticated %}
                     {% if admin %}
-                        <li class="dropdown" id="recipes__li">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Recetas <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="{{ url_for('recipes.create') }}">Registrar receta</a></li>
-                            </ul>
-                        </li>
+                        {% if session['tenantPermits'].get('recipes') %}
+                            <li class="dropdown" id="recipes__li">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Recetas <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="{{ url_for('recipes.create') }}">Registrar receta</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                        {% if session['tenantPermits'].get('ingredients') %}
                         <li class="dropdown" id="ingredients__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ingredientes <span class="caret"></span></a>
                             <ul class="dropdown-menu">
@@ -39,6 +42,8 @@
                                 <li><a href="{{ url_for('ingredients.create') }}">Registrar Ingrediente</a></li>
                             </ul>
                         </li>
+                        {% endif %}
+                        {% if session['tenantPermits'].get('orders') %}
                         <li class="dropdown" id="orders__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-roledescription="estimar" aria-haspopup="true" aria-expanded="false">Pedidos <span class="caret"></span></a>
                             <ul class="dropdown-menu">
@@ -48,6 +53,8 @@
                                 <li><a href="{{ url_for('orders.create') }}">Registrar pedido</a></li>
                             </ul>
                         </li>
+                        {% endif %}
+                        {% if session['tenantPermits'].get('stores') %}
                         <li class="dropdown" id="stores__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-roledescription="estimar" aria-haspopup="true" aria-expanded="false">Locales <span class="caret"></span></a>
                             <ul class="dropdown-menu">
@@ -56,12 +63,17 @@
                                 <li><a href="{{ url_for('stores.create') }}">Registrar Local</a></li>
                             </ul>
                         </li>
+                        {% endif %}
+                        {% if session['tenantPermits'].get('inventory') %}
                         <li class="dropdown" id="inventory__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Inventario <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="{{ url_for('inventory.list_inventory') }}">Inventario</a></li>
+                                <li><a href="{{ url_for('inventory.list_inventory') }}">Ver inventario</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('inventory.create') }}">Añadir al inventario</a></li>
                             </ul>
                         </li>
+                        {% endif %}
                         <li class="dropdown" id="guests__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Usuarios <span class="caret"></span></a>
                             <ul class="dropdown-menu">

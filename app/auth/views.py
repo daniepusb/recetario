@@ -132,6 +132,9 @@ def login():
                     session['gender']           = user.gender
                     session['tenant']           = user.tenant
                     session['tenantImageURL']   = tenant.get('imageURL')
+                    session['tenantName']       = tenant.get('name')
+                    session['tenantType']       = tenant.get('type')
+                    session['tenantPermits']    = tenant.get('permits')
                     session['username']         = user.id
                     
                     
@@ -144,14 +147,15 @@ def login():
 
                     response = make_response(redirect('/orders'))
                 else:
+                    flash('La informacion no coincide', category='warning')
                     response = render_template('login.html', **context)
             else:
                 flash('La informacion no coincide', category='warning')
                 response = render_template('login.html', **context)
         else:
-            flash('El usuario no existe', category='error')
+            flash('La informacion no coincide', category='error')
             ##TODO: customize los flash con colores
-            ##TODO: quizas un mensaje diferente flash('La informacion no coincide')
+            ##TODO: quizas un mensaje diferente flash('La informacion no coincide o el usuario no existe')
             response = render_template('login.html', **context)
     
 
@@ -169,6 +173,9 @@ def logout():
     session.pop('fullname')
     session.pop('gender')
     session.pop('tenant')
+    session.pop('tenantImageURL')
+    session.pop('tenantName')
+    session.pop('tenantType')
     session.pop('username')
 
     ##TODO: saber si es necesario o no lo session.pop()

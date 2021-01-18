@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% import 'macros.html' as macros %}
+
+{% block content %}
+
+    <div class="container">
+        <form id="inventory_create_form" class="form form-horizontal" method="POST" role="form" action="/inventory/create">
+            <fieldset id="fieldsetmyFormControl" >
+                <legend>{{title}}</legend>
+                <div class="form-group">
+                    <label for="inputTitle" class="col-sm-3 control-label">Nombre del ingrediente</label>
+                    <div class="col-sm-4">
+                        <input id="title" name="title" type="text" class="form-control"  placeholder="Nombre del ingrediente" {% if form %} value="{{form.get('title')}}" {% endif %} required>
+                    </div>
+                </div>
+                <hr>
+                <!-- **********************************************************-->
+                <div class="form-group">
+                    <label for="inputPrice" class="col-sm-3 control-label">Precio</label>
+                    <div class="col-sm-4">
+                        <input id="price" name="price" type="number" class="form-control"  placeholder="Precio del ingrediente" step="0.01" min="0" {% if form %} value="{{form.get('price')}}" {% endif %} required>
+                    </div>
+                    <div class="col-sm-5"></div>
+                </div>
+                <div class="form-group">
+                    <label for="inputQuantity" class="col-sm-3 control-label">Cantidad</label>
+                    <div class="col-sm-4">
+                        <input id="quantity" name="quantity" type="number" class="form-control"  placeholder="Cantidad de la presentacion" step="0.01" min="0" {% if form %} value="{{form.get('quantity')}}" {% endif %} required>
+                    </div>
+                    <div class="col-sm-5"></div>
+                </div>
+                <div class="form-group">
+                    <label for="inputUnit" class="col-sm-3 control-label">Unidad</label>
+                    <div class="col-sm-4">
+                        <select name="unit" id="" class="form-control" required>
+                            {% if form %} <option selected value="{{form.get('unit')}}">{{form.get('unit')}}</option> {% endif %}
+                            <option value="gr">gr</option>
+                            <option value="ml">ml</option>
+                            <option value="unidad">unidad</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-5"></div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="glutenFree">Gluten Free</label>
+                    <div class="col-sm-4">
+                        <input id="glutenFree" name='is_gluten_free'  type="checkbox" {% if form %} checked="{{form.get('is_gluten_free')}}" {% endif %}> 
+                    </div>
+                    <div class="col-sm-8"></div>
+                </div>
+                
+                <br><br>
+
+                <div class="text-right">
+                    <button type="submit" class="btn btn-success" >Crear</button>
+                </div>
+                <br>
+            </fieldset>    
+        </form>
+
+
+    </div>
+    
+    <script type='text/javascript'>
+        document.getElementById("title").focus();
+        // document.getElementById("ingredient-row").getElementsByTagName("button")[0].style.display = "none";
+
+        function addProperty() {
+            var original    = document.getElementById("property_row_hidden")
+            var clone       = original.cloneNode(true)
+            clone.id        = ""
+            original.parentNode.appendChild(clone);
+        }
+
+        function deleteProperty(e) {
+            // console.log(e)
+            // console.log(e.parentNode.parentNode)
+            // console.log( e.parentNode.parentNode.getElementsByTagName("button"))
+            e.parentNode.parentNode.remove()
+        }
+
+        var j = 0;
+    </script>
+
+    <script>
+
+        function loadXMLDoc()
+        {
+            var req = new XMLHttpRequest()
+            req.onreadystatechange = function()
+            {
+                if (req.readyState == 4)
+                {
+                    if (req.status != 200)
+                    {
+                        //error handling code here
+                    }
+                    else
+                    {
+                        var response    = JSON.parse(req.responseText)
+                        var container   = document.getElementById("ingredients")
+                        // container.appendChild(response);
+                        // container.appendChild(document.createElement("div"));
+                        document.getElementById('ingredients').innerHTML = response
+                    }
+                }
+            }
+        
+            req.open('GET', '/recipes/ajax')
+            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            // var un = document.getElementById('scname').value
+            // var sec = document.getElementById('secret').value
+            // var postVars = 'username='+un+'&secret='+sec
+            // req.send(postVars)
+            req.send()
+            
+            return false
+        }
+    </script>
+{% endblock %}
+
+
+
+

@@ -54,6 +54,18 @@
     </li>
 {% endmacro %}
 
+{% macro render_products(r) %}
+    <li class="list-group-item">
+        <div class="media">
+            <div class="media-left media-middle">
+                <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="{{ r.id }}" style="width:20px;height:20px;">
+            </div>
+            <div class="media-body">
+                <h4 class="media-middle"><a >{{ r.id }}</a></h4>
+            </div>
+        </div>
+    </li>
+{% endmacro %}
 {% macro render_ingredients(r) %}
     <li class="list-group-item">
         <div class="media">

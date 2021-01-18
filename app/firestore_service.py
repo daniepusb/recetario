@@ -294,9 +294,23 @@ def update_store(store, old_store=None):
 #
 #INVENTORY
 #
-def get_list_inventory():
-    return db.collection('tenant').document(session['tenant']).collection('inventory').stream()
+def get_inventory_products():
+    return db.collection('tenant').document(session['tenant']).collection('inventory').where(u'type', u'==', u'product').stream()
 
+def get_inventory_ingredients():
+    return db.collection('tenant').document(session['tenant']).collection('inventory').where(u'type', u'==', u'ingredient').stream()
+
+#
+#TENANT
+#
+def get_tenat_info(tenant):
+    return db.collection('tenant').document(tenant).get()
+
+
+
+#
+# CAUTION: just for admin and sandbox trigger
+#
 def import__export_data():
     pass
 #     from_ref= db.collection('recipes').document('POSTRE FRIO DE LIMON').collection('ingredients').stream()
@@ -305,12 +319,6 @@ def import__export_data():
 #     for doc in from_ref:
 #         to_ref.document(doc.id).set(doc.to_dict())
         
-
-#
-#TENANT
-#
-def get_tenat_info(tenant):
-    return db.collection('tenant').document(tenant).get()
 
 
 

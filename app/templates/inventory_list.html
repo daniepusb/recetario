@@ -1,43 +1,68 @@
 {% extends 'base.html' %}
-{% import 'macros.html' as macros %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %} 
-    {{super()}} Ver Inventario
-{% endblock %}
-
-{% block navbar %}
-    {{super()}}
+    {{super()}} Ver inventario
 {% endblock %}
 
 {% block content %}
-    {{super()}}
-
     <div class="container">
         {% if products %}
-            <h1>Ver Productos </h1>
-            <ul class="list-group">
-                {% for r in products %}
-                    {{ macros.render_products(r) }}                
-                {% endfor %}
-            </ul>
-        {% else %}
-            <h1>No hay productos para mostrar</h1>
+            <div class="panel panel-default">
+                <div class="panel-heading">Panel de productos {{title}}</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Producto</th>					
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in products  %}
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>{{i.id}}</td>
+                                <td>{{ i.get('quantity') }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+            <hr>
         {% endif %}
-        <hr>
         {% if ingredients %}
-            <h1>Listar ingredientes</h1>
-            <ul class="list-group">
-                {% for r in ingredients %}
-                    {{ macros.render_ingredients(r) }}                
-                {% endfor %}
-            </ul>
-        {% else %}
-            <h1>No hay ingredientes para mostrar</h1>
+            <div class="panel panel-default">
+                <div class="panel-heading">Panel de ingredientes {{title}}</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Ingrediente</th>					
+                                <th>Cantidad</th>		
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in ingredients  %}
+                            <tr>
+                                <th scope="row"></th>
+                                <td>{{i.id}}</td>
+                                <td>{{i.get('quantity')}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
         {% endif %}
-
-        
-
     </div>
+    <hr>
+    <br>
+    
 
+    
+    <br><br><br><br><br><br><br><br><br><br><br><br>
 {% endblock %}
+
+
+
+
