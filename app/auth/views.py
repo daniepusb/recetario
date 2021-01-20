@@ -6,7 +6,7 @@ from werkzeug.security  import generate_password_hash,  check_password_hash
 from . import auth
 from app.forms              import LoginForm, GuestForm 
 from app.common_functions   import generarQR, isLogin
-from app.firestore_service  import get_user, user_put, get_guest, guest_put, get_user_with_tenant, get_tenat_info
+from app.firestore_service  import user_put, get_guest, guest_put, get_user_with_tenant, get_tenat_info
 from app.models             import UserData, UserModel, GuestData, GuestModel
 from datetime               import timedelta
 
@@ -31,7 +31,6 @@ def signup():
             # print(formData)
             context['form']=formData
 
-            # user__db = get_user(username).to_dict()
             user__db = get_user_with_tenant(username,session['tenant'])
             if user__db.to_dict() is None:
                 password__hash  = generate_password_hash(password)
@@ -39,7 +38,7 @@ def signup():
 
                 user_put(user__data)
                
-                flash('Usuario registrado', category='info')
+                flash('Usuario '+ username +' registrado', category='info')
                 return redirect(url_for('orders.list_orders'))
             else:
                 flash('El usuario existe.')
@@ -111,7 +110,6 @@ def login():
         # print(formData)
         context['form'] = formData
 
-        # user__db = get_user(username).to_dict()
         user__db = get_user_with_tenant(username,tenant).to_dict()
 
         if user__db is not None:
@@ -119,11 +117,9 @@ def login():
                 if tenant == user__db['tenant']:
                     user__data  = UserData(username=username,password=password, admin=user__db['admin'], tenant=user__db['tenant'], fullname=user__db['fullname'], gender=user__db['gender'] )
                     user        = UserModel(user__data) 
-
-                    login_user(user, remember=False, duration=None, force=False, fresh=True)
+                    
                     # search tenant info (like imageURL)
                     tenant = get_tenat_info(tenant)
-
 
                     ##TODO: llamar a una funcion que agregue todos estos
                     ##TODO: crear una funcion que los quite y usar esa funcion en log_out
@@ -136,6 +132,11 @@ def login():
                     session['tenantType']       = tenant.get('type')
                     session['tenantPermits']    = tenant.get('permits')
                     session['username']         = user.id
+
+                    login_user(user, remember=False, duration=None, force=False, fresh=True)
+
+
+                    
                     
                     
                     # print(session)

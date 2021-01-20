@@ -3,16 +3,17 @@ import firebase_admin
 from flask import session
 from firebase_admin import firestore
 
-#credential = credentials.ApplicationDefault()
 app = firebase_admin.initialize_app()
-
 db = firestore.client()
 
 #
 #USERS
 #
-def get_users():
-    return db.collection('users').get()
+def get_all_users_with_tenant(tenant):
+    """
+    Return a list with all users in that tenant
+    """
+    return db.collection('tenant').document(tenant).collection('users').get()
 
 def get_user(username):
     return db.collection('users').document(username).get()
@@ -21,8 +22,9 @@ def get_user_with_tenant(username,tenant):
     return db.collection('tenant').document(tenant).collection('users').document(username).get()
 
 def user_put(user__data):
-    user_ref = db.collection('users').document(user__data.username)
-    user_ref.set({'password': user__data.password,'admin': False, 'tenant':session['tenant'], 'gender':user__data.gender, 'fullname':user__data.fullname})
+    # DEPRECATE , before multitenant
+    # user_ref = db.collection('users').document(user__data.username)
+    # user_ref.set({'password': user__data.password,'admin': False, 'tenant':session['tenant'], 'gender':user__data.gender, 'fullname':user__data.fullname})
 
     user_ref = db.collection('tenant').document(session['tenant']).collection('users').document(user__data.username)
     user_ref.set({'password': user__data.password,'admin': False, 'tenant':session['tenant'], 'gender':user__data.gender, 'fullname':user__data.fullname})
@@ -196,17 +198,6 @@ def guest_put(guest):
     recipes_collection_ref.set({'email': guest.email, 'name': guest.name, 'phone': guest.phone})
 
 
-
-#
-#DEPARTMENTS
-#
-def get_departments():
-    #return db.collection(u'recipes').where(u'capital', u'==', True).stream()
-    return db.collection('departments').stream()
-
-
-
-
 #
 # ORDERS
 #
@@ -313,15 +304,25 @@ def get_tenat_info(tenant):
 #
 def import__export_data():
     pass
-#     from_ref= db.collection('recipes').document('POSTRE FRIO DE LIMON').collection('ingredients').stream()
-#     to_ref  = db.collection('tenant').document('REFLACAKE').collection('recipes').document('POSTRE FRIO DE LIMON').collection('ingredients')
+    # from_ref= db.collection('ADMIN').stream()
+    # to_ref  = db.collection('tenant').document('ARIANI')
     
-#     for doc in from_ref:
-#         to_ref.document(doc.id).set(doc.to_dict())
+    # for doc in from_ref:
+    #     to_ref.document(doc.id).set(doc.to_dict())
         
-
-
-
+def backend_only_create_tenant_store(newTenant):
+    """
+    Create new Tenant
+    """
+    #comprobar que NO existe tenant (NO QUEREMOS SOBREESCRIBIR Todo UN CLIENTE POR FAVOR)
+    #obtener referencia a UNIQUEVENDORNAME
+    #obtener referencia a subcolección users para guardar usuario ADMIN
+    ref         = db.collection('createTenant').document('UNIQUEVENDORNAME').get()
+    admin__ref  = db.collection('createTenant').document('UNIQUEVENDORNAME').collection('users').document('ADMIN').get()
+    dicc        = ref.to_dict()
+    dicc__user  = admin__ref.to_dict()
+    to__ref     = db.collection('tenant').document(newTenant).set(dicc)
+    to__ref_user= db.collection('tenant').document(newTenant).collection('users').document('ADMIN').set(dicc__user)
 
 """
 

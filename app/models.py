@@ -1,6 +1,6 @@
-from flask_login import UserMixin
-
-from .firestore_service import get_user, get_recipe, get_guest, get_ingredient
+from flask_login        import UserMixin
+from flask              import session
+from .firestore_service import get_user_with_tenant, get_recipe, get_guest, get_ingredient
 
 #
 #USERS Collection(users)
@@ -30,7 +30,9 @@ class UserModel(UserMixin):
 
     @staticmethod
     def query(user_id):
-        user_doc = get_user(user_id)
+        ##TODO: asegurarme que este query solo se ejecute cuando session esté seteada, de lo contrario dará error y no lo estoy manejando con un try
+        ##TODO: manejar con un try
+        user_doc = get_user_with_tenant(user_id,session['tenant'])
         user_data = UserData(
             username=user_doc.id,
             password=user_doc.to_dict()['password'],

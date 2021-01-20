@@ -1,19 +1,14 @@
-from flask import Flask
-from flask import request, make_response, redirect, flash, session, url_for
-from flask import render_template # allow to render from templates
-from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms.fields import StringField, PasswordField,SubmitField
-from wtforms.validators import DataRequired
-from flask_login import login_required, current_user
-
 import qrcode # allow make qrCode
 import unittest
+from flask import Flask
+from flask import request, make_response, redirect, session, url_for
+from flask import render_template 
+
 
 from app import create_app
 
 from app.common_functions import generarQR
-from app.firestore_service import get_recipes, get_recipe, recipe_put, get_user, import__export_data
+from app.firestore_service import  import__export_data, backend_only_create_tenant_store
 
 app = create_app()
 
@@ -96,7 +91,20 @@ def index():
 @app.route('/api/import', methods=['GET'])
 def importJson():
     try:
-        # import__export_data()
+        import__export_data()
+
+        return {'message': 'Done'},200
+    except Exception as inst:
+        print(type(inst))    # the exception instance
+        print(inst.args)     # arguments stored in .args
+        print(inst)          # __str__ allows args to be printed directly,
+                             # but may be overridden in exception subclasses
+        return {'message': 'Error importing or exporting data'},400
+        
+@app.route('/api/createTenant/<newTenant>', methods=['GET'])
+def create_tenant(newTenant):
+    try:
+        backend_only_create_tenant_store(newTenant)
 
         return {'message': 'Done'},200
     except Exception as inst:
