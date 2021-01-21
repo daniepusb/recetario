@@ -197,5 +197,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# app/admin*
+app/admin*
 app/config.py
+initscript.sh
+imagesToUpload/
+credentials_pyrecetario.json
+app/static/assets/js
+ConfigFirebase.js

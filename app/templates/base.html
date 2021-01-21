@@ -15,15 +15,16 @@
     <meta property="og:title" content="Recetario" />
     <meta property="og:type"  content="website" />
     <meta property="og:url"   content="https://danielpedroza.pythonanywhere.com/" />
-    <meta property="og:image" content="https://daniepusb.github.io/assets/img/profile_daniel_github.jpg" />
+    <meta property="og:image" content="{{ url_for('static', filename='assets/img/recetario.png')}}" />
     <meta property="og:site_name" content="daniepusb.github.io">
     <meta property="og:description" content="#Recetario">
 
     <link rel="canonical" href="https://danielpedroza.pythonanywhere.com/" />
-    <link rel="icon" href="https://daniepusb.github.io/assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="{{ url_for('static', filename='assets/img/recetario.png')}}" type="image/x-icon" />
 
 
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css')}}">
+    
 {% endblock %}
 
 {% block body %}

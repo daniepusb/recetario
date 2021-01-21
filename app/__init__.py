@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from .config        import Config
 #from .admin         import admin
 from .auth          import auth
+from .faq           import faq
 from .ingredients   import ingredients
 from .inventory     import inventory
 from .orders        import orders
@@ -31,6 +32,7 @@ def create_app():
     #Es necesario registrar los blueprints
     #app.register_blueprint(admin)
     app.register_blueprint(auth)
+    app.register_blueprint(faq)
     app.register_blueprint(orders)
     app.register_blueprint(stores)
     app.register_blueprint(recipes)
