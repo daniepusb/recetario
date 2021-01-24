@@ -8,47 +8,48 @@
 {% endblock %}
 
 {% block content %}
-<div class="container center">
-    <div class="demo__choice transition__all">
-        <input id='vendor' name="demo" type='radio' class="typeTenantSelector"/>
-        <label for='vendor'>Soy Vendor</label>
+<div class="container text-center">
+    <input id='vendor' name="demo" type='radio' class="typeTenantSelector" checked aria-checked="true"/>
+    <label for='vendor'>Soy Vendor</label>
     
-        <input id='store' name="demo" type='radio'  class="typeTenantSelector"/>
-        <label for='store'>Soy Store</label>
+    <input id='store' name="demo" type='radio'  class="typeTenantSelector"/>
+    <label for='store'>Soy Store</label>
+
+    
+    <div class="demo__forms transition__all text-center">
+        <form id="demo__vendor__login__form" class="form-signin form form-horizontal" method="POST" role="form" action="/auth/login">
+            <h2 class="form-signin-heading text-left">Demo gastronómico</h2>
+            
+            <input id="inputTenant"     name="tenant"   type="hidden" value="DEMO_VENDOR" aria-hidden="true" >
+            <input id="inputPassword"   name="password" type="hidden" value="contraseñanosegurademo" aria-hidden="true">
+            <input id="inputUsername"   name="username" type="email"  class="form-control" placeholder="Correo electrónico" autofocus=""  required style="text-transform:uppercase">
+            
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="terms" value="terms" required>
+                    Acepto <a href="{{url_for('faq.termsAndConditions')}}">términos y condiciones</a>
+                </label>
+            </div>
+            <br>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+        </form>
+        <form id="demo__store__login__form" class="form-signin form form-horizontal" method="POST" role="form" action="/auth/login">
+            <h2 class="form-signin-heading text-left">Demo market</h2>
+            
+            <input id="inputTenant"     name="tenant_store"     type="hidden" value="DEMO_STORE">
+            <input id="inputPassword"   name="password_store"   type="hidden" value="contraseñanosegurademo">
+            <input id="inputUsername"   name="username_store"   type="email"  class="form-control" placeholder="Correo electrónico" required {% if form %} value="{{form.get('username')}}" {% endif %} style="text-transform:uppercase">
+            
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="terms_store" value="terms_store" required>
+                    Acepto <a href="{{url_for('faq.termsAndConditions')}}">términos y condiciones</a>
+                </label>
+            </div>
+            <br>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+        </form>
     </div>
-    <form id="demo__vendor__login__form" class="form-signin form form-horizontal" method="POST" role="form" action="/auth/login">
-        <h2 class="form-signin-heading text-left">Demo gastronómico</h2>
-        
-        <input id="inputTenant"     name="tenant"   type="hidden" value="DEMO_VENDOR" aria-hidden="true" >
-        <input id="inputPassword"   name="password" type="hidden" value="contraseñanosegurademo" aria-hidden="true">
-        <input id="inputUsername"   name="username" type="email"  class="form-control" placeholder="Correo electrónico" autofocus=""  required style="text-transform:uppercase">
-        
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" name="terms" value="terms" required>
-                Acepto <a href="{{url_for('faq.termsAndConditions')}}">términos y condiciones</a>
-            </label>
-        </div>
-        <br>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
-    </form>
-    <form id="demo__store__login__form" class="form-signin form form-horizontal" method="POST" role="form" action="/auth/login">
-        <h2 class="form-signin-heading text-left">Demo market</h2>
-        
-        <input id="inputTenant"     name="tenant_store"     type="hidden" value="DEMO_STORE">
-        <input id="inputPassword"   name="password_store"   type="hidden" value="contraseñanosegurademo">
-        <input id="inputUsername"   name="username_store"   type="email"  class="form-control" placeholder="Correo electrónico" required {% if form %} value="{{form.get('username')}}" {% endif %} style="text-transform:uppercase">
-        
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" name="terms_store" value="terms_store" required>
-                Acepto <a href="{{url_for('faq.termsAndConditions')}}">términos y condiciones</a>
-            </label>
-        </div>
-        <br>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
-    </form>
-    
 </div>
 {% endblock %}
 

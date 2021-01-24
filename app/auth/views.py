@@ -52,7 +52,7 @@ def signup():
 
 @auth.route('demo',methods=['GET'])
 def demo():
-    flash('Recuerda que podrás usar de toda la plataforma, pero todos tus cambios se guardarán solo por 24 horas')
+    flash('Recuerda que podrás usar la plataforma, pero todos tus cambios se guardarán solo por 24 horas')
     return render_template('demo_login.html')
 
 

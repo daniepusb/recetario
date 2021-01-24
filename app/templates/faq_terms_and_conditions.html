@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %}
+    {{ super() }}
+    FAQ
+{% endblock %}
+
+{% block content %}
+
+<section class="call-to-action text-white text-center container">
+    <div class="video-container" style="z-index:0;">
+        <video autoplay muted loop playsinline>
+            <source src="{{url_for('static', filename='assets/video/rolling_pin.mov')}}" type="video/mp4">
+        </video>
+        <div class="row" style="position: relative; z-index:1;color:white;top:40%;">
+            <div class="col-xl-12">
+                <img src="{{ url_for('static', filename='assets/img/recetario.png')}}" class="img-fluid" alt="Responsive image" style="height: 40px;">
+            </div>
+            <div class="col-xl-12">
+                <p style="font: 20px/40px Arial,Verdana,sans-serif; color:'floralwhite'">
+                    Sistema de gestión gastronómico 100% online 
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+<hr>
+<section class="text-white text-center container">
+    <p>
+        Recetario es un sistema de gestión gastronómica 100% online que te ayuda a:
+    </p>
+    <p>
+        Almacenar recetas de manera segura en la nube, calcular costos de recetas, cantidad de ingredientes de uno o más pedidos ,  costo de ingredientes en un pedido, manejar historial de pedidos y más.
+    </p>
+
+</section>
+<hr>
+<br><br><br><br>
+<section>
+    <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/daniepusb/recetario">recetario</a> is maintained by <a href="https://github.com/daniepusb">daniepusb</a>.</span>
+    </footer>
+</section>
+{% endblock %}

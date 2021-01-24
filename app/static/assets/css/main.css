@@ -43,6 +43,31 @@ hr {
     width: 80%;
 }
 
+input[type=radio].typeTenantSelector  {
+    opacity: 1;
+}
+form#demo__vendor__login__form, form#demo__store__login__form {
+    border: 1px solid transparent;
+    transition: overflow 1s ease-in;
+    overflow: hidden;
+    height: 0px;
+    display: none;
+}
+input[type=radio]#vendor:checked ~ div form#demo__vendor__login__form {
+    width: 300px;
+    height: 300px;
+    padding: 15px;
+    overflow: initial;
+}
+input[type=radio]#store:checked ~ div form#demo__store__login__form {
+    width: 300px;
+    height: 300px;
+    padding: 15px;
+    overflow: initial;
+}
+  
+
+  
 /* 
 .css-tooltip{
     position: relative;
