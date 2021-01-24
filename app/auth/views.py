@@ -6,7 +6,7 @@ from werkzeug.security  import generate_password_hash,  check_password_hash
 from . import auth
 from app.forms              import LoginForm, GuestForm 
 from app.common_functions   import generarQR, isLogin
-from app.firestore_service  import user_put, get_guest, guest_put, get_user_with_tenant, get_tenat_info
+from app.firestore_service  import user_put, get_guest, guest_put, get_user_with_tenant, get_tenat_info, user_put_into_newsletter, create_demo_tenant_and_demo_user
 from app.models             import UserData, UserModel, GuestData, GuestModel
 from datetime               import timedelta
 
@@ -16,7 +16,8 @@ import app
 @login_required
 def signup():
     ##TODO: verificar que al momento de generar la contraseña esté sumando un SAL, un código adicional al final para que no sea reversible y mas seguro
-    if ( session['admin'] ):
+    context={}
+    if session.get('admin'):
         context = {
             'admin': session['admin'],
         }
@@ -47,6 +48,12 @@ def signup():
     else: 
         flash('No tiene permisos de administrador', category='info')
         return redirect(url_for('orders.list_orders'))
+
+
+@auth.route('demo',methods=['GET'])
+def demo():
+    flash('Recuerda que podrás usar de toda la plataforma, pero todos tus cambios se guardarán solo por 24 horas')
+    return render_template('demo_login.html')
 
 
 @auth.route('signupGuest', methods=['GET','POST'])
@@ -102,22 +109,73 @@ def login():
     response = render_template('login.html', **context)
     
     if request.method == 'POST':
+        ##TODO: creear funncion que asegure el input del login
         formData    = request.form
-        tenant      = formData.get('tenant').upper()
-        username    = formData.get('username').upper()
-        password    = formData.get('password')
+        
+        user__db    = ''
+        tenant      = ''
+        password    = ''
+        temrs       = ''
+        username    = ''
 
-        # print(formData)
-        context['form'] = formData
+        if formData.get('tenant'):
+            tenant      = formData.get('tenant').upper()
+        if formData.get('tenant_store'):
+            tenant      = formData.get('tenant_store').upper()
 
-        user__db = get_user_with_tenant(username,tenant).to_dict()
+        if formData.get('password'):
+            password    = formData.get('password')
+        if formData.get('password_store'):
+            password    = formData.get('password_store')
 
+        if formData.get('terms'):
+            terms       = formData.get('terms').upper()
+        if formData.get('terms_store'):
+            terms       = formData.get('terms_store').upper()
+        
+        if formData.get('username'):
+            username       = formData.get('username').upper()
+        if formData.get('username_store'):
+            username       = formData.get('username_store').upper()
+
+        if tenant=='DEMO_VENDOR' and password=='contraseñanosegurademo':
+            session['type__of__tenant'] =   'sandbox'
+            session['tenant']           =   username
+            tenant                      =   username
+
+            user__db = get_user_with_tenant(username,username).to_dict()
+
+            if user__db is None:
+                password__hash  = generate_password_hash(password)
+                create_demo_tenant_and_demo_user(username,password__hash,'VENDOR')
+                user_put_into_newsletter(username,username)
+                user__db = get_user_with_tenant(username,username).to_dict()
+
+        elif tenant=='DEMO_STORE' and password=='contraseñanosegurademo':
+            session['type__of__tenant'] =   'sandbox'
+            session['tenant']           =   username
+            tenant                      =   username
+            user__db = get_user_with_tenant(username,username).to_dict()
+            
+            if user__db is None:
+                password__hash  = generate_password_hash(password)
+                create_demo_tenant_and_demo_user(username,password__hash,'STORE')
+                user_put_into_newsletter(username,username)
+                user__db        = get_user_with_tenant(username,username).to_dict()
+            
+        else:
+            session['type__of__tenant'] ='tenant'
+            session['tenant']           = tenant
+            context['form']             = formData
+            user__db = get_user_with_tenant(username,tenant).to_dict()
+
+
+        
         if user__db is not None:
             if check_password_hash(user__db['password'], password):
                 if tenant == user__db['tenant']:
                     user__data  = UserData(username=username,password=password, admin=user__db['admin'], tenant=user__db['tenant'], fullname=user__db['fullname'], gender=user__db['gender'] )
                     user        = UserModel(user__data) 
-                    
                     # search tenant info (like imageURL)
                     tenant = get_tenat_info(tenant)
 
@@ -135,16 +193,10 @@ def login():
 
                     login_user(user, remember=False, duration=None, force=False, fresh=True)
 
-
-                    
-                    
-                    
-                    # print(session)
-
                     if user.gender =='male':
-                        flash(user.fullname +', Bienvenido de nuevo', category='info')
+                        flash(user.fullname +', Bienvenido', category='info')
                     elif user.gender =='female':
-                        flash(user.fullname +', Bienvenida de nuevo', category='info')
+                        flash(user.fullname +', Bienvenida', category='info')
 
                     response = make_response(redirect('/orders'))
                 else:

@@ -11,8 +11,12 @@
                 <span class="icon-bar"></span>
             </button>
             {% if session['tenantImageURL'] %}
-                <a class="navbar-brand" href="{{ url_for('recipes.list_recipes') }}">
+            <a class="navbar-brand" href="{{ url_for('recipes.list_recipes') }}">
+                {% if session['type__of__tenant']=='sandbox' %}
+                    <img id="app__logo" data-tooltip="{{session['tenant']}}" style="padding: 2px;background-color: red;" src="{{ session['tenantImageURL'] }}" alt="Logo">
+                {% else %}
                     <img id="app__logo" data-tooltip="{{session['tenant']}}" class="css-tooltip" src="{{ session['tenantImageURL'] }}" alt="Logo">
+                {% endif %}
                 </a>
             {% else %}
                 <a  class="navbar-brand" href="{{ url_for('recipes.list_recipes') }}">
@@ -76,22 +80,23 @@
                             </ul>
                         </li>
                         {% endif %}
+                        {% if session['tenantPermits'].get('users') %}
                         <li class="dropdown" id="guests__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Usuarios <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="{{ url_for('auth.signup') }}">Registrar usuario</a></li>
                             </ul>
                         </li>
-                        
+                        {% endif %}
                     {% else %}
-                        <li id="recipes__li"><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
+                    <li id="recipes__li"><a href="{{ url_for('recipes.list_recipes') }}">Recetas</a></li>
                     {% endif %}
-                    <li><a href="https://github.com/daniepusb/recetario/" target="_blank">Github</a></li>
+                    <li><a href="{{ url_for('faq.info') }}">Preguntas Frecuentes</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
-                    <li><a href="{{ url_for('auth.signup_guest') }}">Invitados</a></li>
-                    <li><a href="{{ url_for('faq.info') }}">FAQ</a></li>
+                    <li><a href="{{ url_for('auth.demo') }}">Demo</a></li>
+                    <li><a href="{{ url_for('faq.info') }}">Preguntas Frecuentes</a></li>
                 {% endif %}
             </ul>
         </div>

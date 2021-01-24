@@ -137,9 +137,7 @@ def update():
         }
         ##TODO: ojo que el parametro order de esta funcion se está usando sin ninguna restriccion en get_order()
 
-        print(get_order(order))
-
-        return render_template('order_update.html' , **context)
+        return redirect(url_for('orders.list_orders'))
 
     else:
         return redirect(url_for('orders.list_orders'))

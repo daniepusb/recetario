@@ -8,7 +8,7 @@ from flask import render_template
 from app import create_app
 
 from app.common_functions import generarQR
-from app.firestore_service import  import__export_data, backend_only_create_tenant_store
+from app.firestore_service import  import__export_data, backend_only_create_tenant, backend_only_sandbox_reset
 
 app = create_app()
 
@@ -37,9 +37,9 @@ def server_error(error):
     
 @app.errorhandler(404)
 def error(error):
-    context = {
-        'admin' : session['admin'],
-    }
+    context={}
+    if session.get('admin'):
+        context['admin']= session['admin']
     return render_template('404.html', error=error, **context)
 
 
@@ -100,13 +100,29 @@ def importJson():
         print(inst)          # __str__ allows args to be printed directly,
                              # but may be overridden in exception subclasses
         return {'message': 'Error importing or exporting data'},400
-        
-@app.route('/api/createTenant/<newTenant>', methods=['GET'])
-def create_tenant(newTenant):
+
+
+@app.route('/api/createTenant/<newTenant>/<typeTenant>', methods=['GET'])
+def create_tenant(newTenant,typeTenant):
     try:
-        backend_only_create_tenant_store(newTenant)
+        backend_only_create_tenant(newTenant,typeTenant)
 
         return {'message': 'Done'},200
+    except Exception as inst:
+        print(type(inst))    # the exception instance
+        print(inst.args)     # arguments stored in .args
+        print(inst)          # __str__ allows args to be printed directly,
+                             # but may be overridden in exception subclasses
+        return {'message': 'Error importing or exporting data'},400
+
+
+
+@app.route('/api/sandboxReset', methods=['GET'])
+def sandboxReset():
+    try:
+        backend_only_sandbox_reset()
+
+        return {'message': 'Done' },200
     except Exception as inst:
         print(type(inst))    # the exception instance
         print(inst.args)     # arguments stored in .args

@@ -13,21 +13,27 @@ def get_all_users_with_tenant(tenant):
     """
     Return a list with all users in that tenant
     """
-    return db.collection('tenant').document(tenant).collection('users').get()
+    return db.collection(session['type__of__tenant']).document(tenant).collection('users').get()
 
 def get_user(username):
     return db.collection('users').document(username).get()
 
 def get_user_with_tenant(username,tenant):
-    return db.collection('tenant').document(tenant).collection('users').document(username).get()
+    """
+    Return user from DB
+    """
+    return db.collection(session['type__of__tenant']).document(tenant).collection('users').document(username).get()
 
 def user_put(user__data):
-    # DEPRECATE , before multitenant
-    # user_ref = db.collection('users').document(user__data.username)
-    # user_ref.set({'password': user__data.password,'admin': False, 'tenant':session['tenant'], 'gender':user__data.gender, 'fullname':user__data.fullname})
-
-    user_ref = db.collection('tenant').document(session['tenant']).collection('users').document(user__data.username)
+    user_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('users').document(user__data.username)
     user_ref.set({'password': user__data.password,'admin': False, 'tenant':session['tenant'], 'gender':user__data.gender, 'fullname':user__data.fullname})
+
+def user_put_into_newsletter(email,tenant):
+    """
+    Add email to newsLetter list in BD
+    """
+    user_ref = db.collection('newsletter').document(email)
+    user_ref.set({'tenant':tenant})
 
 
 
@@ -36,11 +42,11 @@ def user_put(user__data):
 #
 def get_recipes():
     #return db.collection(u'collection').where(u'capital', u'==', True).stream()
-    return db.collection(u'tenant').document(session['tenant']).collection('recipes').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('recipes').stream()
 
 
 def get_recipe(recipe):
-    doc_ref = db.collection('tenant').document(session['tenant']).collection(u'recipes').document(recipe)
+    doc_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection(u'recipes').document(recipe)
     try:
         doc = doc_ref.get()
         # a = doc.to_dict()
@@ -55,11 +61,11 @@ def get_recipe(recipe):
 
 
 def get_recipe_ingredients(recipe):
-    return db.collection('tenant').document(session['tenant']).collection(u'recipes').document(recipe).collection('ingredients').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection(u'recipes').document(recipe).collection('ingredients').stream()
 
 
 def recipe_put(recipe):
-    recipes_collection_ref = db.collection('tenant').document(session['tenant']).collection('recipes').document(recipe.title)
+    recipes_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('recipes').document(recipe.title)
     recipes_collection_ref.set({
         'description'   : recipe.description,
         'instructions'  : recipe.instructions,
@@ -69,7 +75,7 @@ def recipe_put(recipe):
     })
     
     if recipe.ingredients is not None:
-        recipes_ingredients_ref = db.collection('tenant').document(session['tenant']).collection('recipes').document(recipe.title).collection('ingredients')
+        recipes_ingredients_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('recipes').document(recipe.title).collection('ingredients')
         for k,v in recipe.ingredients.items():
             recipes_ingredients_ref.document(k).set(v)
 
@@ -108,7 +114,7 @@ def recipe_update(recipe, old_recipe=None):
         # set new ingredients subcollections reference
         # set new content 
         
-        recipes_collection_ref = db.collection('tenant').document(session['tenant']).collection('recipes').document(recipe.title)
+        recipes_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('recipes').document(recipe.title)
         recipes_collection_ref.set(
             {
                 'description'   : recipe.description,
@@ -119,7 +125,7 @@ def recipe_update(recipe, old_recipe=None):
             }
         )
 
-        recipes_ingredients_ref = db.collection('tenant').document(session['tenant']).collection('recipes').document(recipe.title).collection('ingredients')
+        recipes_ingredients_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('recipes').document(recipe.title).collection('ingredients')
         delete_collection(recipes_ingredients_ref, 100, 0)
 
         if recipe.ingredients is not None:
@@ -154,11 +160,11 @@ def delete_collection(coll_ref, batch_size, counter):
 #INGREDIENTS
 #
 def get_list_ingredients():
-    return db.collection('tenant').document(session['tenant']).collection('ingredients').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('ingredients').stream()
 
 
 def get_ingredient(ingredient):
-    doc_ref = db.collection('tenant').document(session['tenant']).collection(u'ingredients').document(ingredient)
+    doc_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection(u'ingredients').document(ingredient)
     try:
         doc = doc_ref.get()
         # a = doc.to_dict()
@@ -173,13 +179,13 @@ def get_ingredient(ingredient):
 
 
 def put_ingredient(ingredient):
-    ingredient_collection_ref = db.collection('tenant').document(session['tenant']).collection('ingredients').document(ingredient.title)
+    ingredient_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('ingredients').document(ingredient.title)
     ingredient_collection_ref.set({'price': ingredient.price, 'quantity': ingredient.quantity, 'unit': ingredient.unit, 'is_gluten_free': ingredient.is_gluten_free})
 
 
 def update_ingredient(ingredient, old_ingredient=None):
     if old_ingredient is None:
-        ingredient_collection_ref = db.collection('tenant').document(session['tenant']).collection('ingredients').document(ingredient.title)
+        ingredient_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('ingredients').document(ingredient.title)
         ingredient_collection_ref.set({'price': ingredient.price, 'quantity': ingredient.quantity, 'unit': ingredient.unit, 'is_gluten_free': ingredient.is_gluten_free})
     else:
         ## TODO: delete old_ingredient and call put_ingredient(ingredient):
@@ -202,11 +208,11 @@ def guest_put(guest):
 # ORDERS
 #
 def get_list_orders():
-    return db.collection('tenant').document(session['tenant']).collection('orders').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('orders').stream()
 
 
 def get_order(id):
-    doc_ref = db.collection('tenant').document(session['tenant']).collection(u'orders').document(id)
+    doc_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection(u'orders').document(id)
     try:
         doc = doc_ref.get()
     except google.cloud.exceptions.NotFound:
@@ -216,11 +222,11 @@ def get_order(id):
 
 
 def get_order_products(orderID):
-    return db.collection('tenant').document(session['tenant']).collection(u'orders').document(orderID).collection('products').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection(u'orders').document(orderID).collection('products').stream()
 
 
 def put_order(order):
-    order_ref = db.collection('tenant').document(session['tenant']).collection('orders').document()
+    order_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('orders').document()
     order_ref.set({
         'store'         : order.store,
         'createdDate'   : datetime.datetime.now(),
@@ -228,7 +234,7 @@ def put_order(order):
     })
     
     if order.products is not None:
-        products_ref = db.collection('tenant').document(session['tenant']).collection('orders').document(order_ref.id).collection('products')
+        products_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('orders').document(order_ref.id).collection('products')
         for k,v in order.products.items():
             products_ref.document(k).set(v)
 
@@ -239,11 +245,11 @@ def put_order(order):
 # STORES
 #
 def get_list_stores():
-    return db.collection('tenant').document(session['tenant']).collection('stores').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('stores').stream()
 
 
 def get_store(id):
-    doc_ref = db.collection('tenant').document(session['tenant']).collection(u'stores').document(id)
+    doc_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection(u'stores').document(id)
     try:
         doc = doc_ref.get()
     except google.cloud.exceptions.NotFound:
@@ -253,7 +259,7 @@ def get_store(id):
 
 
 def put_store(store):
-    store_collection_ref = db.collection('tenant').document(session['tenant']).collection('stores')
+    store_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('stores')
     store_collection_ref.add({
         'name'          : store.name,
         'address'       : store.address,
@@ -266,7 +272,7 @@ def put_store(store):
 
 def update_store(store, old_store=None):
     if old_store is None:
-        store_collection_ref = db.collection('tenant').document(session['tenant']).collection('stores').document(store.storeID)
+        store_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('stores').document(store.storeID)
         store_collection_ref.set({
             'name'          : store.name,
             'address'       : store.address,
@@ -286,7 +292,7 @@ def update_store(store, old_store=None):
 #INVENTORY
 #
 def get_inventory_products():
-    return db.collection('tenant').document(session['tenant']).collection('inventory').where(u'type', u'==', u'product').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('inventory').where(u'type', u'==', u'product').stream()
 
 def get_inventory_ingredients():
     return db.collection('tenant').document(session['tenant']).collection('inventory').where(u'type', u'==', u'ingredient').stream()
@@ -294,8 +300,28 @@ def get_inventory_ingredients():
 #
 #TENANT
 #
+def create_demo_tenant_and_demo_user(email,password,typeTenant='VENDOR'):
+    """
+    Create new demo tenant in sandbox collection
+    """
+    ref         = db.collection('createTenant').document(typeTenant).get()
+    admin__ref  = db.collection('createTenant').document(typeTenant).collection('users').document('ADMIN').get()
+    
+    dicc        = ref.to_dict()
+    dicc__user  = admin__ref.to_dict()
+    
+    dicc['name']            = email
+    dicc__user['fullname']  = email
+    dicc__user['tenant']    = email
+    dicc__user['password']  = password
+    
+    to__ref     = db.collection('sandbox').document(email).set(dicc)
+    to__ref_user= db.collection('sandbox').document(email).collection('users').document(email).set(dicc__user)
+    
+
 def get_tenat_info(tenant):
-    return db.collection('tenant').document(tenant).get()
+    return db.collection(session['type__of__tenant']).document(tenant).get()
+
 
 
 
@@ -309,37 +335,168 @@ def import__export_data():
     
     # for doc in from_ref:
     #     to_ref.document(doc.id).set(doc.to_dict())
+ 
         
-def backend_only_create_tenant_store(newTenant):
+def backend_only_create_tenant(newTenant,typeTenant='VENDOR'):
     """
     Create new Tenant
     """
     #comprobar que NO existe tenant (NO QUEREMOS SOBREESCRIBIR Todo UN CLIENTE POR FAVOR)
-    #obtener referencia a UNIQUEVENDORNAME
+    #obtener referencia a VENDOR o STORE con typeTenant
     #obtener referencia a subcolección users para guardar usuario ADMIN
-    ref         = db.collection('createTenant').document('UNIQUEVENDORNAME').get()
-    admin__ref  = db.collection('createTenant').document('UNIQUEVENDORNAME').collection('users').document('ADMIN').get()
+    ref         = db.collection('createTenant').document(typeTenant).get()
+    admin__ref  = db.collection('createTenant').document(typeTenant).collection('users').document('ADMIN').get()
+    
     dicc        = ref.to_dict()
     dicc__user  = admin__ref.to_dict()
-    to__ref     = db.collection('tenant').document(newTenant).set(dicc)
-    to__ref_user= db.collection('tenant').document(newTenant).collection('users').document('ADMIN').set(dicc__user)
-
-"""
-
-def get_todos(user_id):
-    return db.collection('users')\
-        .document(user_id)\
-        .collection('todos').get()
-
-
-def put_todo(user_id, description):
-    todos_collection_ref = db.collection('users').document(user_id).collection('todos')
-    todos_collection_ref.add({'description': description, 'done': False})
+    
+    dicc['name']=newTenant
+    dicc__user['tenant']=newTenant
+    
+    to__ref     = db.collection('sandbox').document(newTenant).set(dicc)
+    to__ref_user= db.collection('sandbox').document(newTenant).collection('users').document('ADMIN').set(dicc__user)
+    
+    return True
 
 
-def delete_todo(user_id, todo_id):
-    todo_ref = db.document('users/{}/todos/{}'.format(user_id, todo_id))
-    todo_ref.delete()
+def backend_only_sandbox_reset():
+    """
+    Restore sandbox state to NEW
+    Is time to reboot all this mess
+    Version 2
+    """
+    # obtener la lista de todos los tenants en la colleccion sandbox
+    # para cada tenant en la lista:
+        # buscar la referencia del tenant
+        # buscar sus subcolecciones
+        # para cada subcoleccione, borrar contenido usando delete_collection(recipes_ingredients_ref, 100, 0)
+    # borrar sandbox
+    # DONE
+
+    try:
+        tenants = db.collection('sandbox').stream()
+        for tenant in tenants:
+            print(tenant.id) 
+            ref         = db.collection('sandbox').document(tenant.id)
+            ref_obj     = ref.get()
+            dicc        = ref_obj.to_dict()
+            
+            if ref.collection('recipes'):
+                ref__recipes    = ref.collection('recipes')
+                delete_collection(ref__recipes, 100, 0)
+            if ref.collection('ingredients'):
+                ref__ingredients= ref.collection('ingredients')
+                delete_collection(ref__ingredients, 100, 0)
+            if ref.collection('orders'):
+                ref__orders     = ref.collection('orders')
+                delete_collection(ref__orders, 100, 0)
+            if ref.collection('users'):
+                ref__users      = ref.collection('users')
+                delete_collection(ref__users, 100, 0)
+            if ref.collection('inventory'):
+                ref__inventory  = ref.collection('inventory')
+                delete_collection(ref__inventory, 100, 0)
+            if ref.collection('stores'):
+                ref__stores     = ref.collection('stores')
+                delete_collection(ref.collection('stores'), 100, 0)
 
 
-"""
+        delete_collection(db.collection('sandbox'), 100, 0)
+    except Exception as inst:
+        print(type(inst))    # the exception instance
+        print(inst.args)     # arguments stored in .args
+        print(inst)          # __str__ allows args to be printed directly,
+                             # but may be overridden in exception subclasses
+
+    
+
+
+    return True
+
+
+def backend_only_sandbox_reset_v1():
+    """
+    Restore sandbox state to NEW
+    Is time to reboot all this mess
+    """
+    # buscar la referencia a sandbox
+    # obtener la lista de todos los tenants 
+        # buscar la referencia del tenant
+        # buscar sus subcolecciones
+        # para cada subcoleccione, borrar contenido usando delete_collection(recipes_ingredients_ref, 100, 0)
+        # buscar su tipo de tenant
+        # buscar refencia al tenant original
+        # reemplazar tenant por la referencia original 
+    # DONE
+
+    try:
+        tenants = db.collection('sandbox').stream()
+        for tenant in tenants:
+            print(tenant.id) 
+            ref         = db.collection('sandbox').document(tenant.id)
+            ref_obj     = ref.get()
+            dicc        = ref_obj.to_dict()
+            typeTenant  = dicc['type']
+            
+            if ref.collection('recipes'):
+                ref__recipes    = ref.collection('recipes')
+                delete_collection(ref__recipes, 100, 0)
+            if ref.collection('ingredients'):
+                ref__ingredients= ref.collection('ingredients')
+                delete_collection(ref__ingredients, 100, 0)
+            if ref.collection('orders'):
+                ref__orders     = ref.collection('orders')
+                delete_collection(ref__orders, 100, 0)
+            if ref.collection('users'):
+                ref__users      = ref.collection('users')
+                delete_collection(ref__users, 100, 0)
+            if ref.collection('inventory'):
+                ref__inventory  = ref.collection('inventory')
+                delete_collection(ref__inventory, 100, 0)
+            if ref.collection('stores'):
+                ref__stores     = ref.collection('stores')
+                delete_collection(ref__stores, 100, 0)
+
+            original_ref                = db.collection('createTenant').document(typeTenant).get()
+            admin__user__original_ref   = db.collection('createTenant').document(typeTenant).collection('users').document('ADMIN').get()
+
+            dicc                        = original_ref.to_dict()
+            dicc__user                  = admin__user__original_ref.to_dict()
+            
+            dicc['name']=tenant.id
+            dicc['type']=tenant.id
+            dicc__user['tenant']=tenant.id
+            
+            db.collection('sandbox').document(tenant.id).set(dicc)
+            db.collection('sandbox').document(tenant.id).collection('users').document('ADMIN').set(dicc__user)
+    except Exception as inst:
+        print(type(inst))    # the exception instance
+        print(inst.args)     # arguments stored in .args
+        print(inst)          # __str__ allows args to be printed directly,
+                             # but may be overridden in exception subclasses
+
+    
+
+
+    return True
+
+
+
+
+
+
+# def get_todos(user_id):
+#     return db.collection('users')\
+#         .document(user_id)\
+#         .collection('todos').get()
+
+
+# def put_todo(user_id, description):
+#     todos_collection_ref = db.collection('users').document(user_id).collection('todos')
+#     todos_collection_ref.add({'description': description, 'done': False})
+
+
+# def delete_todo(user_id, todo_id):
+#     todo_ref = db.document('users/{}/todos/{}'.format(user_id, todo_id))
+#     todo_ref.delete()
+
