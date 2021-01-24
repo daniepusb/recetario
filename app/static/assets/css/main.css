@@ -51,7 +51,6 @@ form#demo__vendor__login__form, form#demo__store__login__form {
     transition: overflow 1s ease-in;
     overflow: hidden;
     height: 0px;
-    display: none;
 }
 input[type=radio]#vendor:checked ~ div form#demo__vendor__login__form {
     width: 300px;
