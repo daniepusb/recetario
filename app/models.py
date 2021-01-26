@@ -260,3 +260,37 @@ class InventoryModel():
         self.products       = inventory.products
         self.ingredients    = inventory.ingredients
     
+
+
+
+    
+#
+#PRODCUCTS Collection(products)
+#
+class ProductData:
+    def __init__(self, id, price=0, name='', tenant='DEMO_VENDOR'):
+        self.id     = id
+        self.price  = price
+        self.name   = name
+        self.tenant = tenant
+
+class ProductModel():
+    def __init__(self, product):
+        """
+        :param product: ProductData
+        """
+        self.id     = product.id
+        self.price  = product.price
+        self.name   = product.name
+        self.tenant = product.tenant
+    
+    @staticmethod
+    def query(product):
+        product__bd   = get_product(product)
+        product__data = ProductData(
+            id      = product__bd.id,
+            price   = product__bd.price,
+            name    = product__bd.name,
+            tenant  = product__bd.tenant,
+        )
+

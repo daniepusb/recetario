@@ -25,3 +25,15 @@ Empecemos por comprobar que tenemos python instalado, luego creamos el ambiente 
 
 #### Para Windows OS deberás usar
 source fenv/Scripts/activate
+
+#### Para crear un nuevo módulo deberás
+- crear una carpeta dentro de app con el nombre del modulo
+- crear archivo __init__.py dentro de modulo y crear el blueprint
+- crear archivo views.py dentro de modulo y las rutas necesarias 
+- importar funciones de recuperacion de info en BD, por ejemplo: get_list_ingredients()
+- en caso de necesitar, crear funcionenes necesarias en firestore_service.py
+- en caso de usar render_template, crear el template.html correspondiente en la carpeta template
+- registrar blueprint dentro del archivo __init__.py del proyecto principal dentro de la carpeta app
+- crear link accesible en el navbar.html
+- registrar en BD el permiso del nuevo modulo para cada tenant que lo necesite
+

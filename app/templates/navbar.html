@@ -70,6 +70,16 @@
                             </ul>
                         </li>
                         {% endif %}
+                        {% if session['tenantPermits'].get('products') %}
+                        <li class="dropdown" id="products__li">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Productos<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('products.list_products') }}">Productos</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('products.create') }}">Registrar Producto</a></li>
+                            </ul>
+                        </li>
+                        {% endif %}
                         {% if session['tenantPermits'].get('inventory') %}
                         <li class="dropdown" id="inventory__li">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Inventario <span class="caret"></span></a>

@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+
+
+
+      <!-- Bootstrap core CSS -->
+      <link href="https://startersarg.000webhostapp.com/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+      <!-- Custom fonts for this template -->
+      <link href="https://startersarg.000webhostapp.com/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+      <!-- Custom styles for this template -->
+      <link href="https://startersarg.000webhostapp.com/css/landing-page.css" rel="stylesheet">
+      <link rel="icon" type="image/png" href="https://startersarg.000webhostapp.com/img/favicon.jpeg" />
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-179010817-1"></script>
+      <!-- Bootstrap core JavaScript -->
+      <script src="https://startersarg.000webhostapp.com/vendor/jquery/jquery.min.js"></script>
+      <script src="https://startersarg.000webhostapp.com/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+         
+         gtag('config', 'UA-179010817-1');
+         $(document).ready(function () {
+         
+             $("#contacts").submit(function(event) {
+                  /* stop form from submitting normally */
+                  event.preventDefault();
+                
+                  var $form = $(this);
+                  var url = $form.attr('action');
+         
+                  var posting = $.post(url, {
+                    email: $form.find('[name="email"]').val(),
+                    contact_type_id: $form.find('[name="contact-type"] option:selected').val(),
+                    form_id : $form.attr("id")
+                  });
+                
+                  /* Alerts the results */
+                  posting.done(function(data) {
+                    $('#' + data['form_id']).find('#result').text('Nos comunicaremos pronto!');
+                  });
+                  posting.fail(function($xhr) {
+                    var data = $xhr.responseJSON;
+                    $('#' + data['form_id']).find('#result').text('Error de envío, verifique el email');
+                  });
+                });
+         
+             $("form input").keypress(function(event) {
+                  var $email = $(this);
+                  $email.closest('form').find('#result').text('');
+              });
+         
+         });
+      </script>
+        <!-- cover -->
+      <section class="call-to-action text-white text-center">
+         <div class="video-container" style="z-index:0;">
+            <video autoplay muted loop playsinline>
+               <source src="{{url_for('static', filename='assets/video/rolling_pin.mov')}}" type="video/mp4">
+            </video>
+         </div>
+         <div class="container-fluid" style="position: absolute; z-index:1;">
+            <div class="row">
+               <div class="col-xl-9 mx-auto">
+                  <img src="{{ url_for('static', filename='assets/img/recetario.png')}}" class="img-fluid" alt="Responsive image" style="height: 40px;">
+               </div>
+               <div class="col-xl-9 mx-auto">
+                <p style="font: 20px/40px Arial,Verdana,sans-serif; color:'floralwhite'">
+                Experiencia laboral que impacta en la comunidad
+                </p>
+               </div>
+            </div>
+         </div>
+      </section>
+      <!-- Encuestas -->
+      <section class="testimonials text-center bg-light">
+         <div class="container">
+         <h2 class="mb-5">
+            Apoyanos para conformar la comunidad de estudiantes más grande de Argentina! Danos tu opinión con las siguientes encuestas
+         </h2>
+         <div class="row" style="margin-top: 4rem">
+            <div class="col-lg-4">
+               <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                  <a href="https://www.surveymonkey.com/r/NRB5VCJ">
+                  <img class="img-fluid rounded-circle mb-3" src="img/encuesta-pymes.jpg" alt="">
+                  </a>
+                  <h3>Encuesta a<br/>Pymes</h3>
+                  <p class="lead mb-0"> Si sos una pyme ayudanos a conocerte mejor completando esta encuesta.</p>
+               </div>
+            </div>
+            <div class="col-lg-4">
+               <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                  <a href="https://www.surveymonkey.com/r/NCSZ2VV">
+                  <img class="img-fluid rounded-circle mb-3" src="https://startersarg.000webhostapp.com/img/encuesta-estudiantes.jpg" alt="">
+                  </a>
+                  <h3>Encuesta a<br/>estudiantes</h3>
+                  <p class="lead mb-0"> Si sos un estudiante ayudanos a conocerte mejor completando esta encuesta. </p>
+               </div>
+            </div>
+            <div class="col-lg-4">
+               <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                  <a href="https://www.surveymonkey.com/r/PFJBQ6G">
+                  <img class="img-fluid rounded-circle mb-3" src="img/encuestauniversidades1.jpg" alt="">
+                  </a>
+                  <h3>Encuesta a<br/>universidades</h3>
+                  <p class="lead mb-0"> Si representas a una universidad, ayudanos a conocer mejor tus necesidades completando esta encuesta.</p>
+               </div>
+            </div>
+         </div>
+         <div class="row" style="margin-top: 4rem;margin-bottom: 1rem;text-align: left!important" >
+            <div class="col-9" >
+               <p class="lead mb-0"> Si estás interesado en el proyecto no dudes en enviarnos tu mail y nos estaremos comunicando.</p>
+            </div>
+         </div>
+         <div class="row" style="text-align: left!important">
+         <div class="col-12">
+            <form id="contacts" action="server/contacts.php" method="post" style="width: 100%" role="form" class="form-inline">
+               <div class="container">
+                  <div class="row" style="margin-bottom: 1rem;">
+                     <div class="col-4">
+                        <div class="form-group">
+                           <label for="email" style="margin-right: 0.5rem;">Email:</label>
+                           <input type="email" name="email" class="form-control" placeholder="Ingresa tu email">
+                        </div>
+                     </div>
+                     <div class="col-4">
+                        <div class="form-group">
+                           <label for="contact-type" style="margin-right: 0.5rem;">Soy un/a</label>
+                           <select class="custom-select mr-sm-2" name="contact-type" required>
+                              <option value="" selected>Elija una opción</option>
+                              <option value="1">Empresa</option>
+                              <option value="2">Estudiante</option>
+                              <option value="3">Universidad</option>
+                           </select>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col">
+                        <input type="submit" value="contactarse" style="border-radius: 6px; font: Roboto,Helvetica,Arial,Verdana,geneva,sans-serif; font-weight: 700; border: 2px solid #000;width: fit-content;background: none;padding: 0 1rem !important;" class="custom-select">
+                        <div id="result"></div
+                        </div>
+                     </div>
+                     >
+            </form>
+            </div>
+            </div>
+         </div>
+      </section>
+      <!-- Video pitch -->
+      <section class="video-presentation text-center bg-light">
+         <div class="container">
+            <div class="row">
+               <div class="col d-flex justify-content-center">
+                  <div class="embed-responsive embed-responsive-16by9">
+                     <iframe width="560" height="315" src="https://www.youtube.com/embed/hIzKCOXR9KU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+      <!-- Icons Grid -->
+      <section class="testimonials text-center bg-light">
+         <div class="container">
+            <div class="row">
+               <div class="col-md-4">
+                  <img src="img/compartir.png">
+                  <h4>Plataforma & comunidad</h4>
+                  <p>Formaremos una comunidad que orientara  a las PYMES sobre como incorporar estudiantes sin experiencia y en donde los estudiantes puedan vincularse con con otros estudiantes y las PYMES para conocer los distintos puestos vigentes para aplicar a los mismos.</p>
+               </div>
+               <div class="col-md-4">
+                  <img src="img/009-busqueda-de-trabajo.png">
+                  <h4>Bolsa de trabajo para estudiantes universitarios</h4>
+                  <p> Las empresas podrán publicar sus búsquedas orientados a distintos tipos de estudiantes (con o sin experiencia laboral).</p>
+               </div>
+               <div class="col-md-4">
+                  <img src="img/001-habilidad.png">                    
+                  <h4>Sistema de segmentación propio</h4>
+                  <p>Validaremos los conocimientos de los estudiantes (experiencia, conocimientos y habilidades blandas) para segmentarlos y acercarle propuestas acordes a sus conocimientos..</p>
+               </div>
+               <div class="col-md-4">
+                  <img src="img/002-tiempo-rapido.png">  
+                  <h4>Rapidez y Automatización en el proceso de selección</h4>
+                  <p>Ofreceremos un sistema por el cual las PYME accedan rápidamente a valiosos recursos para sus proyectos o tareas rutinarias. Buscaremos generar productos adaptados a la necesidad del cliente.</p>
+               </div>
+               <div class="col-md-4">
+                  <img src="img/003-proyecto.png">  
+                  <h4>Proyectos SMART </h4>
+                  <p>Fomentaremos el desarrollo de proyectos que sean medibles, gratificantes y útiles tanto para la PYME como para el desarrollo de los estudiantes.</p>
+               </div>
+               <div class="col-md-4">
+                  <img src="img/006-contrato.png">  
+                  <h4>Modalidad de trabajo flexible </h4>
+                  <p> Se acordará una modalidad de trabajo de acuerdo a las necesidades del estudiante para que pueda seguir con su formación. </p>
+               </div>
+            </div>
+         </div>
+      </section>
+      <section class="video-presentation text-center bg-light" style="color: white; background-color: #149884!important;">
+         <div class="container">
+            <h2 class="mb-5">
+               Somos un grupo de amigos cuya misión es generar un proyecto optimista, que brinde oportunidades a estudiantes a no pasar por situaciones que tuvimos que atravesar nosotros, así como generar una alternativa que ayude a la recuperacción e innovación de Pymes y Startups.
+            </h2>
+            <div class="row">
+               <div class="col-xl-9 mx-auto">
+                  <img src="img/Starters_team.jpeg" class="img-fluid" alt="Responsive image" style="height: 300px">
+               </div>
+            </div>
+            <div class="row" style="margin-top: 2rem">
+               <div class="col-lg-12">
+                  Georgina estudia Telecomunicaciones e Informática, es emprendedora y apoya al proyecto con ideas innovadoras, networking, diseño y conocimientos tecnológicos y de metodologías de ideación. Florencia es Ingeniera Civil, estudia una Maestría de Evaluación de Proyectos y apoya al proyecto desde el lado proyectual, financiero y económico. Gonzalo está pronto a recibirse de Licenciado en Ciencias de la Computación y apoya a STARTERS con sus conocimientos de software, tecnología, y metodologías Scrum y Agile.
+               </div>
+            </div>
+         </div>
+      </section>
+      <!-- Footer -->
+      <footer class="footer bg-light">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
+                  <p class="text-muted small mb-4 mb-lg-0">&copy; Starters 2020. All Rights Reserved.</p>
+               </div>
+               <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
+                  <ul class="list-inline mb-0">
+                     <li class="list-inline-item">
+                        <a href="https://www.facebook.com/starters.arg.5">
+                        <i class="fab fa-facebook fa-2x fa-fw"></i>
+                        </a>
+                     </li>
+                     <li class="list-inline-item">
+                        <a href="https://www.instagram.com/startersarg/">
+                        <i class="fab fa-instagram fa-2x fa-fw"></i>
+                        </a>
+                     </li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </footer>
+
+{% endblock  %}

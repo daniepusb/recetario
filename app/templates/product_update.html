@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} 
+    {{super()}} ver producto selecionado
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form id="product_update_form" class="form form-horizontal" method="POST" role="form" action="/products/update/{{id}}" enctype="multipart/form-data" >
+            <fieldset id="fieldsetmyFormControl" disabled>
+                <legend>{{title}}</legend>
+                <div class="form-group">
+                    <label for="inputName" class="col-sm-3 control-label">Nombre del producto</label>
+                    <div class="col-sm-9">
+                        <input id="name" name="name" type="text" class="form-control"  placeholder="Nombre del producto" {% if form %} value="{{title}}" {% endif %} disabled required>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label for="inputPrice" class="col-sm-3 control-label">Precio</label>
+                    <div class="col-sm-4">
+                        <input id="price" name="price" type="number" class="form-control"  placeholder="Precio del producto" step="0.01" min="0" {% if form %} value="{{form.get('price')}}" {% endif %} required>
+                    </div>
+                    <div class="col-sm-5"></div>
+                </div>
+                <!-- <div class="form-group">
+                    <label for="inputUnit" class="col-sm-3 control-label">Vendedor</label>
+                    <div class="col-sm-4">
+                        <input id="tenant" name="tenant" type="text" class="form-control" placeholder="Nombre del Vendedor" {% if form %} value="{{form.get('tenant')}}" {% endif %} required>
+                    </div>
+                    <div class="col-sm-5"></div>
+                </div> -->
+                <hr>
+                
+                <br><br>
+
+                <div id="buttons_box" class="text-right" hidden>
+                    <button type="submit" id="go_back_btn"  name='go_back_btn' class="btn btn-info" >Atras</button>
+                    <button type="submit" id="submit_btn"  class="btn btn-success" >Guardar</button>
+                </div>
+            </fieldset>    
+        </form>
+
+        
+        <div class="text-left" id="go_edit" >
+            <button type="button" class="btn btn-success" onclick="make_editable()" >Editar</button>
+        </div>
+    </div>
+    
+    <script type='text/javascript'>
+        
+        function make_editable() {
+            let submit = document.getElementById('buttons_box')
+            submit.hidden   = !submit.hidden
+
+            let fieldsetmy  = document.getElementById('fieldsetmyFormControl')
+            fieldsetmy.disabled = !fieldsetmy.disabled
+
+            let goEdit = document.getElementById('go_edit')
+            goEdit.hidden   = !goEdit.hidden
+        }
+    </script>
+
+{% endblock %}
+
+
+
+

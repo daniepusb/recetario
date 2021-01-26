@@ -482,6 +482,38 @@ def backend_only_sandbox_reset_v1():
 
 
 
+#
+#PRODUCTOS
+#
+def get_list_products():
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').stream()
+
+
+def get_product(product):
+    doc_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection(u'products').document(product)
+    try:
+        doc = doc_ref.get()
+    except google.cloud.exceptions.NotFound:
+        print('No such document!')
+        doc = None
+
+    return doc
+
+
+def put_product(product):
+    product_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').document()
+    product_collection_ref.set({'price': product.price, 'name': product.name, 'tenant': product.tenant})
+
+
+def update_product(product, old_product=None):
+    if old_product is None:
+        product_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').document(product.id)
+        product_collection_ref.set({'price': product.price, 'name': product.name, 'tenant': product.tenant})
+    else:
+        ## TODO: delete old_product and call put_product(product):
+        pass
+
+
 
 
 
