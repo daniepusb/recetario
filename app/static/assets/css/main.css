@@ -43,7 +43,7 @@ hr {
     width: 80%;
 }
 
-input[type=radio].typeTenantSelector  {
+input[type=radio].radioBtnSelector  {
     opacity: 1;
 }
 form#demo__vendor__login__form, form#demo__store__login__form {
