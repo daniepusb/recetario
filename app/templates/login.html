@@ -3,36 +3,29 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %}
-    {{ super() }}
-    Login
+    {{ super() }} Login
 {% endblock %}
 
 {% block content %}
-    {% if username %}
-        <h1>Bienvenido {{username}}, tu IP es {{ user__ip }}</h1>
-    {% else %}
-        <div class="container center">
-            <form id="login_form" class="form-signin form form-horizontal" method="POST" role="form" action="/auth/login">
-                <h2 class="form-signin-heading">Bienvenido</h2>
-                
-                <label for="inputTenant" class="sr-only">Empresa</label>
-                <input id="inputTenant" name="tenant" type="text"  class="form-control" placeholder="Empresa" required="" autofocus="" {% if form %} value="{{form.get('tenant')}}" {% endif %} style="text-transform:uppercase">
-                
-                <label for="inputEmail" class="sr-only">Usuario</label>
-                <input id="inputUsername" name="username" type="text"  class="form-control" placeholder="Usuario" required {% if form %} value="{{form.get('username')}}" {% endif %} style="text-transform:uppercase">
-                
-                <label for="inputPassword" class="sr-only">Contraseña</label>
-                <input id="inputPassword" name="password" type="password" id="" class="form-control" placeholder="Password" required>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" value="remember-me"> Recordarme
-                  </label>
-                </div>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
-              </form>
-
+<div class="container center">
+    <form id="login_form" class="form-signin form form-horizontal" method="POST" role="form" action="/auth/login">
+        <h2 class="form-signin-heading">Bienvenido</h2>
+        <label for="inputTenant" class="sr-only">Empresa</label>
+        <input id="inputTenant" name="tenant" type="text"  class="form-control" placeholder="Empresa" required="" autofocus="" {% if form %} value="{{form.get('tenant')}}" {% endif %} style="text-transform:uppercase">
+        
+        <label for="inputEmail" class="sr-only">Usuario</label>
+        <input id="inputUsername" name="username" type="text"  class="form-control" placeholder="Usuario" required {% if form %} value="{{form.get('username')}}" {% endif %} style="text-transform:uppercase">
+        
+        <label for="inputPassword" class="sr-only">Contraseña</label>
+        <input id="inputPassword" name="password" type="password" id="" class="form-control" placeholder="Password" required>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me"> Recuérdame
+            </label>
         </div>
-    {% endif %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+      </form>
+</div>
 {% endblock %}
 
 

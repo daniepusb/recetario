@@ -101,10 +101,12 @@ def signup_guest():
 
 @auth.route('login', methods=['GET','POST'])
 def login():
+    """
+    In order to authentificate a user
 
-    context = {
-        'user__ip'      : session.get('user__ip'),
-    }
+    type__of__tenant has two options: tenant or sandbox
+    """
+    context = {}
     
     response = render_template('login.html', **context)
     
