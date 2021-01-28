@@ -45,7 +45,7 @@ def create():
         telegram        = formData.get('telegram')
         instagram       = formData.get('instagram')
 
-        vendor__data = VendorData(id=None, name, address, contactNumber, email, telegram, instagram ) 
+        vendor__data = VendorData(None, name, address, contactNumber, email, telegram, instagram ) 
         put_vendor(vendor__data)
 
         flash('Vendedor creado')
@@ -101,7 +101,7 @@ def update(vendorID):
             telegram        = formData.get('telegram')
             instagram       = formData.get('instagram')
 
-            vendor__data = VendorData(id=vendorID, name, address, contactNumber, email, telegram, instagram ) 
+            vendor__data = VendorData(vendorID, name, address, contactNumber, email, telegram, instagram ) 
             update_vendor(vendor__data)
 
             flash('Vendedor actualizado')
