@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 
  
 import app
-from app.firestore_service import get_list_products, get_product, update_product
+from app.firestore_service import get_list_products, get_list_vendors, get_product, update_product, put_product
 from app.models import ProductData
 from app.common_functions import check_admin
 
@@ -23,42 +23,36 @@ def create():
     context = {
         'title' : title,
         'admin' : session['admin'],
-        'navbar': 'ingredients',
+        'navbar': 'inventory',
+        'vendors__list': get_list_vendors(),
     }
     
     if request.method== 'POST':
-        ingredients = {}
+        products    = {}
         formData    = request.form
 
-        title           = formData.get('title').upper()
-        price           = float (formData.get('price'))
-        quantity        = float (formData.get('quantity'))
-        unit            = formData.get('unit')
-        
-        if formData.get('is_gluten_free'):
-            is_gluten_free = True
+        name        = formData.get('name').upper()
+        description = formData.get('description')
+        price       = float (formData.get('price'))
+        vendor      = formData.get('vendor').upper()
+
+        context['form'] = formData
+
+        product__data= ProductData(id=None, name=name, description=description, price=price, vendor=vendor)
+
+        product__db   = None #get_product(name)
+        if product__db is None and product__db is None:
+            put_product(product__data)
+            flash('Producto creado')
+
+            return redirect(url_for('products.list_products'))
         else:
-            is_gluten_free = False
-        ##TODO: cuando falla el post no mantiene el valor de checkbox
-
-        context['form']     = formData
-
-        ingredient__data= IngredientData(title, price, quantity, unit, is_gluten_free)
-        #print(ingredient__data.is_gluten_free)
-
-        ingredient__db   = get_ingredient(title)
-        if ingredient__db.to_dict() is None:
-            put_ingredient(ingredient__data)
-            flash('Ingrediente creado')
-
-            return redirect(url_for('ingredients.list_ingredients'))
-        else:
-            flash('Ya existe Ingrediente')
+            flash('Ya existe producto')
 
 
-        return  render_template('ingredient_create.html', **context) 
+        return  render_template('product_create.html', **context) 
 
-    return  render_template('ingredient_create.html', **context) 
+    return  render_template('product_create.html', **context) 
 
 
 @products.route('all', methods=['GET'])
@@ -67,7 +61,7 @@ def list_products():
     context = {
         'products'  :   get_list_products(),
         'admin'     :   session['admin'],
-        'navbar'    :   'products',
+        'navbar'    :   'inventory',
     }
 
     return render_template('products_list.html', **context)    
@@ -79,6 +73,7 @@ def select(product):
     """
     Function return a render_template to see the properties of the product selected
     """
+    ##TODO: ojo que get_produdct() puede arrojar un None
     product_db   = get_product(product).to_dict()
     
     ## verificar que si existe esta receta  
@@ -88,7 +83,7 @@ def select(product):
             'title'         : product_db.get('name'),
             'form'          : product_db,
             'admin'         : session['admin'],
-            'navbar'        : 'products',
+            'navbar'        : 'inventory',
         }
         
         return render_template('product_update.html', **context)
@@ -102,11 +97,6 @@ def select(product):
 @products.route('update/<product>', methods=['POST'])
 @login_required
 def update(product):
-    context = {
-        'admin'         : session['admin'],
-        'navbar'        : 'product',
-    }
-    
     if request.method== 'POST':
         ##TODO: verificar requet.form y sus inputs
         formData    = request.form
@@ -119,7 +109,7 @@ def update(product):
             product_db      = get_product(product)
             
             if product_db.to_dict() is not None:
-                product__data   = ProductData(id=product, name=product_db.get('name'), price=price, tenant=product_db.get('tenant'))
+                product__data   = ProductData(id=product, name=product_db.get('name'),description=product_db.get('description'), price=price, vendor=product_db.get('vendor'))
                 update_product(product__data)
 
                 flash('Producto actualizado')
@@ -130,26 +120,3 @@ def update(product):
     
     return redirect(url_for('products.select', product=product))
 
-
-@products.route('/dropdownHTML', methods=['GET'] )
-@login_required
-def ajaxHTML():
-    ingredients     = get_list_ingredients()
-
-    context = {
-        'ingredients__list' : ingredients,
-    }
-
-    return render_template('dropdown.html', **context)
-
-@products.route('/dropdown', methods=['GET'] )
-@login_required
-def ajax():
-    ingredients     = get_list_ingredients()
-    r=''
-    i=0
-    for j in ingredients:
-        r += "<option>"+ j.id + "</option>"
-
-    return r
-    #return jsonify(r)

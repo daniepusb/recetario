@@ -286,6 +286,51 @@ def update_store(store, old_store=None):
         pass
 
 
+#
+# VENDORS
+#
+def get_list_vendors():
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('vendors').stream()
+
+
+def get_vendor(id):
+    doc_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection(u'vendors').document(id)
+    try:
+        doc = doc_ref.get()
+    except google.cloud.exceptions.NotFound:
+        print('No such document!')
+        doc = None
+    return doc
+
+
+def put_vendor(vendor):
+    vendor__collection__ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('vendors')
+    vendor__collection__ref.add({
+        'name'          : vendor.name,
+        'address'       : vendor.address,
+        'contactNumber' : vendor.contactNumber,
+        'email'         : vendor.email,
+        'telegram'      : vendor.telegram,
+        'instagram'     : vendor.instagram,
+    })
+
+
+def update_vendor(vendor, old_vendor=None):
+    if old_vendor is None:
+        vendor_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('vendors').document(vendor.vendorID)
+        vendor_collection_ref.set({
+            'name'          : vendor.name,
+            'address'       : vendor.address,
+            'contactNumber' : vendor.contactNumber,
+            'email'         : vendor.email,
+            'telegram'      : vendor.telegram,
+            'instagram'     : vendor.instagram,
+        })
+    else:
+        ## TODO: delete old_vendor and call put_store(vendor):
+        pass
+
+
 
 
 #
@@ -294,8 +339,31 @@ def update_store(store, old_store=None):
 def get_inventory_products():
     return db.collection(session['type__of__tenant']).document(session['tenant']).collection('inventory').where(u'type', u'==', u'product').stream()
 
+
 def get_inventory_ingredients():
-    return db.collection('tenant').document(session['tenant']).collection('inventory').where(u'type', u'==', u'ingredient').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('inventory').where(u'type', u'==', u'ingredient').stream()
+
+
+def get_inventory_product_info(productID):
+    """
+    Return info of product 
+    """
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('inventory').document(productID).get()
+
+
+def add_inventory(inventory):
+    """
+    Procedure to add a product to the inventory
+    """
+    ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('inventory').document(inventory.id)
+    ref.set({
+        'name'      : inventory.name,
+        'quantity'  : inventory.quantity,
+        'type'      : inventory.typeof,
+    })
+    
+    
+
 
 #
 #TENANT
@@ -502,13 +570,13 @@ def get_product(product):
 
 def put_product(product):
     product_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').document()
-    product_collection_ref.set({'price': product.price, 'name': product.name, 'tenant': product.tenant})
+    product_collection_ref.set({ 'name': product.name, 'description': product.description,'price': product.price, 'vendor': product.vendor})
 
 
 def update_product(product, old_product=None):
     if old_product is None:
         product_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').document(product.id)
-        product_collection_ref.set({'price': product.price, 'name': product.name, 'tenant': product.tenant})
+        product_collection_ref.set({'price': product.price, 'name': product.name, 'description': product.description, 'vendor': product.vendor})
     else:
         ## TODO: delete old_product and call put_product(product):
         pass

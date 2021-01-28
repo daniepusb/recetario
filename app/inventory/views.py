@@ -4,8 +4,8 @@ from flask_login import login_required, current_user
 
  
 import app
-from app.firestore_service import get_inventory_products, get_inventory_ingredients
-from app.models import IngredientData, InventoryData
+from app.firestore_service import get_inventory_products, get_inventory_ingredients, get_list_products, get_inventory_product_info, get_product, add_inventory
+from app.models import  ProductData, InventoryData
 from app.common_functions import check_admin
 
 
@@ -18,71 +18,86 @@ def index():
 @inventory.route('all', methods=['GET'])
 @login_required
 def list_inventory():
+    ##TODO: revisar que siempre exista fullname dentro de current_user, y si es así entonces revisar que todos lo puedan usar
+    context  = {
+        'admin'         : session['admin'],
+        'navbar'        : 'inventory',
+    }
+    
+    if session['tenantPermits'].get('products'):
+        products            = get_inventory_products()
+        context['products'] = products
+    if session['tenantPermits'].get('ingredients'):
+        ingredients             = get_inventory_ingredients()
+        context['ingredients']  = ingredients
 
-    if current_user.is_authenticated:
-        fullname    = current_user.fullname
-
-        context  = {
-            'admin'         : session['admin'],
-            'navbar'        : 'inventory',
-        }
-        
-        products    = get_inventory_products()
-        ingredients = get_inventory_ingredients()
-
-        if products is not None:
-            context['products']    = products
-        if products is not None:
-            context['ingredients'] = ingredients
+    return render_template('inventory_list.html', **context)    
 
 
-        return render_template('inventory_list.html', **context)    
-    else:
-        #no autenticado
-        return make_response(redirect('/auth/login'))
-
-
-@inventory.route('create', methods=['GET','POST'])
+@inventory.route('add', methods=['GET','POST'])
 @login_required
-def create():
+def add():
     
     title       = 'Agregar al inventario'
     context = {
-        'title' : title,
-        'admin' : session['admin'],
-        'navbar': 'inventory',
+        'title'         : title,
+        'admin'         : session['admin'],
+        'navbar'        : 'inventory',
+        'products__list': get_list_products(),
     }
     
     if request.method== 'POST':
-        ingredients = {}
         formData    = request.form
-
-        title           = formData.get('title').upper()
-        price           = float (formData.get('price'))
-        quantity        = float (formData.get('quantity'))
-        unit            = formData.get('unit')
+        productID   = formData.get('productID')
+        amount      = int (formData.get('amount'))
         
-        if formData.get('is_gluten_free'):
-            is_gluten_free = True
+
+        product__db  = get_product(productID)
+        if product__db is None:
+            return  render_template('inventory_add.html', **context) 
+
+        if product__db.to_dict() is None:
+            return  render_template('inventory_add.html', **context) 
         else:
-            is_gluten_free = False
-        ##TODO: cuando falla el post no mantiene el valor de checkbox
+            # si existe, buscar producto en lista de inventario
+                #si exite producto en el inventario, sumar amount + inventory.get('quantity') y actualizar
+                #sino existe entonces agregar el producto con amount
 
-        context['form']     = formData
+            inventory  = get_inventory_product_info(productID)
+            
+            if inventory.to_dict() is not None:
+                quantity        = inventory.get('quantity') + amount
+                print(quantity)
+                inventory__data = InventoryData(
+                    id=productID, 
+                    name=inventory.get('name'), 
+                    quantity=quantity,
+                    typeof=inventory.get('type')) 
+                add_inventory(inventory__data)
 
-        ingredient__data= IngredientData(title, price, quantity, unit, is_gluten_free)
-        #print(ingredient__data.is_gluten_free)
+                flash('Inventario actualizado')
+                return redirect(url_for('inventory.list_inventory'))
+            else:
+                inventory__data = InventoryData(id=product__db.id, name=product__db.get('name'), quantity=amount, typeof='product' ) 
+                add_inventory(inventory__data)
 
-        ingredient__db   = get_ingredient(title)
-        if ingredient__db.to_dict() is None:
-            put_ingredient(ingredient__data)
-            flash('Ingrediente creado')
-
-            return redirect(url_for('inventory.list_inventory'))
-        else:
-            flash('Ya existe Ingrediente')
-
+                flash('Inventario actualizado')
+                return redirect(url_for('inventory.list_inventory'))
 
         return  render_template('inventory_add.html', **context) 
 
     return  render_template('inventory_add.html', **context) 
+
+
+@inventory.route('ajax/<productID>',methods=['GET'])
+def ajax(productID):
+    response = {}
+    info = get_inventory_product_info(productID).to_dict()
+
+    if info is not None:
+        response = {'response': info},200
+    else:
+        # response = {'response': {'name':'NULL','quantity':0,'type':'NULL','unit':'NULL'}},200
+        response = {'response': 'NULL'},200
+
+    return response

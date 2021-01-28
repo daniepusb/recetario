@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} 
+    {{super()}} 
+{% endblock %}
+
+{% block navbar %}
+    {{super()}}
+{% endblock %}
+
+{% block content %}
+    {{super()}}
+   
+    <div class="container">
+        {% if vendors %}
+            {% if session['tenantType'] == 'STORE' %}<h1>Listar proveedores</h1>{% endif %}
+            {% if session['tenantType'] == 'VENDOR' %}<h1>Listar vendedores</h1>{% endif %}
+            <ul class="list-group">
+                {% for r in vendors %}
+                    {{ macros.render_vendors(r) }}                
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h1>No hay vendedores para mostrar</h1>
+        {% endif %}
+    </div>
+
+{% endblock %}

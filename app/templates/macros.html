@@ -6,6 +6,12 @@
     <option>{{r}}</option>
 {% endmacro %}
 
+{% macro render_dropdown_products(r) %}
+    {% for i in r %}  
+        <option value="{{i.id}}" label="{{i.get('name')}}">{{i.get('name')}}</option>
+    {% endfor  %}
+{% endmacro %}
+
 {% macro render_recipes(r) %}
     <li class="list-group-item">
         <div class="media">
@@ -53,7 +59,20 @@
         </div>
     </li>
 {% endmacro %}
-
+{% macro render_vendors(r) %}
+    <li class="list-group-item">
+        <div class="media">
+            <div class="media-left media-middle">
+                <a href="{{ url_for('vendors.select', vendorID=r.id) }}" >
+                    <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="{{ r.get('name') }}" style="width:20px;height:20px;">
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-middle"><a href="{{ url_for('vendors.select', vendorID=r.id) }}">{{ r.get('name')}}</a></h4>
+            </div>
+        </div>
+    </li>
+{% endmacro %}
 {% macro render_products(r) %}
     <li class="list-group-item">
         <div class="media">

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} 
+    {{super()}} Ver vendedor selecionado
+{% endblock %}
+
+{% block content %}
+    {% if form %}
+        <div class="container">
+            <form id="vendor_udpate_form" class="form form-horizontal" method="POST" role="form" action="/vendors/update/{{vendorID}}" >
+                <fieldset id="fieldsetmyFormControl" disabled>
+                    <legend>{{form.get('name')}}</legend>
+                    <!-- primer bloque: nombre, description, servings, instructions, imageURL -->
+                    <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                        <div class="form-group">
+                            <label for="inputName" class="col-sm-4 control-label">Nombre del Vendedor</label>
+                            <div class="col-sm-8">
+                                <input id="name" name="name" type="text" class="form-control"  placeholder="Nombre del vendedor" {% if form %} value="{{form.get('name')}}" {% endif %} required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress" class="col-sm-4 control-label">Direccion</label>
+                            <div class="col-sm-8">
+                                <input id="address" name="address" type="text" class="form-control"  placeholder="Direccion fisica del vendedor" {% if form %} value="{{form.get('address')}}" {% endif %} required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputContactNumber" class="col-sm-4 control-label">WhatsApp</label>
+                            <div class="col-sm-8">
+                                <input id="contactNumber" name="contactNumber" type="number" class="form-control"  placeholder="Numero de contacto" step="1" min="1" {% if form %} value="{{form.get('contactNumber')}}" {% endif %} >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail" class="col-sm-4 control-label">Correo electrónico</label>
+                            <div class="col-sm-8">
+                                <input id="email" name="email" type="text" class="form-control"  placeholder="Correo electrónico" {% if form %} value="{{form.get('email')}}" {% endif %} >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputTelgram" class="col-sm-4 control-label">Telegram</label>
+                            <div class="col-sm-8">
+                                <input id="telegram" name="telegram" type="text" class="form-control"  placeholder="@telegram" {% if form %} value="{{form.get('telegram')}}" {% endif %} >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputInstagram" class="col-sm-4 control-label">Instagram</label>
+                            <div class="col-sm-8">
+                                <input id="instagram" name="instagram" type="text" class="form-control"  placeholder="@instagram" {% if form %} value="{{form.get('instagram')}}" {% endif %} >
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div id="buttons_box" class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" hidden>
+                        <input hidden type="text" name="vendorID" value="{{vendorID}}">
+                        <button type="submit" id="go_back_btn" name='go_back_btn'   class="btn btn-info"    aria-roledescription="go back button">Atras</button>
+                        <button type="submit" id="submit_btn"                       class="btn btn-success" aria-roledescription="save form">Guardar</button>
+                    </div>
+                    <!-- fin primer bloque: name, address, contactNumber, email, telegram, instagram  -->
+                    <!-- **************************************************************** -->
+                    
+                </fieldset>   
+                <!-- fin del fieldset  -->
+            </form>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="text-left" id="go_edit">
+                    <button type="submit" class="btn btn-success" onclick="make_editable()" >Editar</button>
+                </div>
+            </div>
+        </div>
+
+        <script type='text/javascript'>
+        
+            function make_editable() {
+                console.log("hacer editable esta receta")
+                let submit = document.getElementById('buttons_box')
+                submit.hidden   = !submit.hidden
+
+                let fieldsetmy  = document.getElementById('fieldsetmyFormControl')
+                fieldsetmy.disabled = !fieldsetmy.disabled
+
+                let goEdit = document.getElementById('go_edit')
+                goEdit.hidden   = !goEdit.hidden
+            }
+        </script>
+    {% endif %}
+{% endblock %}
+
+
+
+

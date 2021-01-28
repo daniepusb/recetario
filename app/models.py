@@ -1,6 +1,6 @@
 from flask_login        import UserMixin
 from flask              import session
-from .firestore_service import get_user_with_tenant, get_recipe, get_guest, get_ingredient
+from .firestore_service import get_user_with_tenant, get_recipe, get_guest, get_ingredient, get_product
 
 #
 #USERS Collection(users)
@@ -205,6 +205,50 @@ class StoreModel():
 
 
 
+#
+#VENDORS Collection(vendors)
+#
+class VendorData:
+    def __init__(self, vendorID, name, address, contactNumber, email, telegram, instagram ):
+        self.id       = id
+        self.name           = name
+        self.address        = address
+        self.contactNumber  = contactNumber
+        self.email          = email 
+        self.telegram       = telegram 
+        self.instagram      = instagram 
+
+
+class VendorModel():
+    def __init__(self, vendorData):
+        """
+        :param vendor: vendorData
+        """
+        self.id             = vendorData.id
+        self.name           = vendorData.name
+        self.address        = vendorData.address
+        self.contactNumber  = vendorData.contactNumber
+        self.email          = vendorData.email 
+        self.telegram       = vendorData.telegram 
+        self.instagram      = vendorData.instagram 
+
+
+    @staticmethod
+    def query(vendorID):
+        vendor__bd  = get_vendor(vendorID)
+        vendor__data= VendorData(
+            id              = vendor__bd.id,
+            name            = vendor__bd.to_dict()['name'],
+            address         = vendor__bd.to_dict()['address'],
+            contactNumber   = vendor__bd.to_dict()['contactNumber'],
+            email           = vendor__bd.to_dict()['email'],
+            telegram        = vendor__bd.to_dict()['telegram'],
+            instagram       = vendor__bd.to_dict()['instagram'],
+        )
+      
+        return VendorModel(vendor__data)
+
+
 
 #
 #ORDERS Collection(orders)
@@ -247,50 +291,54 @@ class OrderModel():
 #INVENTORY Collection(inventory)
 #
 class InventoryData:
-    def __init__(self, products, ingredients):
-        self.products       = products
-        self.ingredients    = ingredients
+    def __init__(self, id, name, quantity, typeof):
+        self.id      = id
+        self.name    = name
+        self.quantity= quantity
+        self.typeof  = typeof
 
 class InventoryModel():
     def __init__(self, inventory):
         """
-        :param guest_data: InventoryData
+        :param inventory: InventoryData
         """
-        self.id             = inventory.doc
-        self.products       = inventory.products
-        self.ingredients    = inventory.ingredients
-    
-
+        self.id         = inventory.id
+        self.name       = inventory.name
+        self.quantity   = inventory.quantity
+        self.typeof     = inventory.typeof
 
 
     
 #
-#PRODCUCTS Collection(products)
+#PRODUCTS Collection(products)
 #
 class ProductData:
-    def __init__(self, id, price=0, name='', tenant='DEMO_VENDOR'):
-        self.id     = id
-        self.price  = price
-        self.name   = name
-        self.tenant = tenant
+    def __init__(self, id, name, description, price, vendor='NOVENDOR'):
+        self.id         = id
+        self.name       = name
+        self.description= description
+        self.price      = price
+        self.vendor     = vendor
 
 class ProductModel():
     def __init__(self, product):
         """
         :param product: ProductData
         """
-        self.id     = product.id
-        self.price  = product.price
-        self.name   = product.name
-        self.tenant = product.tenant
+        self.id         = product.id
+        self.name       = product.name
+        self.description= product.description
+        self.price      = product.price
+        self.vendor     = product.vendor
     
     @staticmethod
     def query(product):
         product__bd   = get_product(product)
         product__data = ProductData(
-            id      = product__bd.id,
-            price   = product__bd.price,
-            name    = product__bd.name,
-            tenant  = product__bd.tenant,
+            id          = product__bd.id,
+            price       = product__bd.price,
+            name        = product__bd.name,
+            description = product__bd.description,
+            vendor      = product__bd.vendor,
         )
 

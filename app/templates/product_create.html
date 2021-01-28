@@ -2,123 +2,124 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% import 'macros.html' as macros %}
 
-{% block content %}
+{% block title %} 
+    {{super()}} Registrar producto
+{% endblock %}
 
-    <div class="container">
-        <form id="ingredient_create_form" class="form form-horizontal" method="POST" role="form" action="/ingredients/create">
-            <fieldset id="fieldsetmyFormControl" >
-                <legend>{{title}}</legend>
+{% block content %}
+<div class="container">
+    <form id="product_create_form" class="form form-horizontal" method="POST" role="form" action="/products/create" enctype="multipart/form-data" >
+        <fieldset id="fieldsetmyFormControl" >
+            <legend>{{title}}</legend>
+            <!-- primer bloque: nombre, description, servings, instructions, imageURL -->
+            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                 <div class="form-group">
-                    <label for="inputTitle" class="col-sm-3 control-label">Nombre del ingrediente</label>
-                    <div class="col-sm-4">
-                        <input id="title" name="title" type="text" class="form-control"  placeholder="Nombre del ingrediente" {% if form %} value="{{form.get('title')}}" {% endif %} required>
+                    <label for="inputImage" class="control-label">Imagen</label>
+                    <div id="profile-container" >
+                        <image id="profileImage" onclick="fasterPreview(this)" src="{{ url_for('static',  filename='assets/img/cupcake_recipe.png') }}" style="width:150px;height:150px;" />
+                        <input id="imageUpload" onchange="fasterPreview(this)" type="file" name="profile_photo" placeholder="Photo" aria-filename="" aria-src="" value="" accept="image/*">
+                    </div>
+                    <input id="imageUpload__filename" hidden type="text" name="filename" aria-filename="" aria-src="" value="OLDNAME">
+                    <input id="imageUpload__URL" hidden type="text" name="imageURL" aria-imageURL="" aria-src="" value="OLDimageURL">
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                <div class="form-group">
+                    <label for="inputTitle" class="col-sm-4 control-label">Nombre del producto</label>
+                    <div class="col-sm-8">
+                        <input id="name" name="name" type="text" class="form-control"  placeholder="Nombre del producto " {% if form %} value="{{form.get('name')}}" {% endif %} required>
                     </div>
                 </div>
-                <hr>
-                <!-- **********************************************************-->
                 <div class="form-group">
-                    <label for="inputPrice" class="col-sm-3 control-label">Precio</label>
-                    <div class="col-sm-4">
-                        <input id="price" name="price" type="number" class="form-control"  placeholder="Precio del ingrediente" step="0.01" min="0" {% if form %} value="{{form.get('price')}}" {% endif %} required>
+                    <label for="inputDescription" class="col-sm-4 control-label">Descripcion</label>
+                    <div class="col-sm-8">
+                        <input id="description" name="description" type="text" class="form-control"  placeholder="Descripcion del producto" {% if form %} value="{{form.get('description')}}" {% endif %} required>
                     </div>
-                    <div class="col-sm-5"></div>
                 </div>
                 <div class="form-group">
-                    <label for="inputQuantity" class="col-sm-3 control-label">Cantidad</label>
-                    <div class="col-sm-4">
-                        <input id="quantity" name="quantity" type="number" class="form-control"  placeholder="Cantidad de la presentacion" step="0.01" min="0" {% if form %} value="{{form.get('quantity')}}" {% endif %} required>
+                    <label for="inputServings" class="col-sm-4 control-label">Precio</label>
+                    <div class="col-sm-8">
+                        <input id="price" name="price" type="number" class="form-control"  placeholder="Precio del producto" step="1" min="1" {% if form %} value="{{form.get('price')}}" {% endif %} required>
                     </div>
-                    <div class="col-sm-5"></div>
                 </div>
                 <div class="form-group">
-                    <label for="inputUnit" class="col-sm-3 control-label">Unidad</label>
-                    <div class="col-sm-4">
-                        <select name="unit" id="" class="form-control" required>
-                            {% if form %} <option selected value="{{form.get('unit')}}">{{form.get('unit')}}</option> {% endif %}
-                            <option value="gr">gr</option>
-                            <option value="ml">ml</option>
-                            <option value="unidad">unidad</option>
+                    <label for="inputTenant" class="col-sm-4 control-label">Vendedor</label>
+                    <div class="col-sm-8">
+                        <select name="vendor" class="form-control" id="vendor">
+                            {% for i in vendors__list  %}  
+                                {{macros.render_dropdown(i.get('name'))}}
+                            {% endfor  %}
                         </select>
                     </div>
-                    <div class="col-sm-5"></div>
                 </div>
-                <hr>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label" for="glutenFree">Gluten Free</label>
-                    <div class="col-sm-4">
-                        <input id="glutenFree" name='is_gluten_free'  type="checkbox" {% if form %} checked="{{form.get('is_gluten_free')}}" {% endif %}> 
-                    </div>
-                    <div class="col-sm-8"></div>
-                </div>
-                
-                <br><br>
-
-                <div class="text-right">
-                    <button type="submit" class="btn btn-success" >Crear</button>
-                </div>
-                <br>
-            </fieldset>    
-        </form>
-
-
-    </div>
-    
-    <script type='text/javascript'>
-        document.getElementById("title").focus();
-        // document.getElementById("ingredient-row").getElementsByTagName("button")[0].style.display = "none";
-
-        function addProperty() {
-            var original    = document.getElementById("property_row_hidden")
-            var clone       = original.cloneNode(true)
-            clone.id        = ""
-            original.parentNode.appendChild(clone);
-        }
-
-        function deleteProperty(e) {
-            // console.log(e)
-            // console.log(e.parentNode.parentNode)
-            // console.log( e.parentNode.parentNode.getElementsByTagName("button"))
-            e.parentNode.parentNode.remove()
-        }
-
-        var j = 0;
-    </script>
-
-    <script>
-
-        function loadXMLDoc()
-        {
-            var req = new XMLHttpRequest()
-            req.onreadystatechange = function()
-            {
-                if (req.readyState == 4)
-                {
-                    if (req.status != 200)
-                    {
-                        //error handling code here
-                    }
-                    else
-                    {
-                        var response    = JSON.parse(req.responseText)
-                        var container   = document.getElementById("ingredients")
-                        // container.appendChild(response);
-                        // container.appendChild(document.createElement("div"));
-                        document.getElementById('ingredients').innerHTML = response
-                    }
-                }
-            }
-        
-            req.open('GET', '/recipes/ajax')
-            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-            // var un = document.getElementById('scname').value
-            // var sec = document.getElementById('secret').value
-            // var postVars = 'username='+un+'&secret='+sec
-            // req.send(postVars)
-            req.send()
+            </div>
             
-            return false
+            <div class="text-right">
+                <button type="submit" class="btn btn-success" >Crear</button>
+            </div>
+            <br>
+        </fieldset>   
+        <!-- fin del fieldset  -->
+    </form>
+    <!-- fin del form -->
+</div>
+
+<!-- Scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-storage.js"></script>
+
+<script type='text/javascript'>
+    document.getElementById("name").focus();
+</script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDCLEJ3eFncL16rZaFP02-w4Eb_qqFmbSA",
+        authDomain: "blogeekplatzi-2e74f.firebaseapp.com",
+        databaseURL: "https://blogeekplatzi-2e74f.firebaseio.com",
+        projectId: "blogeekplatzi-2e74f",
+        storageBucket: "blogeekplatzi-2e74f.appspot.com",
+        messagingSenderId: "669626757295",
+        appId: "1:669626757295:web:c3ea2002a548b07fe4645a",
+        measurementId: "G-0TLGQ6FHH4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    console.log("firebase config expose");
+
+    function fasterPreview( uploader ) {
+        if ( uploader.files && uploader.files[0] ){
+            $('#profileImage').attr('src',window.URL.createObjectURL(uploader.files[0]) );
         }
-    </script>
+        // document.querySelector("#imageUpload").src = "url"
+        // document.getElementById('imageUpload__filename').value ="name"
+        // document.getElementById('imageUpload__URL').value ="url"            
+        uploadImage()
+    }
+    
+    function uploadImage() {
+        const ref       = firebase.storage().ref('recipes');
+        const file      = document.querySelector("#imageUpload").files[0];
+        const name      = +new Date() + "-"// + file.filename;
+        const metadata  = { contentType: file.type };
+        const task      = ref.child(name).put(file, metadata);
+        
+        task
+            .then(snapshot => snapshot.ref.getDownloadURL())
+                .then(url => {
+                    console.log("ESTA ES LA URL")
+                    console.log(url)
+                    console.log(name)
+                    document.querySelector("#imageUpload").src = url
+                    document.getElementById('imageUpload__filename').value = name
+                    document.getElementById('imageUpload__URL').value = url
+                    //document.querySelector("#imageUpload").setAttribute('aria-filename',name)
+                })
+            .catch(console.error);
+    }
+</script>
+
+    
 {% endblock %}
 
 

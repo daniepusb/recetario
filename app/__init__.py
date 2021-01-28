@@ -13,6 +13,7 @@ from .orders        import orders
 from .products      import products
 from .recipes       import recipes
 from .stores        import stores
+from .vendors       import vendors
 
 login__manager = LoginManager()
 login__manager.login_view = 'auth.login'
@@ -40,5 +41,6 @@ def create_app():
     app.register_blueprint(stores)
     app.register_blueprint(ingredients)
     app.register_blueprint(inventory)
+    app.register_blueprint(vendors)
 
     return app

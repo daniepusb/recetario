@@ -15,7 +15,7 @@ def list_stores():
     title = 'Listar locales' 
 
     context ={
-        'navbar'    : 'stores',
+        'navbar'    : 'inventory',
         'title'     : title,
         'admin'     : session['admin'],
         'stores'    : get_list_stores(),
@@ -31,7 +31,7 @@ def create():
     title   = 'Registrar local' 
 
     context ={
-        'navbar'       : 'stores',
+        'navbar'       : 'inventory',
         'title'        : title,
         'admin'        : session['admin'],
     }
@@ -68,7 +68,7 @@ def select(storeID):
     ## verificar que si existe este local
     if store__db is not None:
         context = {
-            'navbar'    : 'stores',
+            'navbar'    : 'inventory',
             'storeID'   : storeID,
             'title'     : store__db.get('name'),
             'form'      : store__db,

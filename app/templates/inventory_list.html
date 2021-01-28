@@ -22,7 +22,7 @@
                         {% for i in products  %}
                             <tr>
                                 <th scope="row">1</th>
-                                <td>{{i.id}}</td>
+                                <td>{{i.get('name')}}</td>
                                 <td>{{ i.get('quantity') }}</td>
                             </tr>
                         {% endfor %}
@@ -55,12 +55,7 @@
             </div>
         {% endif %}
     </div>
-    <hr>
-    <br>
     
-
-    
-    <br><br><br><br><br><br><br><br><br><br><br><br>
 {% endblock %}
 
 
