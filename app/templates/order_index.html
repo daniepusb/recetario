@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} 
+    {{super()}}
+{% endblock %}
+
+{% block navbar %}
+    {{super()}}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <legend>Total <span id="showTotal" class="totalNumber">0 pesos</span></legend>
+    <div class="bredbrum hidden-xs hidden-sm-* hidden-md-* hidden-lg-* ">
+        <span class="">1. selecciona un producto</span>
+        <span class="">> 2. coloca la cantidad</span>
+        <span class="">> 3. elige método de pago</span>
+        <span class="">> 4. confirma</span>
+    </div>
+    <br>
+    
+
+    <!-- Formulario -->
+    <form id="order_register_form" class="form form-vertical" method="POST" role="form" action="/orders/checkout" >
+        <fieldset id="fieldsetmyFormControl">
+            <input hidden aria-hidden="true" id="total" type="number" name="total" value=0>
+            <div id="checkout"></div>
+            <div id="add" class="form-group text-left col-xs-12 col-sm-12" >
+                <button type="button" class="btn btn-default" aria-label="Left Align" onclick="addProduct()">
+                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                </button>
+            </div>
+            <div id="savebtn" hidden aria-hidden="true" class="form-group text-right col-xs-12 col-sm-12">
+                <button type="button" id="submit_btn" class="btn btn-success" data-toggle="modal" data-target="#paymentsMethods">Checkout</button>
+            </div>
+
+            <!-- Modal -->
+            <div class="container">
+                <div class="modal fade" id="paymentsMethods" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Seleccionar método de pago</h4>
+                            </div>
+                            <div class="modal-body">
+                                <select name="payment" class="form-control" required>
+                                    <option disabled selected value> -- elegir método de pago -- </option>
+                                    {{macros.render_dropdown_paymentsMethods(session['tenantPayments'])}}
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success" onclick="checkout()">Registrar pago</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+    <!-- nuevo item -->
+    <div hidden aria-hidden="true" id="template">
+        <div class="form-group col-xs-12 col-sm-6">
+            <label for="product" class="control-label">Producto</label>
+            <select name="product" class="form-control" onchange="fillInfo(this)">
+                <option disabled selected value> -- elegir producto -- </option>
+                {{macros.render_dropdown_products(products__list)}}
+            </select>
+        </div>
+        <div class="form-group col-xs-12 col-sm-3">
+            <label for="quantity" class="control-label">Cantidad a comprar</label>
+            <div class="">
+                <input type="number" name="quantity" class="form-control"  placeholder="Cantidad de recetas a calcular" step="1" min="1" value="1" required>
+            </div>
+        </div>
+        <div class="form-group text-left col-xs-12 col-sm-3 " style="margin-top: 27px;">
+            <button type="button" class="btn btn-default" aria-label="Left Align" onclick="deleteProduct(this)">
+                <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script type='text/javascript'>
+    function checkout() {
+        console.log("chekout")
+        let formtarget = document.getElementById("order_register_form")
+        formtarget.submit()
+    }
+
+    function fillInfo(e) {
+        let price       = e.options[e.selectedIndex].getAttribute("aria-price")
+        let inputPrice  = document.getElementById("price")
+        inputPrice.value= price
+    }
+
+    function calculateTotal() {
+        console.log("calculateTotal")
+
+        let totalTarget = document.getElementById("total")
+        console.log(totalTarget)
+        console.log(totalTarget.value)
+
+        let checkout    = document.getElementById("chekout")
+        console.log(checkout)
+        if (checkout !==null){
+            let lastProduct = checkout.lastChild
+            console.log(lastProduct)
+            
+            let selecthtml  = lastProduct.getElementsByTagName("select");
+            console.log(selecthtml)
+            
+            console.log(selecthtml.getAttribute("aria-price"))
+        }
+
+    }
+    function addProduct() {
+        // verificar que todos los input con nombre producto tengan producto
+        // verificar()
+        //y por ultimo calcular total
+
+        //cuando haya mas de un producto poder aparecer el boton de guardar
+        let savebtn = document.getElementById("savebtn")
+        let target  = document.getElementById("checkout")
+        let template= document.getElementById("template")
+        let clone   = template.cloneNode(true)
+        
+        clone.id        = "";
+        clone.hidden    =false
+        savebtn.hidden  =false
+        target.appendChild(clone)
+
+        calculateTotal()
+        
+    }
+
+    function deleteProduct(e) {
+        //verificar que si no hay productos entonces no mostrar el savebtn
+        // console.log(e.parentNode.parentNode)
+        // console.log( e.parentNode.parentNode.getElementsByTagName("button"))
+        e.parentNode.parentNode.remove()
+        calculateTotal()
+    }
+</script>
+
+{% endblock %}

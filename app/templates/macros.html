@@ -8,7 +8,13 @@
 
 {% macro render_dropdown_products(r) %}
     {% for i in r %}  
-        <option value="{{i.id}}" label="{{i.get('name')}}">{{i.get('name')}}</option>
+        <option value="{{i.id}}" aria-name="{{i.get('name')}}" aria-price="{{i.get('price')}}">{{i.get('name')}}</option>
+    {% endfor  %}
+{% endmacro %}
+
+{% macro render_dropdown_paymentsMethods(r) %}
+    {% for i in r %}  
+        <option value="{{i}}" label="{{i}}">{{i}}</option>
     {% endfor  %}
 {% endmacro %}
 
@@ -28,7 +34,24 @@
             </div>
         </div>
     </li>
-{% endmacro %}
+{% endmacro %}  
+    
+{% macro render_users(r) %}
+    <li class="list-group-item">
+        <div class="media">
+            <div class="media-left media-middle">
+                <a href="{{ url_for('profile.profile') }}" >
+                    <img src="{{ url_for('static', filename='assets/img/platzi.png') }}" alt="{{ r }}" style="width:20px;height:20px;">
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-middle">
+                    <a href="{{ url_for('profile.select', userid=r ) }}">{{ r }}</a>
+                </h4>
+            </div>
+        </div>
+    </li>
+{% endmacro %}              
 
 {% macro render_orders(r) %}
     <li class="list-group-item">
@@ -85,6 +108,7 @@
         </div>
     </li>
 {% endmacro %}
+
 {% macro render_ingredients(r) %}
     <li class="list-group-item">
         <div class="media">

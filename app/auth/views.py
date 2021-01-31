@@ -191,6 +191,7 @@ def login():
                     session['tenantName']       = tenant.get('name')
                     session['tenantType']       = tenant.get('type')
                     session['tenantPermits']    = tenant.get('permits')
+                    session['tenantPayments']   = tenant.get('payments')
                     session['username']         = user.id
 
                     login_user(user, remember=False, duration=None, force=False, fresh=True)
@@ -231,6 +232,8 @@ def logout():
     session.pop('tenantImageURL')
     session.pop('tenantName')
     session.pop('tenantType')
+    session.pop('tenantPermits')
+    session.pop('tenantPayments')
     session.pop('username')
 
     ##TODO: saber si es necesario o no lo session.pop()

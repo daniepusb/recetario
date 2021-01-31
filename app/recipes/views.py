@@ -202,7 +202,6 @@ def select(recipe):
 @login_required
 def update(recipe):
     ##TODO: saber como hacer un buen try catch
-    ##TODO: esta comprobacion ya no es necesario porque tiene el decorador @login_required
     ##TODO: detectar cambios en el formulario para mostrar el boton de guardar
     ##TODO: es importante advertir que la regla de firebase storage está pública y no debería ser así
     ##TODO: es importante advertir que mientras no se cargue totalmente la foto en storage y retorne la URL no deberia permitirse subir 

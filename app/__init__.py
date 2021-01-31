@@ -11,6 +11,7 @@ from .inventory     import inventory
 from .models        import UserModel, RecipeModel   
 from .orders        import orders
 from .products      import products
+from .profile       import profile
 from .recipes       import recipes
 from .stores        import stores
 from .vendors       import vendors
@@ -37,6 +38,7 @@ def create_app():
     app.register_blueprint(faq)
     app.register_blueprint(orders)
     app.register_blueprint(products)
+    app.register_blueprint(profile)
     app.register_blueprint(recipes)
     app.register_blueprint(stores)
     app.register_blueprint(ingredients)

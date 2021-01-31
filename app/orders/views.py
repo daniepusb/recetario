@@ -3,10 +3,58 @@ from flask          import render_template, session, url_for, request, redirect,
 from flask_login    import login_required, current_user
 
 import app
-from app.firestore_service  import get_list_orders, get_order, get_list_stores, get_recipes, put_order, get_order_products
+from app.firestore_service  import get_list_products, get_list_orders, get_order, get_list_stores, get_recipes, put_order, get_order_products
 from app.common_functions   import check_admin
 from app.models             import OrderData, OrderModel
 
+
+@orders.route('/', methods=['GET'])
+@login_required
+def index():
+
+    title = 'Caja'
+    
+    context = {
+        'title'                 : title,
+        'navbar'                : 'orders',
+        'admin'                 : session['admin'],
+        'products__list'        : get_list_products(),
+    }
+    
+    return render_template('order_index.html', **context)
+
+
+@orders.route('/checkout', methods=['POST'])
+@login_required
+def checkout():
+
+    if request.method =='POST':
+        formData = request.form
+        products = {}
+
+        pp = zip( formData.getlist('product'),formData.getlist('quantity'))
+        
+        for k in pp:
+            products[ k[0] ] = { 'quantity':k[1] }
+        
+        # buscar productos
+        # verificar que todos los productos existen
+        # si existen 
+            # para cada producto confirmar en BD
+            #  
+        # si no rechazar post
+
+        
+        # calcular el precio total
+        print(request.form)
+        print(formData.getlist('product'))
+        print(formData.getlist('quantity'))
+        print(products)
+
+    else:
+        flash("Ocurrio un error: nsd765dahdas98y98apol")
+    return redirect(url_for('orders.index'))
+    # return render_template('order_index.html', **context)
 
 @orders.route('/', methods=['GET'])
 @login_required

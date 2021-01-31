@@ -1,22 +1,19 @@
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
         <div class="navbar-header">
-            <button type="button"
-                    class="navbar-toggle"
-                    data-toggle="collapse"
-                    data-target=".navbar-collapse">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            {% if session['tenantImageURL'] %}
-            <a class="navbar-brand" href="{{ url_for('recipes.list_recipes') }}">
-                {% if session['type__of__tenant']=='sandbox' %}
-                    <img id="app__logo" data-tooltip="{{session['tenant']}}" style="padding: 2px;background-color: red;" src="{{ session['tenantImageURL'] }}" alt="Logo">
-                {% else %}
-                    <img id="app__logo" data-tooltip="{{session['tenant']}}" class="css-tooltip" src="{{ session['tenantImageURL'] }}" alt="Logo">
-                {% endif %}
+            {% if session['tenantImageURL'] and session['tenantType']=='STORE' %}
+                <a class="navbar-brand" href="{{ url_for('orders.index') }}">
+                    <img id="app__logo" data-tooltip="{{session['tenant']}}" {% if session['type__of__tenant']=='sandbox' %} style="padding: 2px;background-color: red;" {% endif %} src="{{ session['tenantImageURL'] }}" alt="Logo">
+                </a>
+            {% elif  session['tenantImageURL'] and session['tenantType']=='VENDOR' %}
+                <a class="navbar-brand" href="{{ url_for('orders.index') }}">
+                    <img id="app__logo" data-tooltip="{{session['tenant']}}" {% if session['type__of__tenant']=='sandbox' %} style="padding: 2px;background-color: red;" {% endif %} src="{{ session['tenantImageURL'] }}" alt="Logo">
                 </a>
             {% else %}
                 <a  class="navbar-brand" href="{{ url_for('recipes.list_recipes') }}">
@@ -45,10 +42,11 @@
                         {% endif %}
                         {% if session['tenantPermits'].get('orders') %}
                             <li class="dropdown" id="orders__li">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-roledescription="estimar" aria-haspopup="true" aria-expanded="false">Pedidos <span class="caret"></span></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-roledescription="estimar" aria-haspopup="true" aria-expanded="false">Caja <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="{{ url_for('orders.list_orders') }}">Ver pedidos</a></li>
-                                    <li><a href="{{ url_for('vendors.create') }}">Registrar pedido</a></li>
+                                    <li><a href="{{ url_for('orders.index') }}">Caja</a></li>
+                                    <li><a href="{{ url_for('orders.list_orders') }}">Ver pedidos   </a></li>
+                                    <!-- <li><a href="{{ url_for('vendors.create') }}">Registrar pedido</a></li> -->
                                     <!-- <li><a href="{{ url_for('orders.simulate') }}">Simular pedido semanal</a></li> -->
                                     <!-- <li role="separator" class="divider"></li> -->
                                 </ul>
@@ -78,11 +76,14 @@
                                 </ul>
                             </li>
                         {% endif %}
-                        {% if session['tenantPermits'].get('users') %}
-                            <li class="dropdown" id="guests__li">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Usuarios <span class="caret"></span></a>
+                        {% if session['tenantPermits'].get('profile') %}
+                            <li class="dropdown" id="profile__li">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Perfil <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="{{ url_for('auth.signup') }}">Registrar usuario</a></li>
+                                    <li><a href="{{ url_for('profile.list_users') }}">Ver usuarios</a></li>
+                                    <li><a href="{{ url_for('profile.signup_user') }}">Registrar usuario</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="{{ url_for('profile.profile') }}">Perfil</a></li>
                                 </ul>
                             </li>
                         {% endif %}

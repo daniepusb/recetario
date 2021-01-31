@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macros %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} 
+    {{super()}} {{title}}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form id="profile_update_form" class="form form-horizontal" method="POST" role="form" action="/profile/update/{{id}}" >
+        <fieldset id="fieldsetmyFormControl" disabled>
+            <legend>{{title}}</legend>
+            <div class="form-group">
+                <label for="inputName" class="col-sm-3 control-label">Usuario</label>
+                <div class="col-sm-9">
+                    <input id="name" name="name" type="text" class="form-control"  placeholder="Usuario" {% if form %} value="{{form.id}}" {% endif %} required disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputUnit" class="col-sm-3 control-label">Vendedor</label>
+                <div class="col-sm-4">
+                    <input id="vendor" name="vendor" type="text" class="form-control" placeholder="Nombre del Vendedor" {% if form %} value="{{form.get('tenant')}}" {% endif %} required disabled>
+                </div>
+                <div class="col-sm-5"></div>
+            </div>
+            <hr>
+            <div class="form-group">
+                <label for="inputFullname" class="col-sm-3 control-label">Nombre completo</label>
+                <div class="col-sm-4">
+                    <input id="fullname" name="fullname" type="text" class="form-control"  placeholder="Nombre completo"  {% if form %} value="{{form.get('fullname')}}" {% endif %} required>
+                </div>
+                <div class="col-sm-5"></div>
+            </div>
+            <div class="form-group">
+                <label for="inputFullname" class="col-sm-3 control-label">Sexo</label>
+                <div class="col-sm-4">
+                    <label for="gender" class="control-label">male</label>
+                    <input name="gender" type="radio" class="" {% if form %} {% if form.get('gender')=='MALE' %} checked="checked" {% endif %} {% endif %}required>
+                    
+                    <label for="gender" class="control-label">female</label>
+                    <input name="gender" type="radio" class="" {% if form %} {% if form.get('gender')=='FEMALE' %} checked="checked" {% endif %} {% endif %} required>
+                </div>
+                <div class="col-sm-5"></div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="glutenFree">Admin</label>
+                <div class="col-sm-4">
+                    <input id="glutenFree" name='is_gluten_free'  type="checkbox" {% if form %} {% if form.get('admin') %} checked="checked" {% endif %} {% endif %}> 
+                </div>
+                <div class="col-sm-8"></div>
+            </div>
+            <hr>
+            
+            <br><br>
+
+            <div id="buttons_box" class="text-right" hidden>
+                <button type="submit" id="go_back_btn"  name='go_back_btn' class="btn btn-info" >Atras</button>
+                <button type="submit" id="submit_btn"  class="btn btn-success" >Guardar</button>
+            </div>
+        </fieldset>    
+    </form>
+
+    
+    <div class="text-left" id="go_edit" >
+        <button type="button" class="btn btn-success" onclick="make_editable()" >Editar</button>
+    </div>
+</div>
+
+<script type='text/javascript'>
+    
+    function make_editable() {
+        let submit = document.getElementById('buttons_box')
+        submit.hidden   = !submit.hidden
+
+        let fieldsetmy  = document.getElementById('fieldsetmyFormControl')
+        fieldsetmy.disabled = !fieldsetmy.disabled
+
+        let goEdit = document.getElementById('go_edit')
+        goEdit.hidden   = !goEdit.hidden
+    }
+</script>
+
+{% endblock %}
