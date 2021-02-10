@@ -342,3 +342,44 @@ class ProductModel():
             vendor      = product__bd.vendor,
         )
 
+
+#
+#TRANSACTION Collection(transactions)
+#
+class TransactionData:
+    def __init__(self, customer, paymentMethod, price, products, state, typeof):
+        self.customer       = customer
+        self.paymentMethod  = paymentMethod
+        self.price          = price 
+        self.products       = products 
+        self.state          = state 
+        self.typeof         = typeof 
+
+class TransactionModel():
+    def __init__(self, transactionData):
+        """
+        :param transaction: transactionData
+        """
+        self.id             = transactionData.id
+        self.customer       = transactionData.customer
+        self.paymentMethod  = transactionData.paymentMethod
+        self.price          = transactionData.price 
+        self.products       = transactionData.products 
+        self.state          = transactionData.state 
+        self.typeof         = transactionData.typeof 
+        
+
+    @staticmethod
+    def query(transaction):
+        transaction__db  = get_transaction(transaction)
+        transaction__data= TransactionData(
+            id           = transaction__db.id,
+            customer     = transaction__db.to_dict()['customer'],
+            paymentMethod= transaction__db.to_dict()['paymentMethod'],
+            price        = transaction__db.to_dict()['price'],
+            products     = transaction__db.to_dict()['products'],
+            state        = transaction__db.to_dict()['state'],
+            typeof       = transaction__db.to_dict()['type'],
+        )
+      
+        return TransactionModel(transaction__data)

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} 
+    {{super()}}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% if daily__transactions__list %}
+            <div class="panel panel-default">
+                <div class="panel-heading">Panel de {{title}}</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha de venta</th>					
+                                <th>Usuario</th>					
+                                <th>método de pago</th>
+                                <th>price</th>
+                                <th>estado</th>
+                                <th>tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in daily__transactions__list  %}
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>{{daily__transactions__list[i].get('createDate')}}</td>
+                                <td>{{daily__transactions__list[i].get('customer')}}</td>
+                                <td>{{daily__transactions__list[i].get('paymentMethod')}}</td>
+                                <td>{{daily__transactions__list[i].get('price')}}</td>
+                                <td>{{daily__transactions__list[i].get('state')}}</td>
+                                <td>{{daily__transactions__list[i].get('type')}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+            <hr>
+        {% endif %}
+        {% if ingredients %}
+            <div class="panel panel-default">
+                <div class="panel-heading">Panel de ingredientes {{title}}</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Ingrediente</th>					
+                                <th>Cantidad</th>		
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in ingredients  %}
+                            <tr>
+                                <th scope="row"></th>
+                                <td>{{i.id}}</td>
+                                <td>{{i.get('quantity')}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+        {% endif %}
+    </div>
+    
+{% endblock %}
+
+
+
+

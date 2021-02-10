@@ -3,9 +3,9 @@ from flask          import render_template, session, url_for, request, redirect,
 from flask_login    import login_required, current_user
 
 import app
-from app.firestore_service  import get_list_products, get_list_orders, get_order, get_list_stores, get_recipes, put_order, get_order_products
+from app.firestore_service  import get_daily_list_transactions, put_transaction,check_products_if_exists, get_list_products, get_list_orders, get_order, get_list_stores, get_recipes, put_order, get_order_products
 from app.common_functions   import check_admin
-from app.models             import OrderData, OrderModel
+from app.models             import OrderData, TransactionData
 
 
 @orders.route('/', methods=['GET'])
@@ -29,32 +29,82 @@ def index():
 def checkout():
 
     if request.method =='POST':
-        formData = request.form
-        products = {}
+        formData            = request.form
+        products__from__form= {}
+        products__to__put   = {}
+        sumTotal            = 0
 
-        pp = zip( formData.getlist('product'),formData.getlist('quantity'))
-        
+        pp = zip( formData.getlist('product'),formData.getlist('quantity'),formData.getlist('price'))
         for k in pp:
-            products[ k[0] ] = { 'quantity':k[1] }
+            products__from__form[ k[0] ] = { 'quantity':k[1], 'price':k[2] }
         
-        # buscar productos
-        # verificar que todos los productos existen
-        # si existen 
-            # para cada producto confirmar en BD
-            #  
-        # si no rechazar post
+        # check if this products exist in DB
+        products__db    = check_products_if_exists(products__from__form)
 
-        
-        # calcular el precio total
-        print(request.form)
-        print(formData.getlist('product'))
-        print(formData.getlist('quantity'))
-        print(products)
+        if products__db is not None:
+            for key_db in products__db:
+                product_in_db   =  products__db[key_db].to_dict()
+                name_db         =  product_in_db.get('name')
+                price_db        =  product_in_db.get('price')
+
+                quantity__form  = products__from__form[key_db].get('quantity')
+                sumTotal       += float(quantity__form) * float(price_db)
+
+
+                product_in_db['quantity'] = quantity__form
+                del product_in_db['description']
+                del product_in_db['vendor']
+                
+                products__to__put[key_db] = product_in_db
+
+            
+
+            # print('total', sumTotal, formData.get('total'))
+            if float(formData.get('total')) == float(sumTotal):
+                print(products__to__put)
+            
+                # Create transaction
+                transaction = TransactionData(customer="", paymentMethod=formData.get('payment'), price=sumTotal, products=products__to__put, state="", typeof="sell")
+                put_transaction(transaction)
+
+            else:
+                # reject post action, aperently the price is not the same
+                flash("Ocurrio un error: nsd765dahdas98y98apol")
+                return redirect(url_for('orders.index'))
+        else:
+            # reject post action, aperently is missing that product in the DB
+            flash("Ocurrio un error: nsd765dahdas98y98apol")
+            return redirect(url_for('orders.index'))
 
     else:
         flash("Ocurrio un error: nsd765dahdas98y98apol")
     return redirect(url_for('orders.index'))
     # return render_template('order_index.html', **context)
+
+
+@orders.route('/daily', methods=['GET'])
+@login_required
+def daily():
+    """
+    """
+    title = 'Ventas de hoy'
+    list__db = get_daily_list_transactions()
+    daily__transactions__list ={}
+    
+    for i in list__db:
+        p=i.to_dict()
+        daily__transactions__list[i.id] = p
+    # print(daily__transactions__list)
+
+    context = {
+        'title'                     : title,
+        'navbar'                    : 'orders',
+        'admin'                     : session['admin'],
+        'daily__transactions__list' : daily__transactions__list,
+    }
+    
+    return render_template('orders_daily.html', **context)
+
 
 @orders.route('/', methods=['GET'])
 @login_required
@@ -70,7 +120,6 @@ def list_orders():
         'orders'    : get_list_orders(),
     }
     return render_template('orders_list.html', **context)
-
 
 
 @orders.route('/create', methods=['GET','POST'])
@@ -130,7 +179,6 @@ def create():
     return render_template('order_create.html', **context)
 
 
-
 @orders.route('/select/<orderID>' , methods=['GET'])
 @login_required
 def select(orderID):
@@ -159,12 +207,6 @@ def select(orderID):
 
     else:
         return redirect(url_for('orders.list_orders'))
-
-
-
-
-
-
 
 
 @orders.route('/update' , methods=['POST'])

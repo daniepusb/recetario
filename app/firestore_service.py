@@ -7,7 +7,7 @@ app = firebase_admin.initialize_app()
 db = firestore.client()
 
 ## when you use document.get() return a list []
-## when you use collection.stream() return a muteabledict
+## when you use collection.stream() return a generator
 
 #
 #USERS
@@ -555,7 +555,7 @@ def backend_only_sandbox_reset_v1():
 
 
 #
-#PRODUCTOS
+#PRODUCTS
 #
 def get_list_products():
     return db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').stream()
@@ -586,7 +586,57 @@ def update_product(product, old_product=None):
         pass
 
 
+def check_products_if_exists(products):
+    """
+    return None if one of products ID is not Found
+    """
+    result  = {}
 
+    for p in products:
+        i   = db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').document(p).get()
+        
+        if i.to_dict() is None:
+            return None
+        else:
+            result[i.id] = i
+            # dicc =  result[i.id]].to_dict()
+            # name =  dicc.get('name')
+            # print(name, i.id, dicc, ite)
+
+    return result
+
+
+
+
+#
+#TRANSACTIONS
+#
+def get_daily_list_transactions():
+    # return db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').stream()
+    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').where(u'createDate', u'!=', datetime.datetime.today()).stream()
+
+
+def get_transaction(transaction):
+    doc_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').document(transaction)
+    try:
+        doc = doc_ref.get()
+    except google.cloud.exceptions.NotFound:
+        print('No such document!')
+        doc = None
+    return doc
+
+
+def put_transaction(transaction):
+    transactions_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').document()
+    transactions_ref.set({
+        'createDate'    : datetime.datetime.now(),
+        'customer'      : "",
+        'paymentMethod' : transaction.paymentMethod,
+        'price'         : transaction.price,
+        'products'      : transaction.products,
+        'state'         : transaction.state,
+        'type'          : transaction.typeof,
+        })
 
 
 # def get_todos(user_id):

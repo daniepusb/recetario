@@ -12,7 +12,7 @@
 
 {% block content %}
 <div class="container">
-    <legend>Total <span id="showTotal" class="totalNumber">0 pesos</span></legend>
+    <legend>Total <span id="showTotal" class="totalNumber">0</span> pesos</legend>
     <div class="bredbrum hidden-xs hidden-sm-* hidden-md-* hidden-lg-* ">
         <span class="">1. selecciona un producto</span>
         <span class="">> 2. coloca la cantidad</span>
@@ -26,14 +26,14 @@
     <form id="order_register_form" class="form form-vertical" method="POST" role="form" action="/orders/checkout" >
         <fieldset id="fieldsetmyFormControl">
             <input hidden aria-hidden="true" id="total" type="number" name="total" value=0>
-            <div id="checkout"></div>
-            <div id="add" class="form-group text-left col-xs-12 col-sm-12" >
+            <div id="add" class="form-group text-left col-xs-1 col-sm-1" >
                 <button type="button" class="btn btn-default" aria-label="Left Align" onclick="addProduct()">
-                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-plus-sign"></span>
                 </button>
             </div>
-            <div id="savebtn" hidden aria-hidden="true" class="form-group text-right col-xs-12 col-sm-12">
-                <button type="button" id="submit_btn" class="btn btn-success" data-toggle="modal" data-target="#paymentsMethods">Checkout</button>
+            <div id="checkout" class="form-group text-left col-xs-11 col-sm-11" ></div>
+            <div id="savebtn" hidden class="form-group text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <button type="button" id="submit_btn" class="btn btn-success" data-toggle="modal" data-target="#paymentsMethods">Método de pago</button>
             </div>
 
             <!-- Modal -->
@@ -52,7 +52,7 @@
                                 </select>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-success" onclick="checkout()">Registrar pago</button>
+                                <button type="submit" class="btn btn-success" onclick="checkout(this)">Registrar pago</button>
                             </div>
                         </div>
                     </div>
@@ -62,23 +62,22 @@
     </form>
 
     <!-- nuevo item -->
-    <div hidden aria-hidden="true" id="template">
+    <div hidden id="template" class="products">
         <div class="form-group col-xs-12 col-sm-6">
             <label for="product" class="control-label">Producto</label>
-            <select name="product" class="form-control" onchange="fillInfo(this)">
+            <input type="number" name="price" value="-1" hidden required>
+            <select name="product" class="form-control" onchange="fillInfo(this)" required>
                 <option disabled selected value> -- elegir producto -- </option>
                 {{macros.render_dropdown_products(products__list)}}
             </select>
         </div>
-        <div class="form-group col-xs-12 col-sm-3">
+        <div class="form-group col-xs-12 col-sm-4">
             <label for="quantity" class="control-label">Cantidad a comprar</label>
-            <div class="">
-                <input type="number" name="quantity" class="form-control"  placeholder="Cantidad de recetas a calcular" step="1" min="1" value="1" required>
-            </div>
+            <input type="number" name="quantity" class="form-control"  placeholder="Cantidad de recetas a calcular" step="1" min="1" value="1" onchange="calculateTotal()" required>
         </div>
-        <div class="form-group text-left col-xs-12 col-sm-3 " style="margin-top: 27px;">
+        <div class="form-group text-left col-xs-12 col-sm-2 " style="margin-top: 27px;">
             <button type="button" class="btn btn-default" aria-label="Left Align" onclick="deleteProduct(this)">
-                <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                <span class="glyphicon glyphicon-minus-sign"></span>
             </button>
         </div>
     </div>
@@ -88,43 +87,64 @@
 
 
 <script type='text/javascript'>
+
     function checkout() {
-        console.log("chekout")
+        //prevenir el submit
+        event.preventDefault()
+        
         let formtarget = document.getElementById("order_register_form")
+
+        
+
+        //verificar que todos los selects estan elegidos
+        //validateProductsChoice()
+        console.log("verificado")
+
+
+        //submit the form
         formtarget.submit()
     }
 
     function fillInfo(e) {
+        let inputPrice  = e.parentNode.getElementsByTagName("input")[0]
         let price       = e.options[e.selectedIndex].getAttribute("aria-price")
-        let inputPrice  = document.getElementById("price")
         inputPrice.value= price
+        //colocar una css.class para que se sepa que está disabled
+        //deshabilitar todas las opciones e
+        // e.disabled =true
+        calculateTotal()
     }
 
     function calculateTotal() {
-        console.log("calculateTotal")
+        let totalTarget     = document.getElementById("total")
+        let showTotalTarget = document.getElementById("showTotal")
+        let checkout        = document.getElementById("checkout")
+        let sumTotal       = 0
 
-        let totalTarget = document.getElementById("total")
-        console.log(totalTarget)
-        console.log(totalTarget.value)
+        //para cada producto obtener la cantidad a comprar
+        //para cada producto obtener el precio
+        //para cada producto sumar el precio a totalTarget
+        if (checkout.innerHTML !== "" ){
+            let products = checkout.getElementsByClassName("products")
 
-        let checkout    = document.getElementById("chekout")
-        console.log(checkout)
-        if (checkout !==null){
-            let lastProduct = checkout.lastChild
-            console.log(lastProduct)
-            
-            let selecthtml  = lastProduct.getElementsByTagName("select");
-            console.log(selecthtml)
-            
-            console.log(selecthtml.getAttribute("aria-price"))
+            for(var j = 0; j < products.length; j++){
+                let divs    = products[j].getElementsByTagName("div")
+                let name    = divs[0].getElementsByTagName("select")[0].options[divs[0].getElementsByTagName("select")[0].selectedIndex].getAttribute("aria-name")
+                let price   = divs[0].getElementsByTagName("select")[0].options[divs[0].getElementsByTagName("select")[0].selectedIndex].getAttribute("aria-price")
+                let quantity= divs[1].getElementsByTagName("input")[0].value
+                sumTotal = sumTotal + (price*quantity)
+                
+                showTotalTarget.innerHTML   = sumTotal
+                totalTarget.value           = sumTotal
+                console.log('producto',  name, 'quantity',  quantity, 'price',  price, 'sumaTotal',  sumTotal)
+            }
+        }else{
+            showTotalTarget.innerHTML = 0
+            console.log("Total ", showTotalTarget.innerHTML, " pesos")
         }
 
     }
     function addProduct() {
-        // verificar que todos los input con nombre producto tengan producto
-        // verificar()
-        //y por ultimo calcular total
-
         //cuando haya mas de un producto poder aparecer el boton de guardar
         let savebtn = document.getElementById("savebtn")
         let target  = document.getElementById("checkout")
@@ -135,9 +155,6 @@
         clone.hidden    =false
         savebtn.hidden  =false
         target.appendChild(clone)
-
-        calculateTotal()
-        
     }
 
     function deleteProduct(e) {
@@ -145,7 +162,28 @@
         // console.log(e.parentNode.parentNode)
         // console.log( e.parentNode.parentNode.getElementsByTagName("button"))
         e.parentNode.parentNode.remove()
+        //Habilitar todas las opciones e en los select que existan
+
         calculateTotal()
+    }
+
+
+    function validateProductsChoice(){
+        let inputPrice = checkout.getElementsByClassName("price")
+        console.log(inputPrice[0])
+
+        // for(var j = 0; j < products.length; j++){
+        //     let divs    = products[j].getElementsByTagName("div")
+        //     let name    = divs[0].getElementsByTagName("select")[0].options[divs[0].getElementsByTagName("select")[0].selectedIndex].getAttribute("aria-name")
+        //     let price   = divs[0].getElementsByTagName("select")[0].options[divs[0].getElementsByTagName("select")[0].selectedIndex].getAttribute("aria-price")
+        //     let quantity= divs[1].getElementsByTagName("input")[0].value
+        //     sumTotal = sumTotal + (price*quantity)
+            
+        //     showTotalTarget.innerHTML   = sumTotal
+        //     totalTarget.innerHTML       = sumTotal
+        //     console.log('producto',  name, 'quantity',  quantity, 'price',  price, 'sumaTotal',  sumTotal)
+        // }
+
     }
 </script>
 

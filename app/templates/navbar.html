@@ -45,7 +45,9 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-roledescription="estimar" aria-haspopup="true" aria-expanded="false">Caja <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ url_for('orders.index') }}">Caja</a></li>
-                                    <li><a href="{{ url_for('orders.list_orders') }}">Ver pedidos   </a></li>
+                                    <li><a href="{{ url_for('orders.daily') }}">Ver ventas diarias</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Ver pedidos</a></li>
                                     <!-- <li><a href="{{ url_for('vendors.create') }}">Registrar pedido</a></li> -->
                                     <!-- <li><a href="{{ url_for('orders.simulate') }}">Simular pedido semanal</a></li> -->
                                     <!-- <li role="separator" class="divider"></li> -->
