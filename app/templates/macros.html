@@ -154,3 +154,10 @@
     {% endif %}
 {% endmacro %}
 
+{% macro render_dropdown_unit_selected(r,opt=False) %}
+    {% if r.id == opt %}
+        <option selected aria-selected="true">{{r.id}}</option>
+    {% else %}
+        <option>{{r.id}}</option>
+    {% endif %}
+{% endmacro %}

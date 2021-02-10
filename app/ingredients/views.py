@@ -15,7 +15,6 @@ def index():
     return redirect(url_for('ingredients.list_ingredients'))
 
 
-
 @ingredients.route('create', methods=['GET','POST'])
 @login_required
 def create():
@@ -25,6 +24,7 @@ def create():
         'title' : title,
         'admin' : session['admin'],
         'navbar': 'ingredients',
+        'units' : ['gr', 'ml', 'unidad'],
     }
     
     if request.method== 'POST':
@@ -118,8 +118,6 @@ def select(ingredient):
         return redirect(url_for('auth.login'))
 
 
-
-
 @ingredients.route('update/<ingredient>', methods=['POST'])
 @login_required
 def update(ingredient):
@@ -175,6 +173,7 @@ def ajaxHTML():
     }
 
     return render_template('dropdown.html', **context)
+
 
 @ingredients.route('/dropdown', methods=['GET'] )
 @login_required
