@@ -313,12 +313,14 @@ class InventoryModel():
 #PRODUCTS Collection(products)
 #
 class ProductData:
-    def __init__(self, id, name, description, price, vendor='NOVENDOR'):
+    def __init__(self, id, name, description, cost, price, vendor='NOVENDOR', imageURL='https://danielpedroza.pythonanywhere.com/static/assets/img/platzi.png'):
         self.id         = id
         self.name       = name
         self.description= description
         self.price      = price
         self.vendor     = vendor
+        self.cost       = cost
+        self.imageURL   = imageURL
 
 class ProductModel():
     def __init__(self, product):
@@ -330,6 +332,8 @@ class ProductModel():
         self.description= product.description
         self.price      = product.price
         self.vendor     = product.vendor
+        self.cost       = product.cost
+        self.imageURL   = imageURL
     
     @staticmethod
     def query(product):
@@ -340,6 +344,8 @@ class ProductModel():
             name        = product__bd.name,
             description = product__bd.description,
             vendor      = product__bd.vendor,
+            cost        = product__bd.cost,
+            imageURL    = product__bd.imageURL,
         )
 
 

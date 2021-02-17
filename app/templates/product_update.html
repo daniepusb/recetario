@@ -7,62 +7,155 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <form id="product_update_form" class="form form-horizontal" method="POST" role="form" action="/products/update/{{id}}" enctype="multipart/form-data" >
-            <fieldset id="fieldsetmyFormControl" disabled>
-                <legend>{{title}}</legend>
+<div class="container">
+    <form id="product_update_form" class="form form-horizontal" method="POST" role="form" action="/products/update/{{id}}" enctype="multipart/form-data" >
+        <fieldset id="fieldsetmyFormControl" disabled>
+            <legend>{{title}}</legend>
+            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                {% if form  and form.get('imageURL') %}
+                    <div class="form-group">
+                        <img id="imageURL" class="form-control"  {% if form %} src="{{form.get('imageURL')}}" {% endif %} style="width:150px;height:150px;" >
+                        <input id="imageUpload__URL" hidden type="text" name="imageURL" aria-imageURL="{{form.get('imageURL')}}" aria-src="{{form.get('imageURL')}}" value="{{form.get('imageURL')}}">
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label for="inputImage" class="control-label">Imagen</label>
+                        <div id="profile-container" >
+                            <image id="profileImage" onclick="fasterPreview(this)" src="{{ url_for('static',  filename='assets/img/cupcake_recipe.png') }}" style="width:150px;height:150px;" />
+                            <input id="imageUpload" onchange="fasterPreview(this)" type="file" name="profile_photo" placeholder="Photo" aria-filename="" aria-src="" value="" accept="image/*">
+                        </div>
+                        <input id="imageUpload__filename" hidden type="text" name="filename" aria-filename="" aria-src="" value="OLDNAME">
+                        <input id="imageUpload__URL" hidden type="text" name="imageURL" aria-imageURL="" aria-src="" value="OLDimageURL">
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
                 <div class="form-group">
-                    <label for="inputName" class="col-sm-3 control-label">Nombre del producto</label>
-                    <div class="col-sm-9">
-                        <input id="name" name="name" type="text" class="form-control"  placeholder="Nombre del producto" {% if form %} value="{{title}}" {% endif %} required>
+                    <label for="inputTitle" class="col-sm-4 control-label">Nombre del producto</label>
+                    <div class="col-sm-8">
+                        <input id="name" name="name" type="text" class="form-control"  placeholder="Nombre del producto " {% if form %} value="{{form.get('name')}}" {% endif %} required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputDescription" class="col-sm-4 control-label">Descripcion</label>
+                    <div class="col-sm-8">
+                        <input id="description" name="description" type="text" class="form-control"  placeholder="Descripcion del producto" {% if form %} value="{{form.get('description')}}" {% endif %} required>
                     </div>
                 </div>
                 <hr>
                 <div class="form-group">
-                    <label for="inputPrice" class="col-sm-3 control-label">Precio</label>
-                    <div class="col-sm-4">
-                        <input id="price" name="price" type="number" class="form-control"  placeholder="Precio del producto" step="0.01" min="0" {% if form %} value="{{form.get('price')}}" {% endif %} required>
+                    <label for="inputCost" class="col-sm-4 control-label">Costo</label>
+                    <div class="col-sm-8">
+                        <input id="cost" name="cost" type="number" class="form-control"  placeholder="Costo del producto" step="1" min="1" {% if form %} value="{{form.get('cost')}}" {% endif %} required>
                     </div>
-                    <div class="col-sm-5"></div>
                 </div>
                 <div class="form-group">
-                    <label for="inputUnit" class="col-sm-3 control-label">Vendedor</label>
-                    <div class="col-sm-4">
-                        <input id="vendor" name="vendor" type="text" class="form-control" placeholder="Nombre del Vendedor" {% if form %} value="{{form.get('vendor')}}" {% endif %} required>
+                    <label for="inputTenant" class="col-sm-4 control-label">Vendedor</label>
+                    <div class="col-sm-8">
+                        <select name="vendor" class="form-control" id="vendor">
+                            {% for i in vendors__list  %}  
+                                {{macros.render_dropdown(i.get('name'))}}
+                            {% endfor  %}
+                        </select>
                     </div>
-                    <div class="col-sm-5"></div>
                 </div>
                 <hr>
-                
-                <br><br>
-
-                <div id="buttons_box" class="text-right" hidden>
-                    <button type="submit" id="go_back_btn"  name='go_back_btn' class="btn btn-info" >Atras</button>
-                    <button type="submit" id="submit_btn"  class="btn btn-success" >Guardar</button>
+                <div class="form-group">
+                    <label for="inputPrice" class="col-sm-4 control-label">Precio</label>
+                    <div class="col-sm-8">
+                        <input id="price" name="price" type="number" class="form-control"  placeholder="Precio de venta el público" step="1" min="1" {% if form %} value="{{form.get('price')}}" {% endif %} required>
+                    </div>
                 </div>
-            </fieldset>    
-        </form>
+            </div>
 
-        
-        <div class="text-left" id="go_edit" >
-            <button type="button" class="btn btn-success" onclick="make_editable()" >Editar</button>
-        </div>
+            <div id="buttons_box" class="text-right" hidden>
+                <button type="submit" id="go_back_btn"  name='go_back_btn' class="btn btn-info" >Atras</button>
+                <button type="submit" id="submit_btn"  class="btn btn-success" >Guardar</button>
+            </div>
+        </fieldset>   
+        <!-- fin del fieldset  -->
+    </form>
+    <!-- fin del form -->
+
+
+    <div class="text-left" id="go_edit" >
+        <button type="button" class="btn btn-success" onclick="make_editable()" >Editar</button>
     </div>
-    
-    <script type='text/javascript'>
-        
-        function make_editable() {
-            let submit = document.getElementById('buttons_box')
-            submit.hidden   = !submit.hidden
 
-            let fieldsetmy  = document.getElementById('fieldsetmyFormControl')
-            fieldsetmy.disabled = !fieldsetmy.disabled
 
-            let goEdit = document.getElementById('go_edit')
-            goEdit.hidden   = !goEdit.hidden
+</div>
+
+<!-- Scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-storage.js"></script>
+
+<script type='text/javascript'>
+    document.getElementById("name").focus();
+
+    function make_editable() {
+        let submit = document.getElementById('buttons_box')
+        submit.hidden   = !submit.hidden
+
+        let fieldsetmy  = document.getElementById('fieldsetmyFormControl')
+        fieldsetmy.disabled = !fieldsetmy.disabled
+
+        let goEdit = document.getElementById('go_edit')
+        goEdit.hidden   = !goEdit.hidden
+    }
+
+
+
+
+</script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDCLEJ3eFncL16rZaFP02-w4Eb_qqFmbSA",
+        authDomain: "blogeekplatzi-2e74f.firebaseapp.com",
+        databaseURL: "https://blogeekplatzi-2e74f.firebaseio.com",
+        projectId: "blogeekplatzi-2e74f",
+        storageBucket: "blogeekplatzi-2e74f.appspot.com",
+        messagingSenderId: "669626757295",
+        appId: "1:669626757295:web:c3ea2002a548b07fe4645a",
+        measurementId: "G-0TLGQ6FHH4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    console.log("firebase config expose");
+
+    function fasterPreview( uploader ) {
+        if ( uploader.files && uploader.files[0] ){
+            $('#profileImage').attr('src',window.URL.createObjectURL(uploader.files[0]) );
         }
-    </script>
+        // document.querySelector("#imageUpload").src = "url"
+        // document.getElementById('imageUpload__filename').value ="name"
+        // document.getElementById('imageUpload__URL').value ="url"            
+        uploadImage()
+    }
+    
+    function uploadImage() {
+        const ref       = firebase.storage().ref('recipes');
+        const file      = document.querySelector("#imageUpload").files[0];
+        const name      = +new Date() + "-"// + file.filename;
+        const metadata  = { contentType: file.type };
+        const task      = ref.child(name).put(file, metadata);
+        
+        task
+            .then(snapshot => snapshot.ref.getDownloadURL())
+                .then(url => {
+                    console.log("ESTA ES LA URL")
+                    console.log(url)
+                    console.log(name)
+                    document.querySelector("#imageUpload").src = url
+                    document.getElementById('imageUpload__filename').value = name
+                    document.getElementById('imageUpload__URL').value = url
+                    //document.querySelector("#imageUpload").setAttribute('aria-filename',name)
+                })
+            .catch(console.error);
+    }
+</script>
 
+    
 {% endblock %}
 
 

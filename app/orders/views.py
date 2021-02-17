@@ -100,7 +100,7 @@ def daily():
         'title'                     : title,
         'navbar'                    : 'orders',
         'admin'                     : session['admin'],
-        'daily__transactions__list' : daily__transactions__list,
+        'daily__transactions__list' : list__db,
     }
     
     return render_template('orders_daily.html', **context)

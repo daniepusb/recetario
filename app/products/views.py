@@ -34,11 +34,12 @@ def create():
         name        = formData.get('name').upper()
         description = formData.get('description')
         price       = float (formData.get('price'))
+        cost        = float (formData.get('cost'))
         vendor      = formData.get('vendor').upper()
 
         context['form'] = formData
 
-        product__data= ProductData(id=None, name=name, description=description, price=price, vendor=vendor)
+        product__data= ProductData(id=None, name=name, description=description, cost=cost, vendor=vendor, price=price)
 
         product__db   = None #get_product(name)
         if product__db is None and product__db is None:
@@ -75,7 +76,7 @@ def select(product):
     """
     ##TODO: ojo que get_produdct() puede arrojar un None
     product_db   = get_product(product).to_dict()
-    
+
     ## verificar que si existe esta receta  
     if product_db is not None:
         context = {
@@ -84,6 +85,7 @@ def select(product):
             'form'          : product_db,
             'admin'         : session['admin'],
             'navbar'        : 'inventory',
+            'vendors__list' : get_list_vendors(),
         }
         
         return render_template('product_update.html', **context)
@@ -105,11 +107,11 @@ def update(product):
             return redirect(url_for('products.list_products'))
         else:
             price   = float (formData.get('price') )
-            
+            cost    = float (formData.get('cost') )
             product_db      = get_product(product)
             
             if product_db.to_dict() is not None:
-                product__data   = ProductData(id=product, name=product_db.get('name'),description=product_db.get('description'), price=price, vendor=product_db.get('vendor'))
+                product__data   = ProductData(id=product, name=product_db.get('name'), description=product_db.get('description'), cost=cost, price=price, vendor=product_db.get('vendor'), imageURL=product_db.get('imageURL'))
                 update_product(product__data)
 
                 flash('Producto actualizado')

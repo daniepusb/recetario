@@ -574,13 +574,27 @@ def get_product(product):
 
 def put_product(product):
     product_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').document()
-    product_collection_ref.set({ 'name': product.name, 'description': product.description,'price': product.price, 'vendor': product.vendor})
+    product_collection_ref.set({
+        'name'          : product.name,
+        'imageURL'      : product.imageURL,
+        'description'   : product.description,
+        'cost'          : product.cost,
+        'vendor'        : product.vendor,
+        'price'         : product.price,
+        })
 
 
 def update_product(product, old_product=None):
     if old_product is None:
         product_collection_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('products').document(product.id)
-        product_collection_ref.set({'price': product.price, 'name': product.name, 'description': product.description, 'vendor': product.vendor})
+        product_collection_ref.set({
+            'imageURL'      : product.imageURL,
+            'cost'          : product.cost,
+            'price'         : product.price,
+            'name'          : product.name,
+            'description'   : product.description,
+            'vendor'        : product.vendor
+            })
     else:
         ## TODO: delete old_product and call put_product(product):
         pass
@@ -612,8 +626,19 @@ def check_products_if_exists(products):
 #TRANSACTIONS
 #
 def get_daily_list_transactions():
+    dtoday = datetime.date.today()
+    lista_t = []
+
+    transactions = db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').stream()
+    for t in transactions:
+        # print( t.id, str( dtoday) )
+        if str(t.id) > str(dtoday):
+            lista_t.append(t)
+
+
+    return lista_t
     # return db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').stream()
-    return db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').where(u'createDate', u'!=', datetime.datetime.today()).stream()
+
 
 
 def get_transaction(transaction):
@@ -627,7 +652,9 @@ def get_transaction(transaction):
 
 
 def put_transaction(transaction):
-    transactions_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').document()
+    dnow =str(datetime.datetime.now()) 
+    # print( 'dnow() ', dnow)
+    transactions_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').document(dnow)
     transactions_ref.set({
         'createDate'    : datetime.datetime.now(),
         'customer'      : "",

@@ -26,12 +26,12 @@
                         {% for i in daily__transactions__list  %}
                             <tr>
                                 <th scope="row">1</th>
-                                <td>{{daily__transactions__list[i].get('createDate')}}</td>
-                                <td>{{daily__transactions__list[i].get('customer')}}</td>
-                                <td>{{daily__transactions__list[i].get('paymentMethod')}}</td>
-                                <td>{{daily__transactions__list[i].get('price')}}</td>
-                                <td>{{daily__transactions__list[i].get('state')}}</td>
-                                <td>{{daily__transactions__list[i].get('type')}}</td>
+                                <td>{{i.get('createDate')}}</td>
+                                <td>{{i.get('customer')}}</td>
+                                <td>{{i.get('paymentMethod')}}</td>
+                                <td>{{i.get('price')}}</td>
+                                <td>{{i.get('state')}}</td>
+                                <td>{{i.get('type')}}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
