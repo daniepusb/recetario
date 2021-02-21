@@ -117,7 +117,7 @@ def delete():
             
             if inventory.to_dict() is not None:
                 quantity        = inventory.get('quantity') - amount
-                if quantity > 0:
+                if quantity >= 0:
                     print(quantity)
                     inventory__data = InventoryData(
                         id=productID, 
