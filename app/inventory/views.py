@@ -88,6 +88,61 @@ def add():
 
     return  render_template('inventory_add.html', **context) 
 
+@inventory.route('delete', methods=['GET','POST'])
+@login_required
+def delete():
+    
+    title       = 'Eliminar del inventario'
+    context = {
+        'title'         : title,
+        'admin'         : session['admin'],
+        'navbar'        : 'inventory',
+        'products__list': get_list_products(),
+    }
+    
+    if request.method== 'POST':
+        formData    = request.form
+        productID   = formData.get('productID')
+        amount      = int (formData.get('amount'))
+        
+
+        product__db  = get_product(productID)
+        if product__db is None:
+            return  render_template('inventory_delete.html', **context) 
+
+        if product__db.to_dict() is None:
+            return  render_template('inventory_delete.html', **context) 
+        else:
+            inventory  = get_inventory_product_info(productID)
+            
+            if inventory.to_dict() is not None:
+                quantity        = inventory.get('quantity') - amount
+                if quantity > 0:
+                    print(quantity)
+                    inventory__data = InventoryData(
+                        id=productID, 
+                        name=inventory.get('name'), 
+                        quantity=quantity,
+                        typeof=inventory.get('type')) 
+                    add_inventory(inventory__data)
+
+                    flash('Inventario actualizado')
+                    return redirect(url_for('inventory.list_inventory'))
+                else:
+                    flash('Cantidad imposible de eliminar')
+                    return redirect(url_for('inventory.list_inventory'))
+            else:
+                inventory__data = InventoryData(id=product__db.id, name=product__db.get('name'), quantity=amount, typeof='product' ) 
+                add_inventory(inventory__data)
+
+                flash('Inventario actualizado')
+                return redirect(url_for('inventory.list_inventory'))
+
+        return  render_template('inventory_delete.html', **context) 
+
+    return  render_template('inventory_delete.html', **context) 
+
+
 
 @inventory.route('ajax/<productID>',methods=['GET'])
 def ajax(productID):

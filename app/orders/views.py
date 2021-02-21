@@ -32,7 +32,8 @@ def checkout():
         formData            = request.form
         products__from__form= {}
         products__to__put   = {}
-        sumTotal            = 0
+        sumTotalPrice            = 0
+        sumTotalCost        = 0
 
         pp = zip( formData.getlist('product'),formData.getlist('quantity'),formData.getlist('price'))
         for k in pp:
@@ -44,11 +45,15 @@ def checkout():
         if products__db is not None:
             for key_db in products__db:
                 product_in_db   =  products__db[key_db].to_dict()
+                del product_in_db['imageURL']
+                print (product_in_db)
                 name_db         =  product_in_db.get('name')
                 price_db        =  product_in_db.get('price')
+                cost_db         =  product_in_db.get('cost')
 
                 quantity__form  = products__from__form[key_db].get('quantity')
-                sumTotal       += float(quantity__form) * float(price_db)
+                sumTotalPrice  += float(quantity__form) * float(price_db)
+                sumTotalCost   += float(quantity__form) * float(cost_db)
 
 
                 product_in_db['quantity'] = quantity__form
@@ -59,12 +64,21 @@ def checkout():
 
             
 
-            # print('total', sumTotal, formData.get('total'))
-            if float(formData.get('total')) == float(sumTotal):
-                print(products__to__put)
+            # print('total', sumTotalPrice, formData.get('total'))
+            if float(formData.get('total')) == float(sumTotalPrice):
             
                 # Create transaction
-                transaction = TransactionData(customer="", paymentMethod=formData.get('payment'), price=sumTotal, products=products__to__put, state="", typeof="sell")
+                transaction = TransactionData(
+                    totalPrice=sumTotalPrice,
+                    totalCost =sumTotalCost,
+                    customer="",
+                    paymentMethod=formData.get('payment'),
+                    products=products__to__put,
+                    state="",
+                    subtypeof="sell",
+                    typeof="out",
+                    reference="A102050",
+                    )
                 put_transaction(transaction)
 
             else:

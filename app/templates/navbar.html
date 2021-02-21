@@ -59,7 +59,8 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Inventario <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ url_for('inventory.list_inventory') }}">Ver inventario</a></li>
-                                    <li><a href="{{ url_for('inventory.add') }}">Añadir al inventario</a></li>
+                                    <li><a href="{{ url_for('inventory.add') }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Añadir al inventario</a></li>
+                                    <li><a href="{{ url_for('inventory.delete') }}"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Eliminar del inventario</a></li>
                                     {% if session['tenantPermits'].get('products') %}
                                         <li role="separator" class="divider"></li>
                                         <li><a href="{{ url_for('products.list_products') }}">Ver productos</a></li>

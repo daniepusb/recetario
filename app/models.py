@@ -353,13 +353,16 @@ class ProductModel():
 #TRANSACTION Collection(transactions)
 #
 class TransactionData:
-    def __init__(self, customer, paymentMethod, price, products, state, typeof):
+    def __init__(self, customer, paymentMethod, totalPrice, totalCost, products, state, typeof, subtypeof, reference):
         self.customer       = customer
         self.paymentMethod  = paymentMethod
-        self.price          = price 
+        self.totalPrice     = totalPrice 
+        self.totalCost      = totalCost 
         self.products       = products 
         self.state          = state 
         self.typeof         = typeof 
+        self.subtypeof      = subtypeof 
+        self.reference      = reference
 
 class TransactionModel():
     def __init__(self, transactionData):
@@ -369,10 +372,13 @@ class TransactionModel():
         self.id             = transactionData.id
         self.customer       = transactionData.customer
         self.paymentMethod  = transactionData.paymentMethod
-        self.price          = transactionData.price 
+        self.totalPrice     = transactionData.totalPrice 
+        self.totalCost      = transactionData.totalCost 
         self.products       = transactionData.products 
         self.state          = transactionData.state 
         self.typeof         = transactionData.typeof 
+        self.subtypeof      = transactionData.subtypeof 
+        self.reference      = transactionData.reference
         
 
     @staticmethod
@@ -382,10 +388,13 @@ class TransactionModel():
             id           = transaction__db.id,
             customer     = transaction__db.to_dict()['customer'],
             paymentMethod= transaction__db.to_dict()['paymentMethod'],
-            price        = transaction__db.to_dict()['price'],
+            totalPrice   = transaction__db.to_dict()['totalPrice'],
+            totalCost    = transaction__db.to_dict()['totalCost'],
             products     = transaction__db.to_dict()['products'],
             state        = transaction__db.to_dict()['state'],
-            typeof       = transaction__db.to_dict()['type'],
+            typeof       = transaction__db.to_dict()['typeof'],
+            subtypeof    = transaction__db.to_dict()['subtypeof'],
+            reference    = transaction__db.to_dict()['reference'],
         )
       
         return TransactionModel(transaction__data)

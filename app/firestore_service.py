@@ -656,13 +656,16 @@ def put_transaction(transaction):
     # print( 'dnow() ', dnow)
     transactions_ref = db.collection(session['type__of__tenant']).document(session['tenant']).collection('transactions').document(dnow)
     transactions_ref.set({
+        'totalPrice'    : transaction.totalPrice,
+        'totalCost'     : transaction.totalCost,
         'createDate'    : datetime.datetime.now(),
         'customer'      : "",
         'paymentMethod' : transaction.paymentMethod,
-        'price'         : transaction.price,
         'products'      : transaction.products,
+        'reference'     : transaction.reference,
+        'subtypeof'     : transaction.subtypeof,
+        'typeof'        : transaction.typeof,
         'state'         : transaction.state,
-        'type'          : transaction.typeof,
         })
 
 
