@@ -1,6 +1,7 @@
 import qrcode # allow make qrCode
 import unittest
 import stripe
+import json
 from flask import Flask
 from flask import request, make_response, redirect, session, url_for
 from flask import render_template 
