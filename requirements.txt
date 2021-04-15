@@ -17,16 +17,6 @@ Flask-RESTful
 Flask-Testing	
 Flask-WTF		
 gcloud			
-google-api-core
-google-api-python-client
-google-auth				
-google-auth-httplib2	
-google-cloud-core		
-google-cloud-firestore	
-google-cloud-storage	
-google-crc32c			
-google-resumable-media	
-googleapis-common-protos
 grpcio				
 httplib2			
 idna				
