@@ -7,3 +7,5 @@ flask-testing
 blinker
 firebase-admin
 flask-login
+Flask-RESTful
+stripe

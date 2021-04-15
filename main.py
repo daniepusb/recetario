@@ -1,5 +1,6 @@
 import qrcode # allow make qrCode
 import unittest
+import stripe
 from flask import Flask
 from flask import request, make_response, redirect, session, url_for
 from flask import render_template 
@@ -83,6 +84,47 @@ def index():
     response = make_response(redirect('/auth/login'))
 
     return response
+
+
+"""
+it is use in create_payment()
+"""
+def calculate_order_amount(items):
+    # buscar API Stripe para buscar amount
+    stripe.api_key = "pk_test_51IcKJFHn1TLFiHT2yyAyH4Mw5ICQ7YduTCu4nBvQyqfkYt4dmC55n3Ns3RJVD1ZhhRmjwmmnjrNvZKFgRSIEGWdF00hBIKrvSw"
+
+    price= stripe.Price.retrieve("price_1IgNtSHn1TLFiHT2RXzSzrY4",)
+    print(price)
+    print(price['unit_amount_decimal'])
+    print(price['currency'])
+
+    return 30000
+
+
+@app.route('/api/create-payment-intent', methods=['POST'])
+def create_payment():
+    """
+        Procedure to checkout
+        http://domain.com/api/create-payment-intent
+    """
+    try:
+        data = json.loads(request.data)
+        print(data)
+        
+        intent = stripe.PaymentIntent.create(
+            amount=calculate_order_amount(data['items']),
+            currency='usd'
+        )
+
+        return jsonify({
+          'clientSecret': intent['client_secret']
+        })
+    except Exception as e:
+        print(type(e))    # the exception instance
+        print(e.args)     # arguments stored in .args
+        print(e)          # __str__ allows args to be printed directly,
+                          # but may be overridden in exception subclasses
+        return jsonify(error=str(e)), 403
 
 
 
