@@ -176,12 +176,25 @@ def sandboxReset():
 @app.route('/api/info', methods=['GET'])
 def getApiInfo():
     try:
-        return jsonify({
-          'id': 1,
-          'name': "dolar today",
-          'imagePath': "recetario.png",
-          'tasa': 1.1,
-        })
+
+
+
+        return jsonify(
+            [
+                {
+                'id': 1,
+                'name': "dolar today",
+                'imagePath': "recetario.png",
+                'tasa': 1.1,
+                },
+                {
+                    'id': 2,
+                    'name': "tasa2",
+                    'imagePath': "recetario.png",
+                    'tasa': 1.1,
+                }
+            ]
+        )
     except Exception as e:
         print(type(e))    # the exception instance
         print(e.args)     # arguments stored in .args
