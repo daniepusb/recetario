@@ -171,3 +171,20 @@ def sandboxReset():
         print(inst)          # __str__ allows args to be printed directly,
                              # but may be overridden in exception subclasses
         return {'message': 'Error importing or exporting data'},400
+
+
+@app.route('/api/info', methods=['GET'])
+def getApiInfo():
+    try:
+        return jsonify({
+          'id': 1,
+          'name': "dolar today",
+          'imagePath': "recetario.png",
+          'tasa': 1.1,
+        })
+    except Exception as e:
+        print(type(e))    # the exception instance
+        print(e.args)     # arguments stored in .args
+        print(e)          # __str__ allows args to be printed directly,
+                          # but may be overridden in exception subclasses
+        return jsonify(error=str(e)), 403
